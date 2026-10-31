@@ -119,6 +119,17 @@ class RouteTests(unittest.TestCase):
                            content_type="application/json")
         self.assertEqual(resp.status_code, 400)
 
+    def test_lone_surrogate_and_blank_items_are_400(self):
+        for op in ("add", "check"):
+            for raw in (b'{"item":"\\ud800"}', b'{"item":"  "}'):
+                resp = self.c.post(f"/api/bloom-filter/{op}", data=raw, content_type="application/json")
+                self.assertEqual(resp.status_code, 400, (op, raw))
+
+    def test_class_survives_surrogate(self):
+        bf = BloomFilter()
+        bf.add("\ud800")
+        self.assertTrue(bf.might_contain("\ud800"))
+
     def test_add_limit(self):
         for _ in range(r.MAX_ADDS):
             self.assertEqual(self.post("add", {"item": "a"}).status_code, 200)

@@ -42,7 +42,11 @@ def _bad(msg):
 
 def _item(data):
     v = data.get("item")
-    if isinstance(v, str) and 0 < len(v) <= MAX_ITEM_LEN:
+    if isinstance(v, str) and v.strip() and len(v) <= MAX_ITEM_LEN:
+        try:
+            v.encode("utf-8")  # lone surrogates are valid JSON but not valid text
+        except UnicodeEncodeError:
+            return None
         return v
     return None
 

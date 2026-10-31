@@ -17,7 +17,7 @@ class BloomFilter:
 
     def positions(self, item):
         """The bit indices an item maps to, by double hashing one SHA-256 digest."""
-        digest = hashlib.sha256(str(item).encode("utf-8")).digest()
+        digest = hashlib.sha256(str(item).encode("utf-8", "surrogatepass")).digest()
         h1 = int.from_bytes(digest[:8], "big")
         h2 = int.from_bytes(digest[8:16], "big") | 1
         return [(h1 + i * h2) % self.size for i in range(self.num_hashes)]
