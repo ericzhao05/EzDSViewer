@@ -163,7 +163,7 @@ function AlgorithmCard({ item, onSubmit }) {
   );
 }
 
-function ShareArea({ session }) {
+function ShareArea({ session, onCommandRun }) {
   const shown = session.shownCommand;
   const cantLink = session.tooLong || !shown;
   return (
@@ -194,7 +194,13 @@ function ShareArea({ session }) {
       <p className="p3-message" aria-live="polite">
         {session.copyNote}
       </p>
-      <form className="p3-command" onSubmit={session.submit}>
+      <form
+        className="p3-command"
+        onSubmit={(e) => {
+          onCommandRun();
+          session.submit(e);
+        }}
+      >
         <label>
           Command
           <input value={session.text} onChange={(e) => session.setText(e.target.value)} spellCheck={false} autoComplete="off" />
@@ -239,8 +245,8 @@ export default function Preset3({ session, controls, intro: Intro, Board, title 
     e.preventDefault();
     if (controls.disabled || item.blockedReason) return;
     const form = e.currentTarget;
-    sentFrom.current = from;
-    item.run();
+    // Only a call that was really sent can have an answer to echo.
+    sentFrom.current = item.run() ? from : null;
     const missing = form.querySelector('input[data-needed="true"]');
     if (missing) missing.focus();
     else if (form.contains(document.activeElement) && document.activeElement.tagName === 'INPUT') document.activeElement.select();
@@ -251,7 +257,6 @@ export default function Preset3({ session, controls, intro: Intro, Board, title 
 
   return (
     <div className="preset-3">
-      <p className="preset-note">Layout 3</p>
       {title && <h2>{title}</h2>}
       {Intro && (
         <div className="p3-intro">
@@ -360,7 +365,7 @@ export default function Preset3({ session, controls, intro: Intro, Board, title 
         </>
       )}
 
-      <ShareArea session={session} />
+      <ShareArea session={session} onCommandRun={() => { sentFrom.current = null; }} />
     </div>
   );
 }

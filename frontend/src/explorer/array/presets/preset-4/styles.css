@@ -20,12 +20,6 @@
   text-align: left;
 }
 
-.preset-4 .preset-note {
-  margin: 0 0 0.5rem;
-  font-size: var(--fs-small);
-  color: var(--p-muted);
-}
-
 .preset-4 .p4-small {
   margin: 0;
   font-size: var(--fs-small);
@@ -122,6 +116,7 @@
 
 /* A gap is always drawn: it has to read as a control before anyone has pressed one. */
 .preset-4 .p4-gap {
+  position: relative;
   flex: none;
   display: flex;
   align-items: center;
@@ -136,6 +131,19 @@
   box-shadow: none;
   color: var(--p-muted);
   cursor: pointer;
+}
+
+.preset-4 .p4-gap::before {
+  /* The gap is drawn 32px wide but its hit area is at least 44px, at every width. */
+  content: '';
+  position: absolute;
+  inset: 0 -6px;
+}
+
+/* Neighbouring cells keep their own edges where the hit areas overlap. */
+.preset-4 .p4-cell-btn {
+  position: relative;
+  z-index: 1;
 }
 
 .preset-4 .p4-gap-mark {
@@ -431,13 +439,6 @@
   flex: 0 1 6rem;
 }
 
-/* Touch screens: gaps are full tap targets. */
-@media (any-pointer: coarse), (max-width: 600px) {
-  .preset-4 {
-    --p4-gap: 44px;
-  }
-}
-
 @media (hover: none) and (pointer: coarse) {
   .preset-4 .p4-keys {
     display: none;
@@ -476,4 +477,18 @@
   min-height: 44px;
   padding-block: 0.6rem;
   cursor: pointer;
+}
+
+/* Looking at an earlier step: the reason sits beside the actions it blocks, with the way out. A left rule marks it without colour. */
+.preset-4 .p4-back {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-sm);
+  padding-left: var(--space-sm);
+  border-left: 3px var(--border-style) var(--p-ink);
+}
+
+.preset-4 .p4-back .p4-small {
+  flex: 1 1 14rem;
 }

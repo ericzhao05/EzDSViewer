@@ -259,7 +259,6 @@ export default function Preset2({ session, controls, intro: Intro, Board, title 
   const capacity = session.state ? session.state.capacity : 0;
   return (
     <div className="preset-2">
-      <p className="preset-note">Layout 2</p>
       <header className="p2-header">
         <h2>{title}</h2>
         <div className="p2-intro">

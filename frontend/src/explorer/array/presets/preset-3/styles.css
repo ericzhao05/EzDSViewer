@@ -5,12 +5,6 @@
   text-align: left;
 }
 
-.preset-3 .preset-note {
-  margin: 0 0 var(--space-xs);
-  font-size: var(--fs-small);
-  color: var(--p-muted);
-}
-
 .preset-3 h2 {
   margin: 0 0 var(--space-sm);
   text-align: left;

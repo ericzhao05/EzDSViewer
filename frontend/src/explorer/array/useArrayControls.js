@@ -50,6 +50,7 @@ export default function useArrayControls(session) {
   const send = (method, args) => {
     setNote({ id: null, text: '' });
     session.runCall(buildCall(method, args));
+    return true; // lets a layout tell a sent call from a refused one
   };
 
   const blockedFor = {

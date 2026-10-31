@@ -6,12 +6,6 @@
   text-align: left;
 }
 
-.preset-2 .preset-note {
-  margin: 0 0 var(--space-xs);
-  color: var(--p-muted);
-  font-size: var(--fs-small);
-}
-
 .preset-2 h3,
 .preset-2 h4,
 .preset-2 p,

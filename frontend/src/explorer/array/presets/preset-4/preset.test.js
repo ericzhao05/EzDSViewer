@@ -226,3 +226,123 @@ describe('the rest of the page', () => {
     expect(screen.getByLabelText('Command')).toBeInTheDocument();
   });
 });
+
+const withFrames = (oldValues, newValues, extra = {}) => {
+  const old = makeSession(oldValues).state;
+  const newest = makeSession(newValues).state;
+  const frames = [
+    { state: old, note: 'old', highlight: [], pointers: {}, call: 0 },
+    { state: newest, note: 'new', highlight: [], pointers: {}, call: 1 },
+  ];
+  return makeSession(oldValues, { frames, frame: frames[0], step: 0, lastStep: 1, canNext: true, stepLabel: 'Step 1 of 2', ...extra });
+};
+
+describe('looking at an earlier step', () => {
+  it('disables Read, Remove and Delete, says why, and goes to the latest step', () => {
+    const session = withFrames([1, 3, 5], [1, 3]);
+    render(<Harness session={session} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Index 2, value 5' }));
+    expect(screen.getByRole('button', { name: 'Read' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Remove index 2' })).toBeDisabled();
+    fireEvent.keyDown(screen.getByRole('button', { name: 'Index 2, value 5' }), { key: 'Delete' });
+    expect(session.runCall).not.toHaveBeenCalled();
+    expect(screen.getByText(/Go to the latest step first/)).toBeInTheDocument();
+    expect(screen.getByText(/Insert and Append apply to the newest array/)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Go to latest step' }));
+    expect(session.goTo).toHaveBeenCalledWith(1);
+  });
+
+  it('still allows appending', () => {
+    const session = withFrames([1, 3, 5], [1, 3]);
+    render(<Harness session={session} />);
+    fireEvent.click(screen.getByRole('button', { name: /Append a value at the end/ }));
+    const input = screen.getByLabelText('Value to append at index 3');
+    fireEvent.change(input, { target: { value: '9' } });
+    fireEvent.keyDown(input, { key: 'Enter' });
+    expect(session.runCall).toHaveBeenCalledWith('append(9)');
+  });
+
+  it('enables them again on the latest step', () => {
+    const session = makeSession([1, 3]);
+    render(<Harness session={session} />);
+    expect(screen.getByRole('button', { name: 'Read' })).not.toBeDisabled();
+    expect(screen.queryByRole('button', { name: 'Go to latest step' })).toBeNull();
+  });
+});
+
+describe('an open insert', () => {
+  it('closes when stepping back makes it invalid, and does not come back or take the focus', () => {
+    const big = makeSession([1, 3, 5, 7]);
+    const { rerender } = render(<Harness session={big} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Insert a value at index 3' }));
+    expect(screen.getByLabelText('Value to insert at index 3')).toBeInTheDocument();
+    rerender(<Harness session={makeSession([1, 3])} />);
+    expect(screen.queryByLabelText(/Value to insert/)).toBeNull();
+    const next = screen.getByRole('button', { name: 'Next step' });
+    act(() => next.focus());
+    rerender(<Harness session={makeSession([1, 3, 5, 7])} />);
+    expect(screen.queryByLabelText(/Value to insert/)).toBeNull();
+    expect(document.activeElement).toBe(next);
+  });
+
+  it('does not pull the focus out of the step controls while stepping', () => {
+    const { rerender } = render(<Harness session={makeSession([1, 3, 5, 7])} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Insert a value at index 1' }));
+    const next = screen.getByRole('button', { name: 'Next step' });
+    act(() => next.focus());
+    rerender(<Harness session={makeSession([1, 3, 5])} />);
+    expect(document.activeElement).toBe(next);
+  });
+});
+
+describe('clearing the typed index', () => {
+  it.each(['Undo', 'Start over'])('%s clears it', (name) => {
+    setup();
+    fireEvent.change(screen.getByLabelText('Index'), { target: { value: '3' } });
+    fireEvent.click(screen.getByRole('button', { name }));
+    expect(screen.getByLabelText('Index')).toHaveValue('');
+  });
+});
+
+describe('algorithm scrolling', () => {
+  afterEach(() => {
+    delete Element.prototype.scrollIntoView;
+  });
+
+  it('only scrolls for a run that was actually sent', () => {
+    Element.prototype.scrollIntoView = jest.fn();
+    const rect = jest.spyOn(Element.prototype, 'getBoundingClientRect').mockReturnValue({ top: -500, bottom: 5000, left: 0, right: 0 });
+    const session = makeSession([1, 3]);
+    const { rerender } = render(<Harness session={session} />);
+    const twoSum = within(screen.getByRole('form', { name: 'Two sum' }));
+    fireEvent.click(twoSum.getByRole('button', { name: 'Run Two sum' })); // no target typed: refused
+    expect(session.runCall).not.toHaveBeenCalled();
+    rerender(<Harness session={{ ...session, calls: ['append(1)'] }} />); // some other call lands
+    expect(Element.prototype.scrollIntoView).not.toHaveBeenCalled();
+    fireEvent.change(twoSum.getByLabelText('Target'), { target: { value: '4' } });
+    fireEvent.click(twoSum.getByRole('button', { name: 'Run Two sum' }));
+    expect(session.runCall).toHaveBeenCalled();
+    rerender(<Harness session={{ ...session, calls: ['append(1)', 'two_sum_sorted(4)'] }} />);
+    expect(Element.prototype.scrollIntoView).toHaveBeenCalled();
+    rect.mockRestore();
+  });
+});
+
+describe('a Delete that fails', () => {
+  it('does not leave the focus handoff armed for a later size change', () => {
+    const { rerender } = render(<Harness session={makeSession([1, 3, 5])} />);
+    const cell = screen.getByRole('button', { name: 'Index 1, value 3' });
+    act(() => cell.focus());
+    fireEvent.keyDown(cell, { key: 'Delete' });
+    rerender(<Harness session={makeSession([1, 3, 5], { error: { message: 'nope' } })} />);
+    const next = screen.getByRole('button', { name: 'Next step' });
+    act(() => next.focus());
+    rerender(<Harness session={makeSession([1, 3, 5, 7])} />);
+    expect(document.activeElement).toBe(next);
+  });
+});
+
+it('prints no layout number', () => {
+  setup();
+  expect(screen.queryByText(/^Layout \d$/)).toBeNull();
+});

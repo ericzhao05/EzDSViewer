@@ -46,6 +46,11 @@ export default function HandsOnArray({ session, controls }) {
   const pointers = (frame && frame.pointers) || {};
   const prefix = frame && frame.aux && frame.aux.prefix;
 
+  // Reading and removing act on the newest array, so they only make sense when that is the one shown.
+  const newest = frames.length > 0 ? frames[frames.length - 1].state : null;
+  const looksBack = !session.playing && JSON.stringify(usedValues(newest)) !== JSON.stringify(usedValues(state));
+
+  const root = useRef(null);
   const [opened, setOpened] = useState(null);
   const [cursor, setCursor] = useState(null);
   const scroller = useRef(null);
@@ -93,11 +98,19 @@ export default function HandsOnArray({ session, controls }) {
     if (firstMark === size - 1) reveal(scroller.current.querySelector('[data-slot="a"]'));
   }, [firstMark, session.step, size]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // An open cell that stops being valid (stepping back to a smaller array) is closed, so it cannot come back later.
+  const stale = Boolean(opened) && !mode;
   useEffect(() => {
-    if (mode && newInput.current) {
-      newInput.current.focus();
-      reveal(newInput.current);
-    }
+    if (stale) setOpened(null);
+  }, [stale]);
+
+  // Focus goes to the new cell when it opens or the row changes under it, but never out of the step controls.
+  useEffect(() => {
+    if (!mode || !newInput.current) return;
+    const at = document.activeElement;
+    if (at && at !== document.body && root.current && !root.current.contains(at)) return;
+    newInput.current.focus();
+    reveal(newInput.current);
   }, [mode && mode.kind, insertingAt, size]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
@@ -116,6 +129,11 @@ export default function HandsOnArray({ session, controls }) {
     const target = scroller.current.querySelector(`[data-slot="${slot}"]`);
     if (target) target.focus();
   }, [size]);
+
+  // A Delete that failed never changes the size, so drop the handoff rather than leave it armed.
+  useEffect(() => {
+    if (session.error) removedAt.current = null;
+  }, [session.error]);
 
   const openInsert = (at) => {
     if (insert.blockedReason) return;
@@ -149,12 +167,12 @@ export default function HandsOnArray({ session, controls }) {
     setIndex(selected === i ? '' : String(i));
   };
   const removeSelected = () => {
-    if (controls.disabled || pop.blockedReason || indexProblem) return;
+    if (controls.disabled || looksBack || pop.blockedReason || indexProblem) return;
     pop.run();
     setIndex('');
   };
   const read = () => {
-    if (controls.disabled || get.blockedReason || indexProblem) return;
+    if (controls.disabled || looksBack || get.blockedReason || indexProblem) return;
     get.run();
   };
 
@@ -179,7 +197,7 @@ export default function HandsOnArray({ session, controls }) {
       setCursor(next);
     } else if ((e.key === 'Delete' || e.key === 'Backspace') && slot[0] === 'c') {
       e.preventDefault();
-      if (controls.disabled) return;
+      if (controls.disabled || looksBack) return;
       setIndex('');
       removedAt.current = Number(slot.slice(1));
       session.runCall(buildCall('pop', [removedAt.current]));
@@ -299,11 +317,21 @@ export default function HandsOnArray({ session, controls }) {
     );
   }
 
-  const newest = frames.length > 0 ? frames[frames.length - 1].state : null;
-  const looksBack = !session.playing && JSON.stringify(usedValues(newest)) !== JSON.stringify(usedValues(state));
+  // Shown beside the actions it affects, with the way out.
+  const backNote = looksBack && (
+    <div className="p4-back">
+      <p className="p4-small">
+        You are looking at an earlier step. Go to the latest step first to read or remove a cell. Insert and Append
+        apply to the newest array.
+      </p>
+      <button type="button" className="control-btn" onClick={() => session.goTo(session.lastStep)}>
+        Go to latest step
+      </button>
+    </div>
+  );
 
   return (
-    <div className="p4-work">
+    <div className="p4-work" ref={root}>
       <div className="array-scroll p4-scroll" ref={scroller}>
         {/* The className keeps array-cells so each theme's highlight and pointer rules apply. */}
         <div className="array-cells p4-row" role="list" aria-label="Array cells" onKeyDown={onRowKey}>
@@ -332,6 +360,7 @@ export default function HandsOnArray({ session, controls }) {
               </button>
             </div>
             {insert.message && <p className="p4-message">{insert.message}</p>}
+            {backNote}
           </div>
         )}
 
@@ -351,6 +380,7 @@ export default function HandsOnArray({ session, controls }) {
               </button>
             </div>
             {append.message && <p className="p4-message">{append.message}</p>}
+            {backNote}
           </div>
         )}
 
@@ -375,6 +405,7 @@ export default function HandsOnArray({ session, controls }) {
               <button
                 type="button"
                 className="control-btn"
+                disabled={looksBack}
                 aria-disabled={Boolean(get.blockedReason) || indexProblem}
                 onClick={read}
               >
@@ -383,6 +414,7 @@ export default function HandsOnArray({ session, controls }) {
               <button
                 type="button"
                 className="control-btn"
+                disabled={looksBack}
                 aria-disabled={Boolean(pop.blockedReason) || indexProblem}
                 onClick={removeSelected}
               >
@@ -397,6 +429,7 @@ export default function HandsOnArray({ session, controls }) {
                 + Append
               </button>
             </div>
+            {backNote}
             {indexProblem && (
               <p className="p4-message">
                 No cell at index {trimmed}. Pick from 0 to {size - 1}.
@@ -424,9 +457,6 @@ export default function HandsOnArray({ session, controls }) {
               to cancel.
             </p>
           </>
-        )}
-        {looksBack && (
-          <p className="p4-small p4-back">You are looking at an earlier step. A change here applies to the newest array.</p>
         )}
       </div>
     </div>

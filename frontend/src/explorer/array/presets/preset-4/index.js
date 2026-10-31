@@ -15,8 +15,8 @@ function Algorithm({ algo, controls, onRun }) {
   const submit = (e) => {
     e.preventDefault();
     if (controls.disabled) return;
-    onRun();
-    algo.run();
+    // Only a run that was really sent should bring the array back into view.
+    if (algo.run()) onRun();
   };
   return (
     <form className="p4-algo" onSubmit={submit} aria-label={algo.label}>
@@ -55,6 +55,11 @@ export default function Preset4({ session, controls, intro: Intro, title }) {
   const ranAlgorithm = useRef(false);
   const callCount = session.calls.length;
 
+  // The typed index belongs to the array that was on screen; Undo and Start over replace it.
+  const clearIndex = () => {
+    controls.operations.filter((op) => op.id === 'get' || op.id === 'pop').forEach((op) => op.inputs[0].setValue(''));
+  };
+
   // The Run buttons sit below the array, so bring the array back into view for the animation.
   useEffect(() => {
     if (!ranAlgorithm.current) return;
@@ -68,7 +73,6 @@ export default function Preset4({ session, controls, intro: Intro, title }) {
 
   return (
     <div className="preset-4">
-      <p className="preset-note">Layout 4</p>
       {title && <h2>{title}</h2>}
       {Intro && <Intro />}
 
@@ -86,10 +90,16 @@ export default function Preset4({ session, controls, intro: Intro, title }) {
             </span>
           </div>
           <div className="p4-top-actions">
-            <button type="button" className="control-btn" disabled={!controls.canUndo} onClick={controls.undo}>
+            <button type="button" className="control-btn" disabled={!controls.canUndo} onClick={() => {
+                clearIndex();
+                controls.undo();
+              }}>
               Undo
             </button>
-            <button type="button" className="control-btn" onClick={controls.startOver}>
+            <button type="button" className="control-btn" onClick={() => {
+                clearIndex();
+                controls.startOver();
+              }}>
               Start over
             </button>
           </div>

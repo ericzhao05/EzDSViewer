@@ -144,3 +144,20 @@ test('calls read as English, and unknown ones stay as written', () => {
   expect(describeCall('two_sum_sorted(10)')).toBe('Looked for two numbers that add up to 10');
   expect(describeCall('reset()')).toBe('reset()');
 });
+
+test('no layout number is printed on the page', async () => {
+  await open('array.append(1)');
+  expect(screen.queryByText(/^Layout \d$/)).toBeNull();
+});
+
+test('a send that was refused leaves no stale echo for a later Command-box run', async () => {
+  await open('array.append(1)');
+  fireEvent.click(screen.getByRole('button', { name: 'Read' }));
+  expect(screen.getByText('Enter a whole-number index first.')).toBeInTheDocument();
+  fireEvent.change(screen.getByLabelText('Command'), { target: { value: 'array.append(1).append(2)' } });
+  await act(async () => {
+    fireEvent.submit(screen.getByLabelText('Command').closest('form'));
+  });
+  await screen.findByText(/of 2/);
+  expect(document.querySelector('.p3-echo')).toBeNull();
+});

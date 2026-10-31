@@ -144,3 +144,8 @@ test('undo, start over and share are all on the page', async () => {
   });
   expect(share.getByLabelText('Command')).toBeInTheDocument();
 });
+
+test('no layout number is printed on the page', async () => {
+  await open('array.append(1)');
+  expect(screen.queryByText(/^Layout \d$/)).toBeNull();
+});
