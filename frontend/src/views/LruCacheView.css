@@ -1,0 +1,110 @@
+.lru-cache-intro,
+.lru-cache-complexity {
+  margin: 0.25rem 0;
+  max-width: 100%;
+}
+
+.lru-cache-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin: 0.75rem 0;
+  color: var(--text-color);
+}
+
+.lru-cache-heading {
+  margin: 0.75rem 0 0.25rem;
+}
+
+.lru-cache-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  margin: 0.5rem 0;
+}
+
+.lru-cache-list {
+  list-style: none;
+  margin: 0;
+  padding: 0.25rem 0;
+  display: flex;
+  align-items: center;
+  width: max-content;
+}
+
+.lru-cache-item {
+  display: flex;
+  align-items: center;
+}
+
+.lru-cache-arrow {
+  padding: 0 0.4rem;
+  color: var(--text-color);
+}
+
+.lru-cache-sentinel {
+  border: 2px dashed var(--input-border);
+  border-radius: 6px;
+  padding: 0.5rem 0.6rem;
+  color: var(--text-color);
+  font-size: 0.85rem;
+}
+
+.lru-cache-node {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  text-align: center;
+  min-width: 4rem;
+  border: 2px solid var(--input-border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.lru-cache-tag {
+  font-size: 0.7rem;
+  padding: 0.1rem 0.3rem;
+  color: var(--text-color);
+}
+
+.lru-cache-node-key,
+.lru-cache-node-value {
+  padding: 0.25rem 0.5rem;
+}
+
+.lru-cache-node-key {
+  background: var(--stack-item-bg);
+  color: var(--stack-item-text);
+  font-weight: bold;
+}
+
+.lru-cache-node-value {
+  color: var(--text-color);
+}
+
+.lru-cache-map {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.lru-cache-map-row {
+  display: flex;
+  align-items: center;
+  margin: 0.25rem 0;
+}
+
+.lru-cache-map-row .lru-cache-node-key {
+  border-radius: 4px;
+  min-width: 3rem;
+  text-align: center;
+}
+
+.lru-cache-pointer {
+  color: var(--text-color);
+  font-size: 0.9rem;
+}
+
+.lru-cache-result {
+  margin: 0.75rem 0;
+  color: var(--text-color);
+}

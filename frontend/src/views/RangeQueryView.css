@@ -1,0 +1,103 @@
+.range-query-intro,
+.range-query-complexity {
+  margin: 0.25rem 0;
+  max-width: 100%;
+}
+
+.range-query-result {
+  margin: 0.5rem 0;
+  font-weight: bold;
+  color: var(--text-color);
+}
+
+.range-query-legend {
+  margin: 0.25rem 0 0.75rem;
+  font-size: 0.85rem;
+  color: var(--text-color);
+}
+
+.range-query-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  margin: 0.5rem 0;
+}
+
+.range-query-fenwick {
+  display: flex;
+  gap: 0.35rem;
+  width: max-content;
+  padding: 0.25rem 0;
+}
+
+.range-query-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 4.2rem;
+}
+
+.range-query-cell {
+  min-width: 2.6rem;
+  padding: 0.4rem 0.5rem;
+  text-align: center;
+  border: 2px solid var(--input-border);
+  border-radius: 4px;
+  background: var(--stack-item-bg);
+  color: var(--stack-item-text);
+}
+
+.range-query-array {
+  margin-top: 0.5rem;
+  opacity: 0.85;
+}
+
+.range-query-hit {
+  border-color: #e67e22;
+  box-shadow: 0 0 0 2px #e67e22;
+}
+
+.range-query-minus {
+  border-style: dashed;
+  border-color: #c0392b;
+  box-shadow: 0 0 0 2px #c0392b;
+}
+
+.range-query-sub {
+  font-size: 0.7rem;
+  color: var(--text-color);
+}
+
+.range-query-svg {
+  display: block;
+}
+
+.range-query-edge {
+  stroke: var(--input-border);
+  stroke-width: 1.5;
+}
+
+.range-query-node {
+  fill: var(--stack-item-bg);
+  stroke: var(--input-border);
+  stroke-width: 2;
+}
+
+.range-query-leaf {
+  stroke-dasharray: 0;
+  stroke-width: 3;
+}
+
+.range-query-node-hit {
+  stroke: #e67e22;
+  stroke-width: 4;
+}
+
+.range-query-node-text {
+  fill: var(--stack-item-text);
+  font-size: 13px;
+}
+
+.range-query-node-index {
+  fill: var(--text-color);
+  font-size: 10px;
+}
