@@ -8,17 +8,7 @@ from DataStrcutures.DynamicArray import (
     two_sum_sorted,
 )
 from api.routes import array_routes
-from flask import Blueprint, Flask
-
-
-def make_client():
-    # Mirrors the real app: bp (prefix /array) nested in a parent mounted at /api.
-    # tests.helpers.client_for overrides the bp prefix, so it would serve /api/<op>.
-    parent = Blueprint("ds_api_test", __name__)
-    parent.register_blueprint(array_routes.bp)
-    app = Flask(__name__)
-    app.register_blueprint(parent, url_prefix="/api")
-    return app.test_client()
+from tests.helpers import client_for
 
 
 class DynamicArrayTest(unittest.TestCase):
@@ -85,7 +75,7 @@ class DynamicArrayTest(unittest.TestCase):
 
 class ArrayRoutesTest(unittest.TestCase):
     def setUp(self):
-        self.c = make_client()
+        self.c = client_for(array_routes.bp)
         self.c.post("/api/array/reset")
 
     def post(self, op, payload=None):
