@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { buildCall } from '../commandLang';
+import { callsBeforeLastSort } from './sortRuns';
 
 const WHOLE = /^-?\d+$/;
 const MAX_SIZE = 64;
@@ -42,15 +43,17 @@ export default function useArrayControls(session) {
   const twoSumTarget = useField('two-sum-target', 'Target', 'number', 'e.g. 8');
   const searchTarget = useField('binary-search-target', 'Target', 'number', 'e.g. 5');
 
-  const values = shownValues(session.state);
+  // Runs build on the newest array, so its values decide what's allowed, not the step on screen.
+  const values = shownValues(session.latestState || session.state);
   const size = values ? values.length : 0;
   const hasString = values ? values.some((v) => typeof v !== 'number') : false;
   // Only meaningful once hasString is ruled out: every check below tests hasString first.
   const ascending = values ? values.every((v, i) => i === 0 || values[i - 1] <= v) : true;
 
-  const send = (method, args) => {
+  const send = (method, args, base) => {
     setNote({ id: null, text: '' });
-    session.runCall(buildCall(method, args));
+    if (base) session.runCall(buildCall(method, args), base);
+    else session.runCall(buildCall(method, args));
     return true; // lets a layout tell a sent call from a refused one
   };
 
@@ -143,7 +146,7 @@ export default function useArrayControls(session) {
   ];
 
   const sort = (id, label, summary, complexity, key) =>
-    item(id, label, summary, complexity, [], () => send(id, []), key);
+    item(id, label, summary, complexity, [], () => send(id, [], callsBeforeLastSort(session.calls)), key);
   const sorts = [
     sort('bubble_sort', 'Bubble sort', 'Swap neighbours that are out of order, pass after pass.', 'O(n²)', 'sortSmall'),
     sort('selection_sort', 'Selection sort', 'Pick the smallest value left and move it to the front.', 'O(n²)', 'sortSmall'),

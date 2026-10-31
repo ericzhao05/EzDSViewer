@@ -117,3 +117,24 @@ describe('ArrayControls', () => {
     expect(screen.getByRole('button', { name: 'Undo' })).toBeDisabled();
   });
 });
+
+describe('move arrows', () => {
+  const state = { data: [3, 1, 2], size: 3, capacity: 4, resizes: 1 };
+  const frameWith = (moves) => ({ highlight: [], pointers: {}, aux: moves ? { moves } : null, note: 'x' });
+  const headStrokes = (el) => el.querySelector('.move-arrow-head').getAttribute('d').match(/M/g).length;
+
+  test('a swap has a head at both ends, an insert at one', () => {
+    const { container, rerender } = render(<ArrayBoard frame={frameWith([{ kind: 'swap', from: 0, to: 1 }])} state={state} />);
+    expect(headStrokes(container.querySelector('.move-arrow-swap'))).toBe(4);
+    rerender(<ArrayBoard frame={frameWith([{ kind: 'insert', from: 2, to: 0 }])} state={state} />);
+    expect(container.querySelector('.move-arrow-swap')).toBeNull();
+    expect(headStrokes(container.querySelector('.move-arrow-insert'))).toBe(2);
+  });
+
+  test('a step with no move draws nothing, and bad indexes are ignored', () => {
+    const { container, rerender } = render(<ArrayBoard frame={frameWith(null)} state={state} />);
+    expect(container.querySelector('.move-arrows')).toBeNull();
+    rerender(<ArrayBoard frame={frameWith([{ kind: 'swap', from: 0, to: 99 }])} state={state} />);
+    expect(container.querySelector('.move-arrow')).toBeNull();
+  });
+});

@@ -73,9 +73,10 @@ export default function useExplorer(initialCommand, onEdit, { startAtEnd = false
   // Resolves to how many frames the new call made, or null if it was superseded or failed.
   // If keepStep() is true once the reply arrives, the person has navigated meanwhile and the step stays put.
   const applyCall = useCallback(
-    async (callText, keepStep) => {
+    // base is the calls to build on, when that isn't all of them.
+    async (callText, keepStep, base = response.calls) => {
       if (!response.structure) return null;
-      const data = await request(join(response.structure, [...response.calls, callText]));
+      const data = await request(join(response.structure, [...base, callText]));
       if (!data) return null;
       if (!data.success) {
         setError(toError(data));
@@ -159,6 +160,7 @@ export default function useExplorer(initialCommand, onEdit, { startAtEnd = false
     step,
     frame,
     state: frame ? frame.state : response.state,
+    latestState: response.state, // the newest array, which edits build on, whatever step is on screen
     result: response.result,
     error,
     loading,

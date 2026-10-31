@@ -34,6 +34,31 @@ def run_sort(sort, nums):
 
 
 class ArraySortsTest(unittest.TestCase):
+    def test_moves_describe_exactly_what_changed_between_frames(self):
+        table = [[5, 3, 9, 1, 7, 2], [9, 8, 7, 6, 5, 4, 3, 2, 1], [1, 2, 3, 4], [2, 2, 1, 1, 3]]
+        for sort in SORTS:
+            for nums in table:
+                with self.subTest(sort=sort, nums=nums):
+                    frames = run(command(nums, "%s()" % sort))["frames"]
+                    frames = [f for f in frames if f["call"] == len(nums)]
+                    current = list(nums)
+                    for frame in frames:
+                        for move in (frame["aux"] or {}).get("moves", []):
+                            i, j = move["from"], move["to"]
+                            self.assertNotEqual(i, j)
+                            if move["kind"] == "swap":
+                                current[i], current[j] = current[j], current[i]
+                            else:
+                                self.assertEqual(move["kind"], "insert")
+                                current.insert(j, current.pop(i))
+                        self.assertEqual(frame["state"]["data"][: len(nums)], current)
+
+    def test_a_sort_that_moves_something_records_arrows(self):
+        for sort in SORTS:
+            with self.subTest(sort=sort):
+                frames = run(command([3, 2, 1], "%s()" % sort))["frames"]
+                self.assertTrue(any(f["aux"] and f["aux"]["moves"] for f in frames))
+
     def each_case(self):
         for sort in SORTS:
             for nums in TABLE:

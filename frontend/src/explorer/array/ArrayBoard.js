@@ -18,7 +18,12 @@ export default function ArrayBoard({ frame, state }) {
           Resizes: <strong>{state.resizes}</strong>
         </span>
       </div>
-      <ArrayCells state={state} highlight={frame ? frame.highlight : undefined} pointers={frame ? frame.pointers : undefined} />
+      <ArrayCells
+        state={state}
+        highlight={frame ? frame.highlight : undefined}
+        pointers={frame ? frame.pointers : undefined}
+        moves={frame && frame.aux && frame.aux.moves ? frame.aux.moves : undefined}
+      />
       {prefix && (
         <div className="array-prefix" role="group" aria-label="Prefix sums">
           Prefix: {prefix.join(', ')}

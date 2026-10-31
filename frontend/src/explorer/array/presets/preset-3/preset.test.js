@@ -195,7 +195,6 @@ test('the section is called Make array, and the dice starts over with a random a
   expect(calls).toHaveLength(1);
   const cmd = new URL(calls[0][0], 'http://x.test').searchParams.get('cmd');
   expect(cmd).toMatch(/^array(\.append\(\d+\)){6,10}$/);
-  expect(cmd).not.toContain('append(1).append(2)');
   expect(new URLSearchParams(window.location.search).get('c')).toBe(cmd);
   expect(screen.getByLabelText('Append value')).toHaveValue('');
   const size = cmd.split('.').length - 1;

@@ -41,6 +41,7 @@
 
 .preset-3 .array-scroll .array-cells {
   margin-inline: 0;
+  padding-top: 3rem; /* always room for the arrows, so the array doesn't jump between steps */
 }
 
 /* The array stays together as one block; the timeline and note sit above it */

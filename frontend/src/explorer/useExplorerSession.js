@@ -98,11 +98,11 @@ export default function useExplorerSession({
 
   // After an edit: one new frame is simply shown; an algorithm's frames play from the first.
   const runCall = useCallback(
-    async (callText) => {
+    async (callText, base) => {
       setPlaying(false);
       const mark = ++interrupt.current;
       const moved = () => interrupt.current !== mark;
-      const made = await x.applyCall(callText, moved);
+      const made = await x.applyCall(callText, moved, base);
       if (made !== null && made > 1 && !moved() && !reducedMotion()) setPlaying(true);
     },
     [x.applyCall] // eslint-disable-line react-hooks/exhaustive-deps
@@ -169,6 +169,7 @@ export default function useExplorerSession({
     step,
     frame,
     state,
+    latestState: x.latestState,
     result: x.result,
     error,
     loading,

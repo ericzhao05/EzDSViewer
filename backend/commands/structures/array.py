@@ -215,11 +215,17 @@ class _Sorter:
         self.a = array._data  # the backing list: writes change the real array
         self.n = len(array)
 
-    def show(self, note, highlight=(), pointers=None):
-        self.rec.add(self.array.to_dict(), note, highlight, pointers)
+    def show(self, note, highlight=(), pointers=None, moves=None):
+        """moves lists what this step moved, so the page can draw it: {"kind", "from", "to"}."""
+        aux = {"moves": moves} if moves else None
+        self.rec.add(self.array.to_dict(), note, highlight, pointers, aux)
 
     def swap(self, i, j):
         self.a[i], self.a[j] = self.a[j], self.a[i]
+
+
+def _swapped(i, j):
+    return [{"kind": "swap", "from": i, "to": j}]
 
 
 def _sorting(algorithm):
@@ -245,13 +251,15 @@ def bubble_sort(s):
         swapped = False
         for j in range(end):
             x, y = a[j], a[j + 1]
+            moves = None
             if x > y:
                 s.swap(j, j + 1)
                 swapped = True
+                moves = _swapped(j, j + 1)
                 note = "Compare %s and %s: out of order, swap them" % (x, y)
             else:
                 note = "Compare %s and %s: already in order" % (x, y)
-            s.show(note, [j, j + 1], {"i": j, "j": j + 1})
+            s.show(note, [j, j + 1], {"i": j, "j": j + 1}, moves)
         if not swapped:
             return
 
@@ -268,12 +276,14 @@ def selection_sort(s):
             else:
                 note = "Compare %s and %s: %s is still the smallest" % (a[j], a[low], a[low])
             s.show(note, [low, j], {"i": i, "min": low, "j": j})
+        moves = None
         if low != i:
             s.swap(i, low)
+            moves = _swapped(i, low)
             note = "%s is the smallest left: move it to index %d" % (a[i], i)
         else:
             note = "%s is the smallest left: it stays at index %d" % (a[i], i)
-        s.show(note, [i, low], {"i": i, "min": low})
+        s.show(note, [i, low], {"i": i, "min": low}, moves)
 
 
 @_sorting
@@ -289,7 +299,7 @@ def insertion_sort(s):
                 break
             s.swap(j - 1, j)
             s.show("Compare %s and %s: out of order, swap them" % (x, y),
-                   [j - 1, j], {"i": i, "j": j - 1})
+                   [j - 1, j], {"i": i, "j": j - 1}, _swapped(j - 1, j))
             j -= 1
 
 
@@ -302,13 +312,15 @@ def merge_sort(s):
         left, right = lo, mid  # next unplaced element of each half
         while left < right < hi:
             x, y = a[left], a[right]
+            moves = None
             if x <= y:
                 note = "Compare %s and %s: %s is smaller, keep it at index %d" % (x, y, x, left)
             else:
                 a[left : right + 1] = [y] + a[left:right]
+                moves = [{"kind": "insert", "from": right, "to": left}]
                 note = "Compare %s and %s: %s is smaller, move it to index %d" % (x, y, y, left)
                 right += 1
-            s.show(note, [left], {"left": left, "right": min(right, hi - 1)})
+            s.show(note, [left], {"left": left, "right": min(right, hi - 1)}, moves)
             left += 1
 
     def sort(lo, hi):
@@ -333,16 +345,19 @@ def quick_sort(s):
         s.show("Pivot is %s" % pivot, [hi], {"pivot": hi})
         small = lo  # everything before this index is smaller than the pivot
         for j in range(lo, hi):
+            moves = None
             if a[j] < pivot:
                 s.swap(small, j)
+                if small != j:
+                    moves = _swapped(small, j)
                 small += 1
                 note = "%s is smaller than %s: move it to the left side" % (a[small - 1], pivot)
             else:
                 note = "%s is not smaller than %s: leave it" % (a[j], pivot)
-            s.show(note, [j, small], {"pivot": hi, "i": min(small, hi), "j": j})
+            s.show(note, [j, small], {"pivot": hi, "i": min(small, hi), "j": j}, moves)
         s.swap(small, hi)
         s.show("Put the pivot %s in its final place at index %d" % (pivot, small),
-               [small], {"pivot": small})
+               [small], {"pivot": small}, _swapped(small, hi) if small != hi else None)
         sort(lo, small - 1)
         sort(small + 1, hi)
 
@@ -362,7 +377,7 @@ def heap_sort(s):
                 return
             note = "Parent %s is smaller than child %s: swap them" % (a[parent], a[child])
             s.swap(parent, child)
-            s.show(note, [parent, child], {"i": parent, "j": child})
+            s.show(note, [parent, child], {"i": parent, "j": child}, _swapped(parent, child))
             parent = child
 
     for start in range(s.n // 2 - 1, -1, -1):  # build a max-heap
@@ -370,7 +385,7 @@ def heap_sort(s):
     for end in range(s.n - 1, 0, -1):  # move the largest to the end, repair the heap
         s.swap(0, end)
         s.show("%s is the largest in the heap: move it to index %d" % (a[end], end),
-               [0, end], {"i": 0, "j": end})
+               [0, end], {"i": 0, "j": end}, _swapped(0, end))
         sift_down(0, end)
 
 

@@ -232,11 +232,18 @@ describe('sorts', () => {
     });
   });
 
-  test('run sends the call with no arguments', () => {
+  test('what is allowed follows the newest array, not the step on screen', () => {
+    const session = sessionWith([3, 1]);
+    session.latestState = { data: [1, 3], size: 2, capacity: 2, resizes: 0 };
+    const { result } = renderHook(() => useArrayControls(session));
+    expect(result.current.algorithms.find((a) => a.id === 'two_sum_sorted').blockedReason).toBeNull();
+  });
+
+  test('run sends the call with no arguments, built on the calls before any earlier sort', () => {
     const session = sessionWith([2, 1]);
     const { result } = renderHook(() => useArrayControls(session));
     act(() => { result.current.sorts[3].run(); });
-    expect(session.runCall).toHaveBeenCalledWith('merge_sort()');
+    expect(session.runCall).toHaveBeenCalledWith('merge_sort()', []);
   });
 
   test('nothing is blocked for a small numeric array, sorted or not', () => {

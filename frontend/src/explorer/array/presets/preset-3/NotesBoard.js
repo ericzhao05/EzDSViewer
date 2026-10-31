@@ -121,7 +121,7 @@ export default function NotesBoard({ session, controls, onSubmit }) {
       <div className="p3-notes-head">
         <h3 id="p3-algorithms">Algorithms</h3>
         <p className="p3-notes-lead">
-          Run one and the page goes back up to the array so you can watch it, step by step. Sorts put the array in order; the others only read it.
+          Run one and the page goes back up to the array so you can watch it, step by step. Each sort starts from the array you made, so you can compare them. The array stays sorted until you make or change it.
         </p>
         <div className="p3-notes-find" role="search">
           <label>

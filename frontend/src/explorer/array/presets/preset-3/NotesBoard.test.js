@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, within, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, within, waitFor, act } from '@testing-library/react';
 import App from '../../../../App';
 
 const REPEAT = 'Already ran on this array. Change the array first.';
@@ -171,4 +171,15 @@ test('the notes hide while a coming-soon structure is on screen, and come back',
 
   fireEvent.click(screen.getByRole('button', { name: 'Open Array' }));
   expect(screen.getByRole('searchbox', { name: 'Search algorithms' })).toBeVisible();
+});
+
+test('a second sort starts again from the array that was made, not the sorted one', async () => {
+  await open('array.append(3).append(1)');
+  await screen.findByText(/of 2/);
+  const sent = () => global.fetch.mock.calls.map(([url]) => new URL(url, 'http://x.test').searchParams.get('cmd'));
+  await act(async () => { fireEvent.click(screen.getByRole('button', { name: 'Run bubble sort' })); });
+  expect(sent()).toContain('array.append(3).append(1).bubble_sort()');
+  await screen.findByText(/of 3/);
+  await act(async () => { fireEvent.click(screen.getByRole('button', { name: 'Run merge sort' })); });
+  expect(sent()).toContain('array.append(3).append(1).merge_sort()');
 });
