@@ -108,23 +108,31 @@ export default function useExplorer(initialCommand, onEdit, { startAtEnd = false
     if (editHook.current) editHook.current(data.command);
   }, [request, response]);
 
+  // Swaps everything for a new command, keeping what's on screen if it fails, and shows its last step.
+  const replaceWith = useCallback(
+    async (text) => {
+      const data = await request(text);
+      if (!data) return;
+      if (!data.success) {
+        setError(toError(data));
+        return;
+      }
+      setResponse(data);
+      setCommand(data.command);
+      setStep(lastFrame(data));
+      setError(null);
+      if (editHook.current) editHook.current(data.command);
+    },
+    [request]
+  );
+
   // Loads just the structure name, which clears the history.
   // After a bad first load there is no structure, so use the command's own if it has a board, else array.
   const startOver = useCallback(async () => {
     const named = command.split('.')[0].trim();
     const structure = response.structure || (BOARDS[named] ? named : 'array');
-    const data = await request(structure);
-    if (!data) return;
-    if (!data.success) {
-      setError(toError(data));
-      return;
-    }
-    setResponse(data);
-    setCommand(data.command);
-    setStep(lastFrame(data));
-    setError(null);
-    if (editHook.current) editHook.current(data.command);
-  }, [request, response, command]);
+    await replaceWith(structure);
+  }, [replaceWith, response, command]);
 
   const goTo = useCallback(
     (i) => setStep(Math.min(Math.max(i, 0), Math.max(0, response.frames.length - 1))),
@@ -158,6 +166,7 @@ export default function useExplorer(initialCommand, onEdit, { startAtEnd = false
     applyCall,
     undo,
     startOver,
+    replaceWith,
     goTo,
     next,
     prev,

@@ -2,7 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import NotesBoard from './NotesBoard';
 import { Blank, Flags } from './Fields';
-import PlayerBar from './PlayerBar';
+import PlayerBar, { Icon } from './PlayerBar';
+import randomArrayCommand from './randomArray';
 import './styles.css';
 
 // The words around each operation's inputs. A string is plain text; { input } is an input's id.
@@ -134,6 +135,15 @@ export default function Preset3({ session, controls, intro: Intro, Board, title 
     else if (form.contains(document.activeElement) && document.activeElement.tagName === 'INPUT') document.activeElement.select();
   };
 
+  // Starts over with a random array, clearing anything typed into the sentences and notes.
+  const rollDice = () => {
+    [...controls.operations, ...controls.algorithms, ...controls.sorts].forEach((item) =>
+      item.inputs.forEach((input) => input.setValue(''))
+    );
+    sentFrom.current = null;
+    session.replaceWith(randomArrayCommand());
+  };
+
   const echoText = (id) => (echoFor === id ? session.note : '');
   const inviting = !session.hasFrames ? 'Nothing has happened yet. Append a value below to begin.' : '';
 
@@ -163,7 +173,19 @@ export default function Preset3({ session, controls, intro: Intro, Board, title 
           </div>
 
           <section className="p3-section" aria-labelledby="p3-change">
-            <h3 id="p3-change">Change or read the array</h3>
+            <div className="p3-heading">
+              <h3 id="p3-change">Make array</h3>
+              <button
+                type="button"
+                className="control-btn p3-icon-btn p3-dice"
+                aria-label="Make a random array"
+                title="Make a random array"
+                disabled={controls.disabled}
+                onClick={rollDice}
+              >
+                <Icon name="dice" />
+              </button>
+            </div>
             <p className="p3-lead">Press the first word of a sentence, or press Enter in a blank.</p>
             <ul className="p3-rows">
               {controls.operations.map((item) => (

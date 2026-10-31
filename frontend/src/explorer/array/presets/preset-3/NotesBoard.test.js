@@ -158,14 +158,6 @@ test('typing in the search box does not trigger the page shortcuts', async () =>
   expect(screen.getByRole('button', { name: 'Play' })).toBeInTheDocument();
 });
 
-test.each(['1', '2', '4', '5'])('preset %s leaves the slot empty', async (preset) => {
-  window.history.replaceState(null, '', `/?preset=${preset}&c=array.append(1)`);
-  render(<App />);
-  await waitFor(() => expect(document.querySelector('.array-cells')).not.toBeNull());
-  expect(slot()).toBeEmptyDOMElement();
-  expect(document.querySelector('.p3-notes')).toBeNull();
-});
-
 test('the notes hide while a coming-soon structure is on screen, and come back', async () => {
   await open('array.append(1)');
   const soon = document.querySelector('.ds-sidebar-soon').closest('button');

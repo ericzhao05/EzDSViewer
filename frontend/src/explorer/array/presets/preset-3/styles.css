@@ -136,6 +136,37 @@
   text-align: left;
 }
 
+.preset-3 .p3-heading {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-xs);
+}
+
+.preset-3 .p3-section .p3-heading h3 {
+  margin: 0;
+}
+
+.preset-3 .p3-dice .p3-icon {
+  transition: transform 0.2s ease-out;
+}
+
+.preset-3 .p3-dice:hover:not(:disabled) .p3-icon,
+.preset-3 .p3-dice:focus-visible .p3-icon {
+  transform: rotate(-14deg);
+}
+
+.preset-3 .p3-dice:active:not(:disabled) .p3-icon {
+  transform: rotate(40deg) scale(0.9);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .preset-3 .p3-dice .p3-icon {
+    transition: none;
+    transform: none !important;
+  }
+}
+
 .preset-3 .p3-lead {
   max-width: 72ch;
   margin: 0 0 var(--space-md);

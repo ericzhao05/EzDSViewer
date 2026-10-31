@@ -2,6 +2,16 @@ import React from 'react';
 
 // Small hand-drawn icons: slightly uneven strokes in currentColor, so each theme can ink them its own way.
 const PATHS = {
+  dice: (
+    <>
+      <path d="M6.2 3.9 C10 3.6 14.2 3.7 17.9 4 C19.5 4.2 20.2 5 20.2 6.5 C20.4 10.2 20.3 14 20.1 17.8 C20 19.3 19.2 20.1 17.7 20.2 C14 20.4 10 20.3 6.3 20.1 C4.8 20 4 19.2 3.9 17.7 C3.7 14 3.7 10 3.9 6.2 C4 4.8 4.8 4 6.2 3.9 Z" />
+      <circle cx="8.3" cy="8.3" r="1.2" fill="currentColor" stroke="none" />
+      <circle cx="15.8" cy="8.2" r="1.2" fill="currentColor" stroke="none" />
+      <circle cx="12" cy="12.1" r="1.2" fill="currentColor" stroke="none" />
+      <circle cx="8.2" cy="15.9" r="1.2" fill="currentColor" stroke="none" />
+      <circle cx="15.8" cy="15.8" r="1.2" fill="currentColor" stroke="none" />
+    </>
+  ),
   prev: (
     <>
       <path d="M5.6 5.2 C5.8 9 5.5 15 5.7 18.8" />
@@ -29,7 +39,7 @@ const PATHS = {
   ),
 };
 
-function Icon({ name }) {
+export function Icon({ name }) {
   return (
     <svg
       className="p3-icon"

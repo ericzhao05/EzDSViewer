@@ -6,10 +6,10 @@ import './PresetSwitcher.css';
 
 const isPreset = (id) => PRESETS.some((p) => p.id === id);
 
-// The preset in the address bar; anything missing or invalid means 1.
+// The preset in the address bar; anything missing or invalid means the first.
 export function readPreset() {
   const id = new URLSearchParams(window.location.search).get('preset');
-  return isPreset(id) ? id : '1';
+  return isPreset(id) ? id : PRESETS[0].id;
 }
 
 // Sets the preset in a search string such as '?c=array', leaving the other parameters byte for byte.
@@ -40,6 +40,7 @@ export function usePreset() {
 }
 
 export default function PresetSwitcher({ value, onChange }) {
+  if (PRESETS.length < 2) return null;
   return (
     <div className="preset-switcher" role="group" aria-label="Layout">
       <span className="preset-switcher-label">Layout:</span>

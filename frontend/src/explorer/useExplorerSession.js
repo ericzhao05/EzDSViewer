@@ -192,6 +192,7 @@ export default function useExplorerSession({
     runCall,
     undo: stopping(x.undo),
     startOver: stopping(x.startOver),
+    replaceWith: stopping(x.replaceWith),
     canUndo: calls.length > 0,
     // The Command box.
     text,

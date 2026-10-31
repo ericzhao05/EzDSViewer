@@ -184,3 +184,27 @@ test('the timeline, then the note, sit above the array, and only the array is th
   expect(stage).not.toContainElement(slider);
   expect(stage).not.toContainElement(note);
 });
+
+test('the section is called Make array, and the dice starts over with a random array', async () => {
+  await open('array.append(1).append(2)');
+  expect(screen.getByRole('heading', { name: 'Make array' })).toBeInTheDocument();
+  fireEvent.change(screen.getByLabelText('Append value'), { target: { value: '5' } });
+  const before = global.fetch.mock.calls.length;
+  await act(async () => { fireEvent.click(screen.getByRole('button', { name: 'Make a random array' })); });
+  const calls = global.fetch.mock.calls.slice(before);
+  expect(calls).toHaveLength(1);
+  const cmd = new URL(calls[0][0], 'http://x.test').searchParams.get('cmd');
+  expect(cmd).toMatch(/^array(\.append\(\d+\)){6,10}$/);
+  expect(cmd).not.toContain('append(1).append(2)');
+  expect(new URLSearchParams(window.location.search).get('c')).toBe(cmd);
+  expect(screen.getByLabelText('Append value')).toHaveValue('');
+  const size = cmd.split('.').length - 1;
+  expect(screen.getByText(`Step ${size} of ${size}`)).toBeInTheDocument();
+});
+
+test('only this layout is active, so no switcher shows', async () => {
+  const { PRESETS } = require('../index');
+  expect(PRESETS.map((p) => p.id)).toEqual(['3']);
+  await open('array.append(1)');
+  expect(screen.queryByRole('group', { name: 'Layout' })).toBeNull();
+});
