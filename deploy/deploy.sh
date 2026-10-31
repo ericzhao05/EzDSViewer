@@ -18,7 +18,7 @@ DIR="/opt/ezdsviewer/releases/$RELEASE"
 
 ssh "$HOST" "mkdir -p '$DIR'"
 git archive HEAD backend | ssh "$HOST" "tar -x -C '$DIR' --no-same-owner"
-COPYFILE_DISABLE=1 tar -c frontend/build | ssh "$HOST" "tar -x -C '$DIR' --no-same-owner"
+COPYFILE_DISABLE=1 tar --no-xattrs -c frontend/build | ssh "$HOST" "tar -x -C '$DIR' --no-same-owner"
 
 ssh "$HOST" "bash -s '$DIR'" <<'REMOTE'
 set -euo pipefail
