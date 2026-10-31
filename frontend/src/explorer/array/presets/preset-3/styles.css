@@ -15,11 +15,6 @@
   margin: 0 0 var(--space-sm);
 }
 
-.preset-3 .p3-intro .array-complexity {
-  color: var(--p-muted);
-  font-size: var(--fs-small);
-}
-
 /* Every line starts at the same left edge, whatever a theme does with page paragraphs */
 .ds-container .explorer .preset-3 p {
   margin-inline: 0;
@@ -48,7 +43,7 @@
   margin-inline: 0;
 }
 
-/* The array, its note and the stepper stay together */
+/* The array stays together as one block; the timeline and note sit above it */
 .preset-3 .p3-stage {
   padding-bottom: var(--space-sm);
   background-color: var(--card-bg);
@@ -58,8 +53,9 @@
   margin-top: 0;
 }
 
-.preset-3 .p3-stage .explorer-note {
+.preset-3 .p3-player .explorer-note {
   min-height: 2.6em;
+  margin-top: var(--space-sm);
   margin-bottom: var(--space-sm);
   font-size: calc(var(--fs-base) * 1.15);
 }
@@ -373,10 +369,6 @@
   .preset-3 .p3-stage .array-scroll {
     padding-top: var(--space-sm);
     padding-bottom: var(--space-sm);
-  }
-
-  .preset-3 .p3-echo {
-    display: none;
   }
 
   /* Keyboard focus must not land underneath the stuck array */

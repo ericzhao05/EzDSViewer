@@ -161,3 +161,20 @@ test('a send that was refused leaves no stale echo for a later Command-box run',
   await screen.findByText(/of 2/);
   expect(document.querySelector('.p3-echo')).toBeNull();
 });
+
+test('the timeline, then the note, sit above the array, and only the array is the frozen block', async () => {
+  await open('array.append(1)');
+  expect(screen.queryByText(/Access O\(1\)/)).toBeNull();
+  const buttons = screen.getByRole('button', { name: 'Previous step' });
+  const slider = screen.getByRole('slider', { name: 'Step' });
+  const note = screen.getByRole('status');
+  const stats = document.querySelector('.array-stats');
+  const before = (a, b) => expect(a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  before(buttons, slider);
+  before(slider, note);
+  before(note, stats);
+  const stage = document.querySelector('.p3-stage');
+  expect(stage).toContainElement(stats);
+  expect(stage).not.toContainElement(slider);
+  expect(stage).not.toContainElement(note);
+});

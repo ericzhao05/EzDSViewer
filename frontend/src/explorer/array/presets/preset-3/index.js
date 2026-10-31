@@ -214,16 +214,17 @@ function ShareArea({ session, onCommandRun }) {
 }
 
 // Layout 3, The Sentences. The controls read as English and each verb is its own button;
-// algorithms are separate, larger explained cards, and the array stays in view when there is room.
+// algorithms are separate, larger explained cards. The timeline and note sit above the array,
+// and the array alone stays in view when there is room.
 export default function Preset3({ session, controls, intro: Intro, Board, title }) {
-  const stage = useRef(null);
+  const player = useRef(null);
   // Which sentence sent the latest edit, so its answer can be repeated beside it on small screens.
   const sentFrom = useRef(null);
   const [echoFor, setEchoFor] = useState(null);
   const firstCommand = useRef(true);
 
   const reveal = () => {
-    const el = stage.current;
+    const el = player.current;
     if (!el) return;
     const { top } = el.getBoundingClientRect();
     if (top >= 0 && top < window.innerHeight / 2) return;
@@ -260,22 +261,24 @@ export default function Preset3({ session, controls, intro: Intro, Board, title 
       {title && <h2>{title}</h2>}
       {Intro && (
         <div className="p3-intro">
-          <Intro />
+          <Intro showComplexity={false} />
         </div>
       )}
 
       {session.structure && Board && (
         <>
-          <div className="p3-stage" ref={stage}>
-            <div className="explorer-board">
-              <Board frame={session.frame} state={session.state} />
-            </div>
+          <div className="p3-player" ref={player}>
+            <PlayerControls session={session} />
             <div className="explorer-note" role="status">
               <span key={session.step} className="p3-note-text">
                 {session.note || inviting}
               </span>
             </div>
-            <PlayerControls session={session} />
+          </div>
+          <div className="p3-stage">
+            <div className="explorer-board">
+              <Board frame={session.frame} state={session.state} />
+            </div>
           </div>
 
           <section className="p3-section" aria-labelledby="p3-change">
