@@ -6,7 +6,9 @@ from flask import jsonify, request
 
 
 def body():
-    return request.get_json(silent=True) or {}
+    """The JSON object sent by the client; anything else counts as an empty body."""
+    data = request.get_json(silent=True)
+    return data if isinstance(data, dict) else {}
 
 
 def ok(state, result=None, **extra):
