@@ -1,0 +1,261 @@
+/* phosphor: specialized. Shared cell and node rules are at the top of core.css. */
+
+/* ---- Fenwick and segment tree ---- */
+[data-style='phosphor'] .main-content .range-query-col {
+  min-width: 5.2rem;
+}
+
+[data-style='phosphor'] .main-content .range-query-sub {
+  color: var(--p-muted);
+  font-size: var(--fs-small);
+}
+
+[data-style='phosphor'] .main-content .range-query-cell.range-query-array {
+  margin-top: var(--space-xs);
+  opacity: 1;
+  color: var(--p-muted);
+}
+
+[data-style='phosphor'] .main-content .range-query-leaf {
+  stroke-width: 3;
+}
+
+/* ---- Skip list ---- */
+[data-style='phosphor'] .main-content .skip-list-grid {
+  margin: 0;
+}
+
+[data-style='phosphor'] .main-content .skip-list-grid :is(th, td) {
+  border: 0;
+}
+
+[data-style='phosphor'] .main-content .skip-list-level-label {
+  color: var(--p-muted);
+}
+
+[data-style='phosphor'] .main-content .skip-list-cell {
+  height: 2rem;
+  font-size: 1.3rem;
+}
+
+[data-style='phosphor'] .main-content :is(.skip-list-node, .skip-list-head, .skip-list-nil) {
+  background: var(--p-bg);
+  opacity: 1;
+}
+
+[data-style='phosphor'] .main-content .skip-list-node.skip-list-visited {
+  background: var(--p-ink);
+  color: var(--p-bg);
+}
+
+/* ---- Bloom filter: off is dim, on is inverted, a probed bit gets a glowing ring on top ---- */
+[data-style='phosphor'] .main-content .bloom-filter-row {
+  gap: var(--space-xs);
+}
+
+[data-style='phosphor'] .main-content .bloom-filter-bit {
+  color: var(--p-muted);
+  font-size: 1.3rem;
+}
+
+[data-style='phosphor'] .main-content .bloom-filter-bit.bloom-filter-on {
+  background: var(--p-ink);
+  color: var(--p-bg);
+  text-shadow: none;
+}
+
+[data-style='phosphor'] .main-content .bloom-filter-bit.bloom-filter-hit {
+  outline: 2px solid var(--ph-max);
+  outline-offset: 1px;
+  box-shadow: 0 0 10px 3px rgba(239, 255, 243, 0.55);
+}
+
+[data-style='phosphor'] .main-content .bloom-filter-index {
+  color: var(--p-muted);
+  font-size: var(--fs-small);
+}
+
+/* ---- kd-tree: x splits are heavy solid lines, y splits are lighter and dashed ---- */
+[data-style='phosphor'] .main-content .kdtree-frame {
+  stroke: var(--p-line);
+}
+
+[data-style='phosphor'] .main-content .kdtree-split-x {
+  stroke: var(--ph-bright);
+  stroke-width: 2.5;
+}
+
+[data-style='phosphor'] .main-content .kdtree-split-y {
+  stroke: var(--p-muted);
+  stroke-width: 1.5;
+  stroke-dasharray: var(--ph-dash-danger);
+}
+
+/* Points in the plane are solid dots; a visited one goes hollow and dim, the best one glows */
+[data-style='phosphor'] .main-content .kdtree-dot {
+  fill: var(--p-ink);
+  stroke: var(--p-ink);
+  stroke-width: 1.5;
+}
+
+[data-style='phosphor'] .main-content .kdtree-dot.kdtree-node-visited {
+  fill: var(--p-bg);
+  stroke: var(--p-muted);
+  stroke-dasharray: var(--ph-dash-visited);
+  stroke-linecap: round;
+}
+
+[data-style='phosphor'] .main-content .kdtree-dot.kdtree-node-best {
+  fill: var(--ph-max);
+  stroke: var(--ph-max);
+  stroke-width: 3;
+  filter: var(--ph-svg-glow);
+}
+
+[data-style='phosphor'] .main-content .kdtree-query {
+  fill: var(--p-bg);
+  stroke: var(--ph-max);
+  stroke-width: 2;
+}
+
+[data-style='phosphor'] .main-content .kdtree-node-text {
+  font-size: 14px;
+}
+
+[data-style='phosphor'] .main-content .kdtree-axis-text {
+  fill: var(--p-muted);
+  font-size: 14px;
+}
+
+[data-style='phosphor'] .main-content .kdtree-label {
+  font-size: 15px;
+}
+
+/* ---- Quadtree ---- */
+[data-style='phosphor'] .main-content .quadtree-svg {
+  border: 1px dashed var(--p-line);
+  background: none;
+}
+
+[data-style='phosphor'] .main-content .quadtree-cell {
+  stroke: var(--p-line);
+}
+
+[data-style='phosphor'] .main-content .quadtree-visited {
+  fill: var(--p-ink);
+  fill-opacity: 0.06;
+  stroke: var(--p-muted);
+  stroke-dasharray: var(--ph-dash-visited);
+}
+
+[data-style='phosphor'] .main-content .quadtree-query {
+  stroke: var(--ph-max);
+  stroke-dasharray: var(--ph-dash-danger);
+}
+
+[data-style='phosphor'] .main-content .quadtree-point {
+  fill: var(--p-ink);
+  stroke: var(--p-ink);
+}
+
+[data-style='phosphor'] .main-content .quadtree-point.quadtree-found {
+  fill: var(--ph-max);
+  stroke: var(--ph-max);
+  stroke-width: 3;
+  filter: var(--ph-svg-glow);
+}
+
+/* ---- Suffix array ---- */
+[data-style='phosphor'] .main-content .suffix-array-chars {
+  gap: var(--space-xs);
+}
+
+[data-style='phosphor'] .main-content .suffix-array-index {
+  color: var(--p-muted);
+  font-size: var(--fs-small);
+}
+
+[data-style='phosphor'] .main-content table .suffix-array-match td {
+  border: 2px solid var(--ph-max);
+  background: none;
+  color: var(--ph-max);
+  text-shadow: var(--ph-glow-found);
+  box-shadow: var(--ph-box-glow);
+}
+
+/* ---- Fibonacci heap: outlined boxes ---- */
+[data-style='phosphor'] .main-content .fibonacci-heap-field {
+  font-size: var(--fs-small);
+}
+
+[data-style='phosphor'] .main-content .fibonacci-heap-node {
+  border: 1.5px solid var(--p-ink);
+  background: var(--p-bg);
+  color: var(--p-ink);
+  font-family: var(--f-data);
+  text-shadow: inherit;
+}
+
+[data-style='phosphor'] .main-content .fibonacci-heap-key {
+  font-size: 1.3rem;
+}
+
+[data-style='phosphor'] .main-content .fibonacci-heap-deg {
+  opacity: 1;
+  color: var(--p-muted);
+  font-size: 1rem;
+}
+
+[data-style='phosphor'] .main-content .fibonacci-heap-min {
+  color: var(--ph-max);
+  font-size: var(--fs-small);
+}
+
+[data-style='phosphor'] .main-content .fibonacci-heap-min::after {
+  border-top-color: var(--ph-max);
+}
+
+/* Minimum: found */
+[data-style='phosphor'] .main-content .fibonacci-heap-node-min {
+  border: 3px solid var(--ph-max);
+  box-shadow: var(--ph-box-glow);
+  color: var(--ph-max);
+}
+
+/* Marked: lost a child, dashed as the page's note says */
+[data-style='phosphor'] .main-content .fibonacci-heap-node-mark {
+  border: 2px dashed var(--ph-max);
+  background: var(--p-bg);
+  color: var(--ph-max);
+}
+
+/* Selected and hovered: inverted */
+[data-style='phosphor'] .main-content .fibonacci-heap-node-selected,
+[data-style='phosphor'] .main-content button.fibonacci-heap-node:hover:not(:disabled) {
+  background: var(--p-ink);
+  color: var(--p-bg);
+  text-shadow: none;
+}
+
+[data-style='phosphor'] .main-content .fibonacci-heap-node-selected .fibonacci-heap-deg,
+[data-style='phosphor'] .main-content button.fibonacci-heap-node:hover:not(:disabled) .fibonacci-heap-deg {
+  color: var(--p-bg);
+}
+
+[data-style='phosphor'] .main-content .fibonacci-heap-node-selected {
+  outline: 3px solid var(--ph-max);
+}
+
+[data-style='phosphor'] .main-content button.fibonacci-heap-node-min:focus-visible,
+[data-style='phosphor'] .main-content button.fibonacci-heap-node:focus-visible {
+  outline: 3px dashed var(--focus-ring);
+  outline-offset: 5px;
+}
+
+/* Edges pass behind the segment tree's index labels; a halo keeps them readable */
+[data-style='phosphor'] .main-content .range-query-node-index {
+  paint-order: stroke;
+  stroke: var(--card-bg);
+  stroke-width: 4px;
+  stroke-linejoin: round;
+}

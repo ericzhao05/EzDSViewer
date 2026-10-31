@@ -19,7 +19,7 @@ export default function ArrayCells({ state, highlight = NONE, pointers = NO_POIN
           const marked = highlight.includes(i) ? ' array-cell-highlight' : '';
           return (
             <div className="array-cell-wrap" key={i} role="listitem">
-              <div className={`array-cell ${used ? 'array-cell-used' : 'array-cell-free'}${marked}`}>
+              <div key={used ? `v:${item}` : 'free'} className={`array-cell ${used ? 'array-cell-used' : 'array-cell-free'}${marked}`}>
                 {used ? String(item) : ''}
               </div>
               <div className="array-cell-index">{i}</div>

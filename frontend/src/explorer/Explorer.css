@@ -40,25 +40,13 @@
 
 .explorer-command input {
   min-height: 44px;
-  box-sizing: border-box;
-  padding: 0 0.5rem;
-  border: 1px solid var(--input-border);
-  border-radius: 4px;
-  background-color: var(--card-bg);
-  color: var(--text-color);
-  font-family: monospace;
+  font-family: var(--f-data);
 }
 
 .explorer .control-btn,
 .explorer .array-controls input {
   min-height: 44px;
   min-width: 44px;
-}
-
-.explorer .control-btn {
-  background-color: var(--card-bg);
-  color: var(--text-color);
-  border: 1px solid var(--input-border);
 }
 
 .explorer .explorer-speed-on {

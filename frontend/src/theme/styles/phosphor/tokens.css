@@ -1,0 +1,81 @@
+/* Phosphor: one hue. Meaning is carried by inversion, dash, stroke width, brightness and glow. */
+[data-style='phosphor'] {
+  /* The green family. Text may use --ph-max, --ph-bright, --p-ink or --p-muted;
+     --p-line is 3.9:1 and is for lines only. */
+  --ph-max: #EFFFF3;
+  --ph-bright: #C8FFD6;
+  --ph-glow: 0 0 5px rgba(124, 255, 158, 0.4);
+  --ph-glow-found: 0 0 8px rgba(239, 255, 243, 0.9);
+  --ph-svg-glow: drop-shadow(0 0 4px rgba(239, 255, 243, 0.85));
+  --ph-box-glow: 0 0 8px rgba(239, 255, 243, 0.6);
+
+  /* Decorative glyphs. The "/ ''" alt text keeps them out of accessible names. */
+  --ph-open: '[' / '';
+  --ph-close: ']' / '';
+
+  --ph-dash-danger: 6 4;  /* SVG: invalid, red-black red, dashed split */
+  --ph-dash-visited: 1.5 3.5;  /* SVG: already traversed */
+
+  --f-data: 'VT323', 'Courier New', monospace;
+  --fs-base: 1.3rem;
+  --fs-small: 1.1rem;
+  --fs-h1: 1.9rem;
+  --fs-h2: 2.5rem;
+  --fs-h3: 1.6rem;
+  --fw-heading: 400;
+  --fw-control: 400;
+  --lh-body: 1.2;
+
+  --space-xs: 0.2rem;
+  --space-sm: 0.4rem;
+  --space-md: 0.8rem;
+  --space-lg: 1.2rem;
+  --space-xl: 2rem;
+
+  --border-style: dashed;
+  --radius-sm: 0;
+  --radius-md: 0;
+  --radius-lg: 0;
+
+  --btn-bg: transparent;
+  --btn-ink: var(--p-ink);
+  --btn-border: transparent;
+  --btn-hover-bg: var(--p-ink);
+  --btn-hover-ink: var(--p-bg);
+  --input-bg: transparent;
+  --input-border-color: var(--p-muted);
+  --focus-ring: var(--ph-max);
+
+  --panel-bg: var(--p-bg);
+
+  --nav-bg: var(--p-bg);
+  --side-bg: var(--p-bg);
+  --side-hover-bg: var(--p-surface);
+  --side-active-bg: var(--p-ink);
+  --side-active-ink: var(--p-bg);
+
+  --edge-width: 1.5;
+  --state-active: var(--p-ink);
+  --state-visited: var(--p-muted);
+  --state-found: var(--ph-max);
+  --state-danger: var(--ph-bright);
+  --state-info: var(--p-muted);
+  --island-1: #7CFF9E;
+  --island-2: #4FC773;
+  --island-3: #2E8049;
+  --island-4: #C8FFD6;
+  --island-5: #1E5C33;
+  --island-ink: #07120A;
+
+  /* Older names. Nodes are "no fill" but stay opaque so edges stop at their outline. */
+  --main-bg: var(--p-bg);
+  --card-bg: var(--p-bg);
+  --stack-item-bg: var(--p-bg);
+  --stack-item-text: var(--p-ink);
+  --debug-bg: transparent;
+  --debug-text: var(--p-muted);
+  --empty-message: var(--p-muted);
+  --error-bg: transparent;
+  --error-border: var(--ph-max);
+  --error-text: var(--ph-max);
+}

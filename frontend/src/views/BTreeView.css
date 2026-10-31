@@ -47,7 +47,7 @@
 .b-tree-select {
   padding: 0.5rem;
   border: 1px solid var(--input-border);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   background-color: var(--card-bg);
   color: var(--text-color);
 }
@@ -90,7 +90,7 @@
 }
 
 .b-tree-link-hl {
-  stroke: #e67e22;
+  stroke: var(--state-active);
   stroke-width: 3;
 }
 
@@ -113,11 +113,11 @@
 }
 
 .b-tree-cell-hit {
-  fill: #f5b041;
+  fill: var(--state-active);
 }
 
 .b-tree-node-hl .b-tree-cell {
-  stroke: #e67e22;
+  stroke: var(--state-active);
   stroke-width: 3;
 }
 

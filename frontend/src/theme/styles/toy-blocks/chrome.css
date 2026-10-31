@@ -1,0 +1,340 @@
+/* toy-blocks: chrome and the page furniture every page shares. */
+
+/* Top bar: a violet band sitting on its own underside */
+[data-style='toy-blocks'] .navbar {
+  padding: var(--space-sm) var(--space-md);
+  box-shadow: 0 5px 0 var(--tb-under-accent);
+}
+
+[data-style='toy-blocks'] .theme-menu-button {
+  border: none;
+  background-color: #fff;
+  box-shadow: 0 4px 0 var(--tb-under-accent);
+  color: var(--p-accent);
+}
+
+[data-style='toy-blocks'] .theme-menu-button:hover {
+  background-color: var(--p-bg);
+}
+
+[data-style='toy-blocks'] .theme-menu-button:active,
+[data-style='toy-blocks'] .theme-menu-button[aria-expanded='true'] {
+  background-color: var(--p-cell);
+  box-shadow: none;
+  color: var(--p-cell-ink);
+  transform: translateY(4px);
+}
+
+[data-style='toy-blocks'] .App .navbar .theme-menu-button:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+}
+
+/* Theme menu: a tray of pills */
+[data-style='toy-blocks'] .theme-menu-panel {
+  top: calc(100% + 0.9rem);
+  border: none;
+  box-shadow: 0 6px 0 var(--tb-under-accent);
+}
+
+[data-style='toy-blocks'] .theme-menu-row {
+  margin-top: var(--space-sm);
+  padding: var(--space-xs) var(--space-md) var(--space-xs) var(--space-xs);
+  border: none;
+  background-color: #fff;
+  box-shadow: 0 4px 0 var(--tb-under-plain);
+}
+
+[data-style='toy-blocks'] .theme-menu-option:hover .theme-menu-row {
+  background-color: var(--p-bg);
+}
+
+[data-style='toy-blocks'] .theme-menu-option input:checked + .theme-menu-row {
+  background-color: var(--p-accent);
+  box-shadow: 0 4px 0 var(--tb-under-accent);
+  color: var(--p-accent-ink);
+}
+
+[data-style='toy-blocks'] .theme-menu-option input:checked + .theme-menu-row .theme-menu-palette {
+  color: var(--p-accent-ink);
+}
+
+[data-style='toy-blocks'] .theme-menu-option input:active + .theme-menu-row {
+  box-shadow: none;
+  transform: translateY(4px);
+}
+
+[data-style='toy-blocks'] .theme-menu-option input:focus-visible + .theme-menu-row {
+  outline-offset: 3px;
+}
+
+[data-style='toy-blocks'] .theme-menu-swatch {
+  border-radius: 999px;
+  box-shadow: none;
+  padding: 7px 8px;
+}
+
+[data-style='toy-blocks'] .theme-menu-swatch span {
+  border-radius: 3px;
+}
+
+/* Sidebar: a pale tray of pills */
+[data-style='toy-blocks'] .ds-sidebar {
+  padding: var(--space-xs) var(--space-sm) var(--space-lg);
+}
+
+[data-style='toy-blocks'] .ds-sidebar-group {
+  margin: var(--space-md) 0 var(--space-xs);
+  padding: 0 var(--space-sm);
+  font-size: var(--fs-small);
+}
+
+[data-style='toy-blocks'] .ds-sidebar-item {
+  margin-bottom: 4px;
+  padding: 0.4rem 0.8rem;
+  border: none;
+  font-weight: 400;
+}
+
+[data-style='toy-blocks'] .ds-sidebar-item.active {
+  box-shadow: 0 4px 0 var(--tb-under-accent);
+  font-weight: 600;
+}
+
+[data-style='toy-blocks'] .ds-sidebar-item:active {
+  transform: translateY(2px);
+}
+
+/* The page card */
+/* Every page stretches with the window, rather than stopping at the shared 900px */
+[data-style='toy-blocks'] .ds-container {
+  max-width: 100%;
+  border: none;
+}
+
+/* The page stretches, but text stays at a readable line length */
+[data-style='toy-blocks'] .ds-container p {
+  max-width: 75ch;
+  margin-inline: auto;
+  text-align: center;
+}
+
+/* Controls */
+[data-style='toy-blocks'] .ds-controls {
+  gap: 10px 10px;
+  margin-top: var(--space-md);
+}
+
+[data-style='toy-blocks'] .App .main-content .control-btn {
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--btn-bg);
+  box-shadow: var(--btn-shadow);
+  color: var(--btn-ink);
+  margin-bottom: 4px;
+  padding: 0.55rem 1.15rem;
+  font-weight: 600;
+}
+
+[data-style='toy-blocks'] .App .main-content .control-btn:hover:not(:disabled) {
+  background: var(--btn-hover-bg);
+  color: var(--btn-hover-ink);
+}
+
+/* The first button of a row is its main action; the rest are white. */
+[data-style='toy-blocks'] .App .main-content .control-btn ~ .control-btn,
+[data-style='toy-blocks'] .App .main-content .control-btn[aria-pressed='false'] {
+  background: #fff;
+  box-shadow: 0 4px 0 var(--tb-under-plain);
+  color: var(--p-ink);
+}
+
+[data-style='toy-blocks'] .App .main-content .control-btn ~ .control-btn:hover:not(:disabled),
+[data-style='toy-blocks'] .App .main-content .control-btn[aria-pressed='false']:hover:not(:disabled) {
+  background: var(--p-bg);
+  color: var(--p-ink);
+}
+
+/* A toggle that is on stays pressed down and violet. */
+[data-style='toy-blocks'] .App .main-content .control-btn[aria-pressed='true'],
+[data-style='toy-blocks'] .App .main-content .control-btn[aria-pressed='true']:hover:not(:disabled) {
+  background: var(--p-accent);
+  box-shadow: none;
+  color: var(--p-accent-ink);
+  outline: 3px solid var(--p-ink);
+  outline-offset: 1px;
+  transform: translateY(4px);
+}
+
+[data-style='toy-blocks'] .App .main-content .control-btn[aria-pressed='true']:disabled {
+  opacity: 1;
+}
+
+[data-style='toy-blocks'] .App .main-content .control-btn:active:not(:disabled) {
+  box-shadow: none;
+  transform: translateY(4px);
+}
+
+[data-style='toy-blocks'] .App .main-content .control-btn:disabled {
+  box-shadow: none;
+  transform: translateY(4px);
+}
+
+[data-style='toy-blocks'] .App .main-content :is(input:not([type='checkbox'], [type='radio'], [type='range']), select, textarea) {
+  padding: 0.5rem 0.75rem;
+  border: 2px solid var(--input-border-color);
+  border-radius: var(--radius-sm);
+  background-color: var(--input-bg);
+  color: var(--input-ink);
+}
+
+/* Fields keep enough room for their placeholder; a crowded row wraps instead. */
+[data-style='toy-blocks'] .App .main-content .ds-controls input {
+  min-width: 7rem;
+}
+
+[data-style='toy-blocks'] .App .main-content label select {
+  margin-inline-start: var(--space-xs);
+}
+
+/* Trays: every diagram and row of blocks sits on the pink floor. */
+[data-style='toy-blocks'] .App .main-content :is([class$='-scroll'], .stack-view-board, .matrix-view-board) {
+  box-sizing: border-box;
+  padding: var(--space-md);
+  border: none;
+  border-radius: var(--radius-lg);
+  background-color: var(--main-bg);
+}
+
+[data-style='toy-blocks'] .App .main-content [class$='-scroll'] {
+  margin-block: var(--space-sm);
+}
+
+[data-style='toy-blocks'] .App .main-content [class$='-scroll'] > svg,
+[data-style='toy-blocks'] .App .main-content [class$='-scroll'] > table {
+  margin-inline: auto;
+}
+
+[data-style='toy-blocks'] .App .main-content [class$='-scroll'] > svg {
+  display: block;
+}
+
+/* Stats: pills of plain facts */
+[data-style='toy-blocks'] .App .main-content div[class$='-stats'] {
+  gap: 10px;
+}
+
+[data-style='toy-blocks'] .App .main-content div[class$='-stats'] > span,
+[data-style='toy-blocks'] .App .main-content p[class$='-stats'] {
+  padding: 0.3rem 0.85rem;
+  border-radius: var(--radius-sm);
+  background-color: var(--p-bg);
+  color: var(--p-ink);
+}
+
+[data-style='toy-blocks'] .App .main-content p[class$='-stats'] {
+  display: inline-block;
+  box-sizing: border-box;
+  margin: var(--space-xs) 0;
+}
+
+/* Messages: a white block with a plain underside. Errors come from tokens. */
+[data-style='toy-blocks'] .App .main-content :is([class$='-result'], .array-note, .bst-note, .balanced-trees-note, .fibonacci-heap-note) {
+  width: fit-content;
+  max-width: 75ch;
+  margin: var(--space-md) auto;
+  padding: 0.6rem 0.9rem;
+  border: none;
+  border-radius: var(--radius-sm);
+  background-color: #fff;
+  box-shadow: 0 4px 0 var(--tb-under-plain);
+  color: var(--p-ink);
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+[data-style='toy-blocks'] .App .main-content :is(.array-note, .bst-note, .balanced-trees-note, .fibonacci-heap-note) {
+  font-weight: 400;
+}
+
+[data-style='toy-blocks'] .error-message {
+  border-radius: var(--radius-sm);
+  box-shadow: 0 4px 0 var(--tb-under-danger);
+  font-weight: 600;
+}
+
+[data-style='toy-blocks'] .empty-message {
+  font-style: normal;
+}
+
+/* Tables: a rounded white block, header row on the floor color */
+[data-style='toy-blocks'] .App .main-content table:not(.skip-list-grid) {
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: var(--radius-sm);
+  background-color: #fff;
+  box-shadow: 0 4px 0 var(--tb-under-plain);
+  color: var(--p-ink);
+  overflow: hidden;
+}
+
+[data-style='toy-blocks'] .App .main-content table:not(.skip-list-grid) :is(th, td) {
+  padding: 0.4rem 0.8rem;
+  border: none;
+  border-top: 2px solid var(--p-bg);
+  background-color: transparent;
+}
+
+[data-style='toy-blocks'] .App .main-content table:not(.skip-list-grid) tr:first-child > :is(th, td) {
+  border-top: none;
+}
+
+[data-style='toy-blocks'] .App .main-content table:not(.skip-list-grid) th {
+  background-color: var(--tb-table-head);
+  font-weight: 600;
+}
+
+[data-style='toy-blocks'] .App .main-content table:not(.skip-list-grid) caption {
+  padding-bottom: var(--space-xs);
+  font-weight: 600;
+}
+
+/* Words beside a node sit on a sticker edge so they stay readable over a line or a block. */
+[data-style='toy-blocks'] .App .main-content :is(
+  .binary-tree-badge, .graph-step, .graph-weight, .balanced-trees-balance,
+  .kdtree-label, .range-query-node-index, .intervals-tick-text, .b-tree-value
+) {
+  paint-order: stroke;
+  stroke: var(--p-bg);
+  stroke-width: 4px;
+  stroke-linejoin: round;
+}
+
+/* Focus last, so no block rule can remove it. */
+[data-style='toy-blocks'] .App .main-content :focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 3px;
+}
+
+/* Phones: the sidebar pills wrap, so the page is not pushed a full screen down. */
+@media (max-width: 700px) {
+  [data-style='toy-blocks'] .ds-sidebar-item {
+    display: inline-block;
+    width: auto;
+    margin: 0 4px 6px 0;
+    padding: 0.35rem 0.75rem;
+  }
+
+  [data-style='toy-blocks'] .ds-sidebar {
+    padding-bottom: var(--space-sm);
+  }
+}
+
+/* Disabled buttons lose the underside and fill, but keep readable text */
+[data-style='toy-blocks'] .App .main-content .control-btn:disabled:not([aria-pressed='true']) {
+  opacity: 1;
+  border: 2px dashed var(--p-muted);
+  background: var(--p-bg);
+  box-shadow: none;
+  color: var(--p-muted);
+}

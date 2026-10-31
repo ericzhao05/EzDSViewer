@@ -1,22 +1,30 @@
-import React, { useEffect } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import Explorer from './Explorer';
-import '../App.css';
+import { applyTheme, loadTheme, resolveTheme } from '../theme/themes';
 
-// Standalone player for /v (follows the saved theme) and /embed (theme=dark in the link).
+// /v follows the saved theme. /embed ignores it and takes the host page's choice:
+// theme=dark in the link gives the dark theme; otherwise the light one.
+function playerTheme(embed, params) {
+  if (!embed) return loadTheme();
+  return params.get('theme') === 'dark'
+    ? resolveTheme('chalkboard', 'blackout')
+    : resolveTheme('toy-blocks', 'bubblegum');
+}
+
 export default function PlayerPage({ embed = false }) {
   const params = new URLSearchParams(window.location.search);
   const command = params.get('c') || 'array';
-  const dark = embed ? params.get('theme') === 'dark' : localStorage.getItem('darkMode') === 'true';
+  const [theme] = useState(() => playerTheme(embed, params));
 
-  // The theme variables in App.css hang off the body's dark-mode class.
-  useEffect(() => {
-    document.body.classList.toggle('dark-mode', dark);
-    return () => document.body.classList.remove('dark-mode');
-  }, [dark]);
+  useLayoutEffect(() => {
+    applyTheme(theme.style, theme.colors);
+  }, [theme]);
 
   return (
-    <div className={`App ${dark ? 'dark-mode' : 'light-mode'}`}>
-      <Explorer initialCommand={command} embed={embed} />
+    <div className="App">
+      <main className="main-content">
+        <Explorer initialCommand={command} embed={embed} />
+      </main>
     </div>
   );
 }

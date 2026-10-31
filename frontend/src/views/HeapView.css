@@ -36,7 +36,7 @@
 
 .heap-node-hl {
   stroke-width: 4;
-  stroke: #e67e22;
+  stroke: var(--state-active);
 }
 
 .heap-node-text {
@@ -66,14 +66,14 @@
   text-align: center;
   padding: 0.4rem 0.5rem;
   border: 1px solid var(--input-border);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   background: var(--stack-item-bg);
   color: var(--stack-item-text);
   font-weight: bold;
 }
 
 .heap-cell-hl {
-  outline: 3px solid #e67e22;
+  outline: 3px solid var(--state-active);
 }
 
 .heap-result {

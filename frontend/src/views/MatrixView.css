@@ -17,7 +17,7 @@
   overflow: auto;
   max-width: 100%;
   border: 1px solid var(--input-border);
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   background-color: var(--main-bg);
 }
 
@@ -38,7 +38,7 @@
   color: var(--text-color);
   background-color: var(--card-bg);
   border: 1px solid var(--input-border);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
 }
 
 .matrix-view-cell:disabled {
@@ -46,15 +46,15 @@
 }
 
 .matrix-view-island {
-  color: var(--stack-item-text);
+  color: var(--island-ink);
   background-color: var(--stack-item-bg);
 }
 
-.matrix-view-island-1 { background-color: #ffb74d; }
-.matrix-view-island-2 { background-color: #81c784; }
-.matrix-view-island-3 { background-color: #ba68c8; }
-.matrix-view-island-4 { background-color: #f48fb1; }
-.matrix-view-island-5 { background-color: #fff176; }
+.matrix-view-island-1 { background-color: var(--island-1); }
+.matrix-view-island-2 { background-color: var(--island-2); }
+.matrix-view-island-3 { background-color: var(--island-3); }
+.matrix-view-island-4 { background-color: var(--island-4); }
+.matrix-view-island-5 { background-color: var(--island-5); }
 
 .matrix-view-selected {
   outline: 3px solid var(--text-color);

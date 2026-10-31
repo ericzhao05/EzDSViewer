@@ -1,0 +1,287 @@
+/* toy-blocks: second-tier pages */
+
+/* Edges */
+[data-style='toy-blocks'] .App .main-content :is(.trie-edge, .union-find-edge, .balanced-trees-edge, .b-tree-edge) {
+  stroke: var(--tb-edge);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+[data-style='toy-blocks'] .App .main-content .trie-edge.trie-hot {
+  stroke: var(--tb-edge-hot);
+  stroke-width: 5;
+}
+
+/* Nodes */
+[data-style='toy-blocks'] .App .main-content :is(.trie-node circle, .union-find-node circle, .balanced-trees-disc) {
+  fill: var(--tb-fill);
+  stroke: var(--tb-stroke);
+  stroke-width: var(--tb-stroke-w);
+  stroke-dasharray: var(--tb-dash, none);
+  filter: drop-shadow(0 4px 0 var(--tb-under));
+}
+
+[data-style='toy-blocks'] .App .main-content :is(.trie-node text, .union-find-node text, .balanced-trees-node text) {
+  fill: var(--tb-ink);
+  font-weight: 600;
+}
+
+[data-style='toy-blocks'] .App .main-content :is(.trie-node, .union-find-node, .balanced-trees-node) {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: tb-bounce 0.4s cubic-bezier(0.3, 1.5, 0.5, 1) both;
+}
+
+/* Trie: a word end and a union-find root are the violet blocks */
+[data-style='toy-blocks'] .App .main-content :is(.trie-word, .union-find-root) {
+  --tb-fill: var(--p-accent);
+  --tb-ink: var(--p-accent-ink);
+  --tb-under: var(--tb-under-accent);
+}
+
+[data-style='toy-blocks'] .App .main-content .trie-node.trie-hot {
+  --tb-fill: var(--state-active);
+  --tb-ink: var(--p-cell-ink);
+  --tb-under: var(--tb-under-active);
+  --tb-stroke: var(--p-ink);
+  --tb-stroke-w: 3;
+}
+
+/* Balanced trees: red is red and dashed, black is plum and solid, unbalanced is red */
+[data-style='toy-blocks'] .App .main-content :is(.balanced-trees-node-red, .balanced-trees-node-unbalanced) {
+  --tb-fill: var(--state-danger);
+  --tb-ink: #fff;
+  --tb-under: var(--tb-under-danger);
+  --tb-stroke: var(--p-ink);
+  --tb-stroke-w: 2;
+  --tb-dash: 4 3;
+}
+
+[data-style='toy-blocks'] .App .main-content .balanced-trees-node-black {
+  --tb-fill: var(--p-ink);
+  --tb-ink: #fff;
+  --tb-under: var(--tb-under-ink);
+}
+
+[data-style='toy-blocks'] .App .main-content .balanced-trees-node-mark .balanced-trees-ring {
+  stroke: var(--p-ink);
+  stroke-width: 3;
+}
+
+[data-style='toy-blocks'] .App .main-content .balanced-trees-node .balanced-trees-balance {
+  fill: var(--p-ink);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+[data-style='toy-blocks'] .balanced-trees-swatch-red {
+  background: var(--state-danger);
+  border: 2px dashed var(--p-ink);
+}
+
+[data-style='toy-blocks'] .balanced-trees-swatch-black {
+  background: var(--p-ink);
+  border: 2px solid var(--p-ink);
+}
+
+[data-style='toy-blocks'] .App .main-content .balanced-trees-scroll svg {
+  overflow: visible;
+}
+
+/* Clickable steps are buttons: quiet pills until current */
+[data-style='toy-blocks'] .App .main-content .balanced-trees-step {
+  margin: 2px 0;
+  padding: 0.3rem 0.8rem;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--p-ink);
+  font-weight: 400;
+  box-shadow: none;
+}
+
+[data-style='toy-blocks'] .App .main-content .balanced-trees-step:hover:not(:disabled) {
+  background: var(--p-bg);
+  color: var(--p-ink);
+}
+
+[data-style='toy-blocks'] .App .main-content .balanced-trees-step[aria-current='step'],
+[data-style='toy-blocks'] .App .main-content .balanced-trees-step[aria-current='step']:hover:not(:disabled) {
+  background: var(--p-accent);
+  box-shadow: 0 4px 0 var(--tb-under-accent);
+  color: var(--p-accent-ink);
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+[data-style='toy-blocks'] .App .main-content .balanced-trees-step-list {
+  text-align: left;
+}
+
+/* B-tree */
+[data-style='toy-blocks'] .App .main-content .b-tree-cell {
+  fill: var(--p-cell);
+  stroke: var(--tb-under-cell);
+  stroke-width: 2;
+  rx: 6px;
+  filter: drop-shadow(0 3px 0 var(--tb-under-cell));
+}
+
+[data-style='toy-blocks'] .App .main-content .b-tree-cell-router {
+  fill: var(--p-accent);
+  stroke: var(--tb-under-accent);
+  filter: drop-shadow(0 3px 0 var(--tb-under-accent));
+}
+
+[data-style='toy-blocks'] .App .main-content .b-tree-text-router {
+  fill: var(--p-accent-ink);
+}
+
+[data-style='toy-blocks'] .App .main-content .b-tree-cell-value {
+  fill: #fff;
+  stroke: var(--tb-under-plain);
+  filter: none;
+}
+
+[data-style='toy-blocks'] .App .main-content .b-tree-value {
+  fill: var(--p-ink);
+  stroke: none;
+  font-weight: 600;
+}
+
+[data-style='toy-blocks'] .App .main-content .b-tree-cell-hit {
+  fill: var(--state-active);
+  stroke: var(--p-ink);
+  stroke-width: 3;
+  filter: drop-shadow(0 3px 0 var(--tb-under-active));
+}
+
+[data-style='toy-blocks'] .App .main-content .b-tree-node-hl .b-tree-cell {
+  stroke: var(--p-ink);
+  stroke-width: 3;
+}
+
+[data-style='toy-blocks'] .App .main-content .b-tree-link {
+  stroke: var(--p-muted);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+[data-style='toy-blocks'] .App .main-content .b-tree-link-hl {
+  stroke: var(--tb-edge-hot);
+  stroke-width: 4;
+}
+
+[data-style='toy-blocks'] .b-tree-arrowhead {
+  fill: var(--p-muted);
+}
+
+/* Intervals */
+[data-style='toy-blocks'] .App .main-content .intervals-bar {
+  fill: var(--p-cell);
+  stroke: none;
+  rx: 8px;
+  filter: drop-shadow(0 4px 0 var(--tb-under-cell));
+}
+
+[data-style='toy-blocks'] .App .main-content .intervals-bar-out {
+  fill: var(--p-accent);
+  filter: drop-shadow(0 4px 0 var(--tb-under-accent));
+}
+
+[data-style='toy-blocks'] .App .main-content .intervals-bar-new {
+  fill: var(--state-active);
+  stroke: var(--p-ink);
+  stroke-width: 3;
+  stroke-dasharray: 5 3;
+  filter: drop-shadow(0 4px 0 var(--tb-under-active));
+}
+
+[data-style='toy-blocks'] .App .main-content .intervals-tick {
+  stroke: var(--tb-edge);
+}
+
+[data-style='toy-blocks'] .App .main-content .intervals-tick-text {
+  fill: var(--p-ink);
+  font-size: 13px;
+}
+
+[data-style='toy-blocks'] .App .main-content .intervals-bar-text {
+  fill: var(--p-cell-ink);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+[data-style='toy-blocks'] .App .main-content .intervals-bar-out ~ .intervals-bar-text {
+  fill: var(--p-accent-ink);
+}
+
+[data-style='toy-blocks'] .App .main-content .intervals-bar-new ~ .intervals-bar-text {
+  fill: var(--p-cell-ink);
+}
+
+/* LRU cache */
+[data-style='toy-blocks'] .App .main-content .lru-cache-node {
+  min-width: 4.5rem;
+  margin-bottom: 5px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background-color: #fff;
+  box-shadow: 0 5px 0 var(--tb-under);
+  animation: tb-bounce 0.4s cubic-bezier(0.3, 1.5, 0.5, 1) both;
+}
+
+[data-style='toy-blocks'] .App .main-content .lru-cache-item:nth-child(even) {
+  --tb-fill: var(--p-accent);
+  --tb-ink: var(--p-accent-ink);
+  --tb-under: var(--tb-under-accent);
+}
+
+[data-style='toy-blocks'] .App .main-content .lru-cache-node-key {
+  background-color: var(--tb-fill);
+  color: var(--tb-ink);
+  font-weight: 600;
+}
+
+[data-style='toy-blocks'] .App .main-content .lru-cache-node-value {
+  color: var(--p-ink);
+}
+
+[data-style='toy-blocks'] .App .main-content .lru-cache-tag {
+  color: var(--p-ink);
+}
+
+[data-style='toy-blocks'] .App .main-content .lru-cache-sentinel {
+  border: 3px dashed var(--tb-edge);
+  border-radius: var(--radius-sm);
+  color: var(--p-ink);
+}
+
+[data-style='toy-blocks'] .App .main-content .lru-cache-arrow {
+  color: var(--p-muted);
+  font-weight: 600;
+}
+
+[data-style='toy-blocks'] .App .main-content .lru-cache-map-row {
+  gap: 10px;
+  margin: 0 0 12px;
+}
+
+[data-style='toy-blocks'] .App .main-content .lru-cache-map-row .lru-cache-node-key {
+  box-shadow: 0 4px 0 var(--tb-under);
+}
+
+/* The page says filled nodes end a word, so every other node stays hollow, even while hot */
+[data-style='toy-blocks'] .App .main-content .trie-node:not(.trie-word),
+[data-style='toy-blocks'] .App .main-content .trie-node.trie-hot:not(.trie-word) {
+  --tb-fill: var(--p-surface);
+  --tb-ink: var(--p-ink);
+  --tb-under: var(--p-line);
+  --tb-stroke: var(--p-muted);
+  --tb-stroke-w: 3;
+}
+
+[data-style='toy-blocks'] .App .main-content .trie-node.trie-hot:not(.trie-word) {
+  --tb-stroke: var(--p-ink);
+  --tb-stroke-w: 5;
+}

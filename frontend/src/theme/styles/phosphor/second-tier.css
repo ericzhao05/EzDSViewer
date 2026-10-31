@@ -1,0 +1,235 @@
+/* phosphor: second-tier. Shared cell and node rules are at the top of core.css. */
+
+/* ---- Trie: the page says filled nodes end a word, so a word end takes a dim fill.
+   A hot node is inverted, and a hot word end adds a glowing rim. ---- */
+[data-style='phosphor'] .main-content .trie-node.trie-word circle {
+  fill: var(--p-line);
+}
+
+[data-style='phosphor'] .main-content .trie-node.trie-word text {
+  fill: var(--ph-max);
+}
+
+[data-style='phosphor'] .main-content .trie-node.trie-word.trie-hot circle {
+  fill: var(--p-ink);
+}
+
+[data-style='phosphor'] .main-content .trie-node.trie-word.trie-hot text {
+  fill: var(--p-bg);
+}
+
+[data-style='phosphor'] .main-content .trie-node.trie-word.trie-hot circle {
+  stroke: var(--ph-max);
+  stroke-width: 3;
+  filter: var(--ph-svg-glow);
+}
+
+/* ---- Union-find: a thick outline marks a root ---- */
+[data-style='phosphor'] .main-content .union-find-root circle {
+  stroke: var(--ph-bright);
+  stroke-width: 3.5;
+}
+
+/* ---- AVL and red-black ---- */
+[data-style='phosphor'] .main-content .balanced-trees-on {
+  outline: 0;
+  background: var(--p-ink);
+  color: var(--p-bg);
+  text-shadow: none;
+}
+
+[data-style='phosphor'] .main-content .balanced-trees-ring {
+  fill: none;
+  stroke: none;
+}
+
+[data-style='phosphor'] .main-content .balanced-trees-node-mark .balanced-trees-ring {
+  stroke: var(--ph-max);
+  stroke-width: 2;
+  filter: var(--ph-svg-glow);
+}
+
+/* Red: inverted fill. The page's legend says red has a dashed outline, and it does:
+   the stroke's outer half breaks up against the background. */
+[data-style='phosphor'] .main-content .balanced-trees-node-red .balanced-trees-disc {
+  fill: var(--p-ink);
+  stroke: var(--p-ink);
+  stroke-width: 3;
+  stroke-dasharray: 4 3;
+}
+
+/* Black: plain outline */
+[data-style='phosphor'] .main-content .balanced-trees-node-black .balanced-trees-disc {
+  fill: var(--p-bg);
+  stroke: var(--p-ink);
+  stroke-width: 1.5;
+}
+
+[data-style='phosphor'] .main-content .balanced-trees-node-red text {
+  fill: var(--p-bg);
+}
+
+[data-style='phosphor'] .main-content .balanced-trees-node-black text {
+  fill: var(--p-ink);
+}
+
+/* Unbalanced AVL node: danger */
+[data-style='phosphor'] .main-content .balanced-trees-node-unbalanced .balanced-trees-disc {
+  fill: var(--p-bg);
+  stroke: var(--ph-max);
+  stroke-width: 2.5;
+  stroke-dasharray: var(--ph-dash-danger);
+}
+
+[data-style='phosphor'] .main-content .balanced-trees-node-unbalanced text:not(.balanced-trees-balance) {
+  fill: var(--ph-max);
+}
+
+[data-style='phosphor'] .main-content .balanced-trees-swatch {
+  width: 1rem;
+  height: 1rem;
+  background-clip: padding-box;
+}
+
+[data-style='phosphor'] .main-content .balanced-trees-swatch-red {
+  border: 2px dashed var(--p-ink);
+  background: var(--p-ink) padding-box;
+}
+
+[data-style='phosphor'] .main-content .balanced-trees-swatch-black {
+  border: 2px solid var(--p-ink);
+  background: var(--p-bg);
+}
+
+[data-style='phosphor'] .main-content .balanced-trees-step-list {
+  padding-left: 2.2rem;
+}
+
+[data-style='phosphor'] .main-content .balanced-trees-step {
+  padding: 0 var(--space-xs);
+  border: 0;
+  background: none;
+  color: var(--p-ink);
+  font-family: var(--f-data);
+  font-size: var(--fs-base);
+  text-align: left;
+  text-shadow: inherit;
+}
+
+[data-style='phosphor'] .main-content .balanced-trees-step:disabled {
+  opacity: 1;
+}
+
+[data-style='phosphor'] .main-content .balanced-trees-step[aria-current='step'],
+[data-style='phosphor'] .main-content .balanced-trees-step:hover:not(:disabled),
+[data-style='phosphor'] .main-content .balanced-trees-step:focus-visible {
+  background: var(--p-ink);
+  color: var(--p-bg);
+  text-shadow: none;
+}
+
+/* ---- B-tree and B+ tree ---- */
+[data-style='phosphor'] .main-content .b-tree-table {
+  margin: var(--space-sm) 0;
+}
+
+/* Routers only direct the search, so they read dimmer than keys that hold data */
+[data-style='phosphor'] .main-content .b-tree-cell-router {
+  stroke: var(--p-muted);
+}
+
+[data-style='phosphor'] .main-content .b-tree-text-router {
+  fill: var(--p-muted);
+}
+
+[data-style='phosphor'] .main-content .b-tree-value {
+  font-size: 16px;
+}
+
+/* Dark dividers keep the keys of an inverted node apart */
+[data-style='phosphor'] .main-content .b-tree-node-hl .b-tree-cell:not(.b-tree-cell-hit) {
+  stroke: var(--p-bg);
+}
+
+/* The key the search found, inside a node the search walked through */
+[data-style='phosphor'] .main-content .b-tree-node-hl .b-tree-cell.b-tree-cell-hit,
+[data-style='phosphor'] .main-content .b-tree-cell.b-tree-cell-hit {
+  fill: var(--p-bg);
+  stroke: var(--ph-max);
+  stroke-width: 3;
+  filter: var(--ph-svg-glow);
+}
+
+[data-style='phosphor'] .main-content .b-tree-node-hl .b-tree-cell-hit + text.b-tree-text,
+[data-style='phosphor'] .main-content .b-tree-cell-hit + text.b-tree-text {
+  fill: var(--ph-max);
+}
+
+[data-style='phosphor'] .main-content .b-tree-link {
+  stroke: var(--p-ink);
+}
+
+[data-style='phosphor'] .main-content .b-tree-meta,
+[data-style='phosphor'] .main-content .b-tree-chain {
+  font-size: var(--fs-small);
+}
+
+/* Keep the "> " prompt on the same line as the first line of output */
+[data-style='phosphor'] .main-content .b-tree-result > div {
+  display: inline;
+}
+
+/* ---- Intervals ---- */
+[data-style='phosphor'] .main-content .intervals-tick {
+  stroke: var(--p-line);
+}
+
+[data-style='phosphor'] .main-content .intervals-bar-text {
+  font-size: 16px;
+}
+
+/* Bars in a result panel: a heavier line than the input timeline */
+[data-style='phosphor'] .main-content .intervals-bar.intervals-bar-out:not(.intervals-bar-new) {
+  stroke: var(--ph-bright);
+  stroke-width: 3;
+}
+
+[data-style='phosphor'] .main-content .intervals-list {
+  gap: var(--space-xs) var(--space-md);
+}
+
+/* ---- LRU cache ---- */
+[data-style='phosphor'] .main-content .lru-cache-arrow,
+[data-style='phosphor'] .main-content .lru-cache-pointer {
+  color: var(--p-muted);
+}
+
+[data-style='phosphor'] .main-content .lru-cache-node {
+  border: 1.5px solid var(--p-ink);
+}
+
+[data-style='phosphor'] .main-content .lru-cache-tag {
+  min-height: 1em;
+  color: var(--p-muted);
+  font-size: var(--fs-small);
+}
+
+[data-style='phosphor'] .main-content .lru-cache-node-key,
+[data-style='phosphor'] .main-content .lru-cache-node-value {
+  padding: 0 var(--space-sm);
+  background: none;
+  color: var(--p-ink);
+}
+
+[data-style='phosphor'] .main-content .lru-cache-node .lru-cache-node-value {
+  border-top: 1px dashed var(--p-line);
+}
+
+[data-style='phosphor'] .main-content .lru-cache-pointer {
+  font-size: var(--fs-small);
+}
+
+[data-style='phosphor'] .main-content .balanced-trees-on:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 2px;
+}

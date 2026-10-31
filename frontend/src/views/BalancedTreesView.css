@@ -98,8 +98,8 @@
 .balanced-trees-node-red .balanced-trees-disc,
 .balanced-trees-node-unbalanced .balanced-trees-disc,
 .balanced-trees-swatch-red {
-  fill: var(--error-border);
-  background: var(--error-border);
+  fill: var(--state-danger);
+  background: var(--state-danger);
 }
 
 .balanced-trees-node-red .balanced-trees-disc,

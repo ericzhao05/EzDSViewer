@@ -41,7 +41,7 @@
   padding: 0.4rem 0.5rem;
   text-align: center;
   border: 2px solid var(--input-border);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   background: var(--stack-item-bg);
   color: var(--stack-item-text);
 }
@@ -52,14 +52,14 @@
 }
 
 .range-query-hit {
-  border-color: #e67e22;
-  box-shadow: 0 0 0 2px #e67e22;
+  border-color: var(--state-active);
+  box-shadow: 0 0 0 2px var(--state-active);
 }
 
 .range-query-minus {
   border-style: dashed;
-  border-color: #c0392b;
-  box-shadow: 0 0 0 2px #c0392b;
+  border-color: var(--state-danger);
+  box-shadow: 0 0 0 2px var(--state-danger);
 }
 
 .range-query-sub {
@@ -88,7 +88,7 @@
 }
 
 .range-query-node-hit {
-  stroke: #e67e22;
+  stroke: var(--state-active);
   stroke-width: 4;
 }
 

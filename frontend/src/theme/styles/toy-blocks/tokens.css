@@ -1,0 +1,102 @@
+/* Toy blocks: a playroom. Soft, chunky, physical. Blocks have a stubby solid underside, never a blur. */
+[data-style='toy-blocks'] {
+  /* Type */
+  --f-data: 'Fredoka', 'Trebuchet MS', sans-serif;
+  --fs-base: 1rem;
+  --fs-small: 0.9rem;
+  --fs-h1: 1.8rem;
+  --fs-h2: 2.8rem;
+  --fs-h3: 1.45rem;
+  --fw-heading: 600;
+  --fw-control: 600;
+
+  /* Spacing: 10px is the smallest gap between blocks */
+  --space-xs: 0.35rem;
+  --space-sm: 0.625rem;
+  --space-md: 1.1rem;
+  --space-lg: 1.75rem;
+  --space-xl: 2.75rem;
+
+  /* Shape */
+  --border-width: 2px;
+  --radius-sm: 14px;
+  --radius-md: 999px;
+  --radius-lg: 28px;
+
+  /* Colors a line or underside needs. Lines stay at 3:1 on both the tray and the floor. */
+  --tb-edge: #9c6b8b;
+  --tb-edge-hot: #b87400;
+  --tb-under-cell: color-mix(in srgb, var(--p-cell) 68%, #000);
+  --tb-under-accent: color-mix(in srgb, var(--p-accent) 68%, #000);
+  --tb-under-plain: var(--p-line);
+  --tb-under-panel: color-mix(in srgb, var(--p-line) 45%, var(--p-bg));
+  --tb-under-active: #b87400;
+  --tb-under-found: #065239;
+  --tb-under-danger: #8f1626;
+  --tb-under-info: #114e86;
+  --tb-under-ink: #26061c;
+  --tb-table-head: #ffd0e6;
+
+  /* What every block reads. A state or an alternate block only changes these. */
+  --tb-fill: var(--p-cell);
+  --tb-ink: var(--p-cell-ink);
+  --tb-under: var(--tb-under-cell);
+  --tb-stroke: none;
+  --tb-stroke-w: 0;
+
+  /* Controls */
+  --btn-bg: var(--p-accent);
+  --btn-ink: var(--p-accent-ink);
+  --btn-border: transparent;
+  --btn-shadow: 0 4px 0 var(--tb-under-accent);
+  --btn-hover-bg: #6A2FE0;
+  --btn-hover-ink: var(--p-accent-ink);
+  --btn-active-transform: translateY(4px);
+  --input-bg: #fff;
+  --input-border-color: var(--tb-edge);
+  --focus-ring: var(--p-ink);
+
+  /* Panels */
+  --panel-bg: var(--p-surface);
+  --panel-border: transparent;
+  --panel-shadow: 0 6px 0 var(--tb-under-panel);
+
+  /* Navigation */
+  --nav-bg: var(--p-accent);
+  --nav-ink: var(--p-accent-ink);
+  --side-bg: var(--p-surface);
+  --side-hover-bg: var(--p-bg);
+  --side-active-bg: var(--p-accent);
+  --side-active-ink: var(--p-accent-ink);
+
+  /* Visualization */
+  --cell-shadow: 0 5px 0 var(--tb-under);
+  --edge-width: 3;
+  --state-active: #ffb800;
+  --state-visited: #7a3ff2;
+  --state-found: #0a7d56;
+  --state-danger: #d7263d;
+  --state-info: #1b74c5;
+  --island-1: #ffb800;
+  --island-2: #5fd6a6;
+  --island-3: #c9a7ff;
+  --island-4: #ff9fcb;
+  --island-5: #8fd0ff;
+  --island-ink: #3a0a26;
+
+  /* Names the views read */
+  --card-bg: var(--p-surface);
+  --main-bg: var(--p-bg);
+  --card-shadow: transparent;
+  --input-border: var(--tb-edge);
+  --debug-bg: #fff;
+  --error-bg: var(--state-danger);
+  --error-border: var(--state-danger);
+  --error-text: #fff;
+}
+
+@keyframes tb-bounce {
+  from { transform: scale(0.4); opacity: 0; }
+  60% { transform: scale(1.08); opacity: 1; }
+  to { transform: none; opacity: 1; }
+}

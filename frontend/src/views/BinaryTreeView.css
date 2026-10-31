@@ -34,7 +34,7 @@
 }
 
 .binary-tree-node.binary-tree-visited circle {
-  stroke: var(--error-border);
+  stroke: var(--state-danger);
 }
 
 .binary-tree-node.binary-tree-current circle {
@@ -43,7 +43,7 @@
 }
 
 .binary-tree-node.binary-tree-lca circle {
-  stroke: var(--error-border);
+  stroke: var(--state-danger);
   stroke-width: 5;
 }
 

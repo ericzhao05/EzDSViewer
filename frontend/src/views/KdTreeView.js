@@ -166,7 +166,13 @@ export default function KdTreeView() {
         <>
           <section className="kdtree-section" aria-label="Plane partition">
             <h3>Plane partition</h3>
-            <p>Red lines split on x, blue lines split on y. Each point splits the region it lives in.</p>
+            <p>Each point splits the region it lives in.</p>
+            <p className="kdtree-key">
+              <svg width="28" height="10" aria-hidden="true"><line className="kdtree-split-x" x1="0" y1="5" x2="28" y2="5" /></svg>
+              {' '}splits on x
+              <svg width="28" height="10" aria-hidden="true"><line className="kdtree-split-y" x1="0" y1="5" x2="28" y2="5" /></svg>
+              {' '}splits on y
+            </p>
             <div className="kdtree-scroll">
               <svg
                 className="kdtree-svg"

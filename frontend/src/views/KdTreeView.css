@@ -30,12 +30,12 @@
 }
 
 .kdtree-split-x {
-  stroke: #e74c3c;
+  stroke: var(--state-danger);
   stroke-width: 2;
 }
 
 .kdtree-split-y {
-  stroke: #3498db;
+  stroke: var(--state-info);
   stroke-width: 2;
 }
 
@@ -52,12 +52,12 @@
 }
 
 .kdtree-node-visited {
-  stroke: #e67e22;
+  stroke: var(--state-active);
   stroke-width: 3;
 }
 
 .kdtree-node-best {
-  stroke: #27ae60;
+  stroke: var(--state-found);
   stroke-width: 4;
 }
 
@@ -67,7 +67,7 @@
 }
 
 .kdtree-query {
-  fill: #9b59b6;
+  fill: var(--state-visited);
 }
 
 .kdtree-node-text,
@@ -96,4 +96,9 @@
 .kdtree-result {
   margin: 0.5rem 0;
   font-weight: bold;
+}
+
+.main-content .kdtree-key svg {
+  margin-left: var(--space-md);
+  vertical-align: middle;
 }

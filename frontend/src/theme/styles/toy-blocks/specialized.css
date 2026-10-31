@@ -1,0 +1,393 @@
+/* toy-blocks: specialized pages */
+
+/* Edges */
+[data-style='toy-blocks'] .App .main-content :is(
+  .range-query-edge, .kdtree-edge, .fibonacci-heap-edge, .fibonacci-heap-root-link, .fibonacci-heap-root-wrap
+) {
+  stroke: var(--tb-edge);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+[data-style='toy-blocks'] .fibonacci-heap-arrow {
+  fill: var(--tb-edge);
+}
+
+/* Blocks */
+[data-style='toy-blocks'] .App .main-content :is(
+  .range-query-cell, .suffix-array-char, .bloom-filter-on, .fibonacci-heap-node
+) {
+  border: none;
+  border-radius: var(--radius-sm);
+  background-color: var(--tb-fill);
+  box-shadow: 0 5px 0 var(--tb-under);
+  color: var(--tb-ink);
+  font-weight: 600;
+  animation: tb-bounce 0.4s cubic-bezier(0.3, 1.5, 0.5, 1) both;
+}
+
+[data-style='toy-blocks'] .App .main-content :where(.range-query-col:nth-child(even), .suffix-array-slot:nth-child(even)) {
+  --tb-fill: var(--p-accent);
+  --tb-ink: var(--p-accent-ink);
+  --tb-under: var(--tb-under-accent);
+}
+
+/* Range query */
+[data-style='toy-blocks'] .App .main-content .range-query-fenwick {
+  gap: 10px;
+}
+
+[data-style='toy-blocks'] .App .main-content .range-query-array {
+  margin-top: 12px;
+  background-color: #fff;
+  box-shadow: 0 4px 0 var(--tb-under-plain);
+  color: var(--p-ink);
+  opacity: 1;
+}
+
+[data-style='toy-blocks'] .App .main-content .range-query-sub {
+  margin-top: 6px;
+  color: var(--p-ink);
+  font-size: 0.8rem;
+}
+
+[data-style='toy-blocks'] .App .main-content .range-query-hit {
+  --tb-fill: var(--state-active);
+  --tb-ink: var(--p-cell-ink);
+  --tb-under: var(--tb-under-active);
+  outline: 3px solid var(--p-ink);
+  outline-offset: 2px;
+}
+
+[data-style='toy-blocks'] .App .main-content .range-query-minus {
+  --tb-fill: var(--state-danger);
+  --tb-ink: #fff;
+  --tb-under: var(--tb-under-danger);
+  outline: 3px dashed var(--p-ink);
+  outline-offset: 2px;
+}
+
+[data-style='toy-blocks'] .App .main-content .range-query-node {
+  fill: var(--p-cell);
+  stroke: none;
+  stroke-width: 0;
+  filter: drop-shadow(0 4px 0 var(--tb-under-cell));
+}
+
+[data-style='toy-blocks'] .App .main-content .range-query-leaf {
+  fill: var(--p-accent);
+  filter: drop-shadow(0 4px 0 var(--tb-under-accent));
+}
+
+[data-style='toy-blocks'] .App .main-content .range-query-leaf + .range-query-node-text {
+  fill: var(--p-accent-ink);
+}
+
+[data-style='toy-blocks'] .App .main-content .range-query-node-hit {
+  fill: var(--state-active);
+  stroke: var(--p-ink);
+  stroke-width: 3;
+  filter: drop-shadow(0 4px 0 var(--tb-under-active));
+}
+
+[data-style='toy-blocks'] .App .main-content .range-query-node-hit + .range-query-node-text {
+  fill: var(--p-cell-ink);
+}
+
+[data-style='toy-blocks'] .App .main-content .range-query-node-text {
+  font-weight: 600;
+}
+
+[data-style='toy-blocks'] .App .main-content .range-query-node-index {
+  fill: var(--p-ink);
+  font-size: 12px;
+}
+
+/* Skip list: lanes of blocks on a 3px rail */
+[data-style='toy-blocks'] .App .main-content .skip-list-grid {
+  border-spacing: 0 12px;
+}
+
+[data-style='toy-blocks'] .App .main-content .skip-list-cell {
+  min-width: 52px;
+  height: 40px;
+  background-size: 100% 3px;
+  background-image: linear-gradient(var(--tb-edge), var(--tb-edge));
+  border: none;
+  color: var(--p-ink);
+}
+
+[data-style='toy-blocks'] .App .main-content :is(.skip-list-node, .skip-list-head, .skip-list-nil) {
+  border: 5px solid transparent;
+  border-width: 0 5px;
+  border-radius: var(--radius-sm);
+  background-clip: padding-box;
+  background-image: none;
+  background-color: var(--tb-fill);
+  box-shadow: inset 0 -5px 0 var(--tb-under);
+  color: var(--tb-ink);
+  font-weight: 600;
+  opacity: 1;
+}
+
+[data-style='toy-blocks'] .App .main-content :is(.skip-list-head, .skip-list-nil) {
+  --tb-fill: var(--p-accent);
+  --tb-ink: var(--p-accent-ink);
+  --tb-under: var(--tb-under-accent);
+}
+
+[data-style='toy-blocks'] .App .main-content .skip-list-visited {
+  --tb-fill: var(--state-active);
+  --tb-ink: var(--p-cell-ink);
+  --tb-under: var(--tb-under-active);
+  outline: 3px solid var(--p-ink);
+  outline-offset: -3px;
+}
+
+/* Bloom filter: an off bit is a spare dashed cell, an on bit is a block */
+[data-style='toy-blocks'] .App .main-content .bloom-filter-row {
+  gap: 10px;
+}
+
+[data-style='toy-blocks'] .App .main-content .bloom-filter-slot {
+  gap: 10px;
+}
+
+[data-style='toy-blocks'] .App .main-content .bloom-filter-bit {
+  min-width: 2.4rem;
+  padding: 0.45rem 0.25rem;
+  border: 3px dashed var(--tb-edge);
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--p-ink);
+  font-weight: 600;
+}
+
+[data-style='toy-blocks'] .App .main-content .bloom-filter-on {
+  border: 3px solid transparent;
+  background-clip: border-box;
+  background-color: var(--tb-fill);
+  color: var(--tb-ink);
+}
+
+[data-style='toy-blocks'] .App .main-content .bloom-filter-hit {
+  --tb-fill: var(--state-active);
+  --tb-ink: var(--p-cell-ink);
+  --tb-under: var(--tb-under-active);
+  outline: 3px solid var(--p-ink);
+  outline-offset: 2px;
+}
+
+[data-style='toy-blocks'] .App .main-content .bloom-filter-index {
+  color: var(--p-ink);
+}
+
+[data-style='toy-blocks'] .App .main-content .bloom-filter-items {
+  gap: 10px;
+}
+
+[data-style='toy-blocks'] .App .main-content .bloom-filter-items li {
+  padding: 0.3rem 0.85rem;
+  border: none;
+  border-radius: var(--radius-md);
+  background-color: #fff;
+  box-shadow: 0 4px 0 var(--tb-under-plain);
+  color: var(--p-ink);
+}
+
+/* kd-tree: x splits are solid red, y splits are dashed blue */
+[data-style='toy-blocks'] .App .main-content .kdtree-frame {
+  stroke: var(--tb-edge);
+  stroke-width: 3;
+}
+
+[data-style='toy-blocks'] .App .main-content .kdtree-split-x {
+  stroke: var(--state-danger);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+[data-style='toy-blocks'] .App .main-content .kdtree-split-y {
+  stroke: var(--state-info);
+  stroke-width: 3;
+  stroke-dasharray: 7 6;
+  stroke-linecap: round;
+}
+
+[data-style='toy-blocks'] .App .main-content :is(.kdtree-node, .kdtree-dot) {
+  --tb-shape-fill: var(--p-cell);
+  --tb-shape-under: var(--tb-under-cell);
+  fill: var(--tb-shape-fill);
+  stroke: none;
+  rx: 10px;
+  filter: drop-shadow(0 3px 0 var(--tb-shape-under));
+}
+
+[data-style='toy-blocks'] .App .main-content :is(.kdtree-node-visited, .kdtree-dot.kdtree-node-visited) {
+  --tb-shape-fill: var(--state-visited);
+  --tb-shape-under: var(--tb-under-accent);
+}
+
+[data-style='toy-blocks'] .App .main-content :is(.kdtree-node-best, .kdtree-dot.kdtree-node-best) {
+  --tb-shape-fill: var(--state-found);
+  --tb-shape-under: var(--tb-under-found);
+  stroke: var(--p-ink);
+  stroke-width: 3;
+}
+
+[data-style='toy-blocks'] .App .main-content .kdtree-node-text,
+[data-style='toy-blocks'] .App .main-content .kdtree-axis-text {
+  fill: var(--p-cell-ink);
+}
+
+[data-style='toy-blocks'] .App .main-content .kdtree-axis-text {
+  font-size: 11px;
+}
+
+[data-style='toy-blocks'] .App .main-content .kdtree-node-text {
+  font-size: 12px;
+}
+
+[data-style='toy-blocks'] .App .main-content :is(.kdtree-node-visited, .kdtree-node-best) ~ :is(.kdtree-node-text, .kdtree-axis-text) {
+  fill: #fff;
+}
+
+[data-style='toy-blocks'] .App .main-content .kdtree-query {
+  fill: var(--state-active);
+  stroke: var(--p-ink);
+  stroke-width: 2;
+}
+
+[data-style='toy-blocks'] .App .main-content .kdtree-label {
+  fill: var(--p-ink);
+  font-size: 12px;
+}
+
+/* Quadtree */
+[data-style='toy-blocks'] .App .main-content .quadtree-svg {
+  border: none;
+  border-radius: var(--radius-sm);
+  background-color: #fff;
+  box-shadow: 0 5px 0 var(--tb-under-plain);
+}
+
+[data-style='toy-blocks'] .App .main-content .quadtree-cell {
+  stroke: var(--tb-edge);
+  stroke-width: 2;
+}
+
+[data-style='toy-blocks'] .App .main-content .quadtree-visited {
+  fill: var(--state-active);
+  fill-opacity: 0.18;
+  stroke: var(--p-ink);
+  stroke-width: 3;
+}
+
+[data-style='toy-blocks'] .App .main-content .quadtree-query {
+  stroke: var(--p-ink);
+  stroke-width: 3;
+}
+
+[data-style='toy-blocks'] .App .main-content .quadtree-point {
+  fill: var(--p-cell);
+  stroke: var(--p-cell-ink);
+  stroke-width: 2;
+}
+
+[data-style='toy-blocks'] .App .main-content .quadtree-found {
+  fill: var(--state-found);
+  stroke: var(--p-ink);
+  stroke-width: 3;
+}
+
+/* Suffix array */
+[data-style='toy-blocks'] .App .main-content .suffix-array-chars {
+  gap: 10px;
+  padding-bottom: 5px;
+}
+
+[data-style='toy-blocks'] .App .main-content .suffix-array-char {
+  min-width: 2.75rem;
+  padding: 0.5rem 0.25rem;
+  font-size: 1.25rem;
+}
+
+[data-style='toy-blocks'] .App .main-content .suffix-array-index {
+  margin-top: 8px;
+  color: var(--p-ink);
+}
+
+[data-style='toy-blocks'] .App .main-content .suffix-array-table .suffix-array-match td {
+  background-color: var(--state-found);
+  color: #fff;
+  font-weight: 600;
+}
+
+/* Fibonacci heap */
+[data-style='toy-blocks'] .App .main-content .fibonacci-heap-node {
+  border-radius: var(--radius-sm);
+  padding: 0;
+}
+
+[data-style='toy-blocks'] .App .main-content .fibonacci-heap-deg {
+  font-size: 0.75rem;
+  font-weight: 400;
+  opacity: 1;
+}
+
+[data-style='toy-blocks'] .App .main-content .fibonacci-heap-node-min {
+  --tb-fill: var(--p-accent);
+  --tb-ink: var(--p-accent-ink);
+  --tb-under: var(--tb-under-accent);
+  outline: 3px solid var(--p-ink);
+  outline-offset: 2px;
+}
+
+[data-style='toy-blocks'] .App .main-content .fibonacci-heap-node-mark {
+  background-color: #fff;
+  border: 3px dashed var(--p-ink);
+  box-shadow: 0 5px 0 var(--tb-under-plain);
+  color: var(--p-ink);
+}
+
+[data-style='toy-blocks'] .App .main-content button.fibonacci-heap-node:hover:not(:disabled) {
+  background-color: var(--tb-fill);
+  color: var(--tb-ink);
+  transform: translateY(-2px);
+}
+
+[data-style='toy-blocks'] .App .main-content button.fibonacci-heap-node:active:not(:disabled) {
+  box-shadow: none;
+  transform: translateY(4px);
+}
+
+[data-style='toy-blocks'] .App .main-content .fibonacci-heap-node-selected {
+  --tb-fill: var(--state-active);
+  --tb-ink: var(--p-cell-ink);
+  --tb-under: var(--tb-under-active);
+  outline: 3px solid var(--p-ink);
+  outline-offset: 3px;
+}
+
+[data-style='toy-blocks'] .App .main-content .fibonacci-heap-min {
+  color: var(--p-ink);
+}
+
+[data-style='toy-blocks'] .App .main-content .fibonacci-heap-field input,
+[data-style='toy-blocks'] .App .main-content .fibonacci-heap-field select {
+  background-color: var(--input-bg);
+}
+
+[data-style='toy-blocks'] .App .main-content .fibonacci-heap-node-min:focus-visible,
+[data-style='toy-blocks'] .App .main-content .fibonacci-heap-node:focus-visible {
+  outline: 3px dashed var(--focus-ring);
+  outline-offset: 5px;
+}
+
+/* Edges pass behind the segment tree's index labels; a halo keeps them readable */
+[data-style='toy-blocks'] .App .main-content .range-query-node-index {
+  paint-order: stroke;
+  stroke: var(--main-bg);
+  stroke-width: 4px;
+  stroke-linejoin: round;
+}

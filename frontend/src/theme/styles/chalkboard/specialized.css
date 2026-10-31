@@ -1,0 +1,346 @@
+/* Chalkboard: range-query, skip-list, bloom-filter, kd-tree, quadtree, suffix-array, fibonacci-heap. */
+
+[data-style='chalkboard'] :is(.range-query-legend, .range-query-sub, .bloom-filter-index, .suffix-array-index,
+  .fibonacci-heap-field, .fibonacci-heap-key, .fibonacci-heap-deg, .fibonacci-heap-min) {
+  font-size: var(--fs-small);
+}
+
+[data-style='chalkboard'] :is(.range-query-scroll, .skip-list-scroll, .bloom-filter-scroll, .kdtree-scroll, .quadtree-scroll, .suffix-array-scroll, .fibonacci-heap-scroll) {
+  padding: var(--space-sm);
+  border: 0;
+  background: none;
+}
+
+[data-style='chalkboard'] :is(.range-query-result, .skip-list-result, .bloom-filter-result, .kdtree-result, .quadtree-result, .suffix-array-result, .fibonacci-heap-result) {
+  margin: var(--space-sm) 0;
+  padding: var(--space-xs) var(--space-sm);
+  border: 0;
+  border-left: 3px dashed var(--p-accent);
+  border-radius: 0;
+  background: var(--p-surface);
+  color: var(--p-ink);
+  font-weight: 400;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+
+[data-style='chalkboard'] :is(.range-query-cell, .bloom-filter-on, .suffix-array-char, .fibonacci-heap-node) {
+  border: var(--cell-border);
+  background: none;
+  color: var(--stack-item-text);
+  font-weight: 400;
+}
+
+[data-style='chalkboard'] :is(.range-query-cell, .bloom-filter-on, .suffix-array-char) {
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-cell);
+}
+
+[data-style='chalkboard'] :is(.range-query-edge, .kdtree-edge, .fibonacci-heap-edge, .fibonacci-heap-root-link, .fibonacci-heap-root-wrap) {
+  stroke: var(--edge-color);
+  stroke-width: var(--edge-width);
+  stroke-linecap: round;
+}
+
+[data-style='chalkboard'] :is(.range-query-node, .kdtree-node) {
+  fill: var(--stack-item-bg);
+  stroke: var(--p-cell);
+  stroke-width: var(--node-stroke);
+}
+
+[data-style='chalkboard'] :is(.range-query-node-text, .kdtree-node-text, .kdtree-axis-text) {
+  fill: var(--stack-item-text);
+}
+
+/* Range query */
+[data-style='chalkboard'] .range-query-fenwick {
+  gap: var(--space-sm);
+}
+
+[data-style='chalkboard'] .range-query-cell.range-query-array {
+  border: var(--spare-border);
+  border-style: solid;
+  opacity: 1;
+  color: var(--p-muted);
+}
+
+[data-style='chalkboard'] .range-query-cell.range-query-hit {
+  border-color: var(--state-active);
+  outline: var(--ring-active);
+  outline-offset: 2px;
+  box-shadow: none;
+  color: var(--state-active);
+}
+
+[data-style='chalkboard'] .range-query-cell.range-query-minus {
+  border-color: var(--state-danger);
+  border-style: dashed;
+  outline: var(--ring-danger);
+  outline-offset: 2px;
+  box-shadow: none;
+  color: var(--state-danger);
+}
+
+[data-style='chalkboard'] .range-query-sub {
+  color: var(--p-muted);
+}
+
+[data-style='chalkboard'] .range-query-leaf {
+  stroke-width: var(--stroke-active);
+}
+
+[data-style='chalkboard'] .range-query-node.range-query-node-hit {
+  stroke: var(--state-active);
+  stroke-width: var(--stroke-active);
+}
+
+[data-style='chalkboard'] .range-query-node-index {
+  fill: var(--p-muted);
+}
+
+/* Skip list: express lanes are chalk lines; head and tail are spare cells */
+[data-style='chalkboard'] .skip-list-grid {
+  border-spacing: 3px 8px;
+}
+
+[data-style='chalkboard'] .skip-list-cell {
+  min-width: 50px;
+  height: 44px;
+  font-size: var(--fs-base);
+  background-image: linear-gradient(var(--edge-color), var(--edge-color));
+}
+
+[data-style='chalkboard'] .skip-list-level-label {
+  color: var(--p-muted);
+  font-weight: 400;
+}
+
+[data-style='chalkboard'] .skip-list-node {
+  border: var(--cell-border);
+  border-radius: var(--radius-sm);
+  background: var(--stack-item-bg);
+  color: var(--stack-item-text);
+  font-weight: 400;
+}
+
+[data-style='chalkboard'] :is(.skip-list-head, .skip-list-nil) {
+  border: var(--spare-border);
+  border-radius: var(--radius-sm);
+  background: var(--stack-item-bg);
+  opacity: 1;
+  color: var(--p-muted);
+}
+
+[data-style='chalkboard'] .skip-list-cell.skip-list-visited {
+  border-color: var(--state-active);
+  outline: var(--ring-active);
+  outline-offset: -1px;
+  color: var(--state-active);
+}
+
+/* Bloom filter: a clear bit is a spare cell, a set bit is a pink one */
+[data-style='chalkboard'] .bloom-filter-bit {
+  min-width: 2.1rem;
+  border: var(--spare-border);
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--p-muted);
+  font-size: var(--fs-base);
+  font-weight: 400;
+}
+
+[data-style='chalkboard'] .bloom-filter-bit.bloom-filter-on {
+  border: var(--cell-border);
+  color: var(--stack-item-text);
+}
+
+[data-style='chalkboard'] .bloom-filter-bit.bloom-filter-hit {
+  border-color: var(--state-active);
+  outline: var(--ring-active);
+  outline-offset: 2px;
+  color: var(--state-active);
+}
+
+[data-style='chalkboard'] .bloom-filter-row {
+  gap: var(--space-xs);
+}
+
+[data-style='chalkboard'] .bloom-filter-items li {
+  border: var(--cell-border);
+  border-radius: var(--radius-sm);
+}
+
+/* kd-tree */
+[data-style='chalkboard'] .kdtree-frame {
+  stroke: var(--p-muted);
+  stroke-width: 2;
+}
+
+[data-style='chalkboard'] .kdtree-split-x {
+  stroke: var(--state-danger);
+  stroke-width: 2;
+}
+
+[data-style='chalkboard'] .kdtree-split-y {
+  stroke: var(--state-visited); /* the page's text calls these the blue lines */
+  stroke-width: 2;
+  stroke-dasharray: var(--dash-spare);
+}
+
+[data-style='chalkboard'] .kdtree-dot {
+  fill: var(--p-cell);
+  stroke: var(--p-bg);
+  stroke-width: 1;
+}
+
+[data-style='chalkboard'] :is(.kdtree-node, .kdtree-dot).kdtree-node-visited {
+  stroke: var(--state-active);
+  stroke-width: var(--stroke-active);
+}
+
+[data-style='chalkboard'] :is(.kdtree-node, .kdtree-dot).kdtree-node-best {
+  stroke: var(--state-found);
+  stroke-width: var(--stroke-found);
+}
+
+[data-style='chalkboard'] .kdtree-query {
+  fill: var(--state-visited);
+}
+
+[data-style='chalkboard'] .kdtree-label {
+  fill: var(--p-muted);
+}
+
+/* A tree node holds two lines of data at the style's minimum size */
+[data-style='chalkboard'] .kdtree-node {
+  width: 52px;
+  height: 42px;
+  transform: translate(-6px, -7px);
+}
+
+[data-style='chalkboard'] .kdtree-node-text {
+  transform: translateY(-1px);
+}
+
+[data-style='chalkboard'] .kdtree-axis-text {
+  transform: translateY(7px);
+}
+
+/* Quadtree */
+[data-style='chalkboard'] .quadtree-svg {
+  border: 0;
+  background: var(--p-bg);
+}
+
+[data-style='chalkboard'] .quadtree-cell {
+  stroke: var(--p-line);
+  stroke-width: 2;
+}
+
+[data-style='chalkboard'] .quadtree-visited {
+  fill: var(--state-visited);
+  fill-opacity: 0.05;
+  stroke: var(--state-visited);
+  stroke-dasharray: var(--dash-visited);
+}
+
+[data-style='chalkboard'] .quadtree-query {
+  stroke: var(--state-active);
+  stroke-width: var(--stroke-active);
+}
+
+[data-style='chalkboard'] .quadtree-point {
+  fill: var(--p-cell);
+  stroke: var(--p-bg);
+}
+
+[data-style='chalkboard'] .quadtree-point.quadtree-found {
+  fill: var(--p-bg);
+  stroke: var(--state-found);
+  stroke-width: var(--stroke-active);
+}
+
+/* Suffix array */
+[data-style='chalkboard'] .suffix-array-chars {
+  gap: 8px;
+}
+
+[data-style='chalkboard'] .suffix-array-char {
+  min-width: 2.4rem;
+}
+
+[data-style='chalkboard'] .suffix-array-index {
+  color: var(--p-muted);
+}
+
+[data-style='chalkboard'] .main-content .suffix-array-match td {
+  border: 3px solid var(--state-found);
+  background: none;
+  color: var(--state-found);
+}
+
+/* Fibonacci heap: a marked node is dashed; the minimum carries a double ring */
+[data-style='chalkboard'] .fibonacci-heap-node {
+  border-radius: var(--radius-lg);
+}
+
+[data-style='chalkboard'] .fibonacci-heap-node:hover:not(:disabled) {
+  border-color: var(--btn-hover-bg);
+  background: var(--btn-hover-bg);
+  color: var(--btn-hover-ink);
+}
+
+[data-style='chalkboard'] .fibonacci-heap-node.fibonacci-heap-node-min {
+  outline: 4px double var(--state-found);
+  outline-offset: 0;
+  box-shadow: none;
+}
+
+[data-style='chalkboard'] .fibonacci-heap-node.fibonacci-heap-node-mark {
+  border-style: dashed;
+  background: none;
+  color: var(--stack-item-text);
+}
+
+[data-style='chalkboard'] .fibonacci-heap-node.fibonacci-heap-node-selected {
+  border-color: var(--state-active);
+  outline: var(--ring-active);
+  outline-offset: 2px;
+  color: var(--state-active);
+}
+
+[data-style='chalkboard'] .fibonacci-heap-arrow {
+  fill: var(--edge-color);
+}
+
+[data-style='chalkboard'] .fibonacci-heap-deg {
+  color: inherit;
+  opacity: 1;
+}
+
+[data-style='chalkboard'] .fibonacci-heap-min {
+  color: var(--state-found);
+  font-weight: 400;
+}
+
+[data-style='chalkboard'] .fibonacci-heap-min::after {
+  border-top-color: var(--state-found);
+}
+
+[data-style='chalkboard'] .fibonacci-heap-steps {
+  text-align: left;
+}
+
+[data-style='chalkboard'] .fibonacci-heap-node.fibonacci-heap-node-min:focus-visible,
+[data-style='chalkboard'] .fibonacci-heap-node:focus-visible {
+  outline: 3px dashed var(--focus-ring);
+  outline-offset: 5px;
+}
+
+/* Edges pass behind the segment tree's index labels; a halo keeps them readable */
+[data-style='chalkboard'] .range-query-node-index {
+  paint-order: stroke;
+  stroke: var(--card-bg);
+  stroke-width: 2px;
+  stroke-linejoin: round;
+}

@@ -41,7 +41,7 @@
 .linked-list-node {
   display: flex;
   border: 2px solid var(--input-border);
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   overflow: hidden;
   background: var(--stack-item-bg);
   color: var(--stack-item-text);
@@ -91,7 +91,7 @@
 }
 
 .linked-list-highlight .linked-list-node {
-  outline: 3px solid #f39c12;
+  outline: 3px solid var(--state-active);
 }
 
 .linked-list-cycle-target .linked-list-node {
@@ -184,7 +184,7 @@
 }
 
 .linked-list-highlight .linked-list-dnode {
-  outline: 3px solid #f39c12;
+  outline: 3px solid var(--state-active);
 }
 
 .linked-list-selected .linked-list-dnode {

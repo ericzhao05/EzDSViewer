@@ -1,0 +1,90 @@
+/* The token contract. Every value is a default that a style may override in its
+   tokens.css. --p-* and --f-display/--f-body are set on <html> by themes.js. */
+:root {
+  /* Typography */
+  --f-data: var(--f-body);
+  --fs-base: 1rem;
+  --fs-small: 0.875rem;
+  --fs-h1: 1.5rem;
+  --fs-h2: 2.25rem;
+  --fs-h3: 1.25rem;
+  --fw-heading: 600;
+  --fw-control: 600;
+  --lh-body: 1.5;
+  --tracking-heading: 0;
+
+  /* Spacing */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2.5rem;
+
+  /* Borders */
+  --border-width: 1px;
+  --border-style: solid;
+  --radius-sm: 4px; /* cells, small marks */
+  --radius-md: 6px; /* controls */
+  --radius-lg: 8px; /* boards, panels */
+
+  /* Controls */
+  --btn-bg: var(--p-accent);
+  --btn-ink: var(--p-accent-ink);
+  --btn-border: var(--p-accent);
+  --btn-shadow: none;
+  --btn-hover-bg: var(--p-accent);
+  --btn-hover-ink: var(--p-accent-ink);
+  --btn-active-transform: none;
+  --input-bg: var(--p-surface);
+  --input-ink: var(--p-ink);
+  --input-border-color: var(--p-line);
+  --focus-ring: var(--p-ink);
+
+  /* Panels */
+  --panel-bg: var(--p-surface);
+  --panel-border: var(--p-line);
+  --panel-shadow: none;
+
+  /* Navigation */
+  --nav-bg: var(--p-surface);
+  --nav-ink: var(--p-ink);
+  --side-bg: var(--p-surface);
+  --side-ink: var(--p-ink);
+  --side-group-ink: var(--p-muted);
+  --side-hover-bg: var(--p-bg);
+  --side-active-bg: var(--p-accent);
+  --side-active-ink: var(--p-accent-ink);
+
+  /* Visualization. Each state must stay distinct from the base node and readable. */
+  --cell-shadow: none;
+  --edge-width: 2;
+  --state-active: var(--p-accent);  /* current step, highlighted node */
+  --state-visited: var(--p-muted);  /* already traversed, secondary mark */
+  --state-found: var(--p-accent);   /* match, answer, best */
+  --state-danger: var(--p-accent);  /* invalid, overlap, red-black red */
+  --state-info: var(--p-muted);     /* second axis, neutral note */
+  --island-1: var(--p-cell);
+  --island-2: var(--p-accent);
+  --island-3: var(--p-muted);
+  --island-4: var(--p-line);
+  --island-5: var(--p-ink);
+  --island-ink: var(--p-bg);
+
+  /* Names the views already read. They map onto the contract so view CSS stays style-agnostic. */
+  --bg-color: var(--p-bg);
+  --text-color: var(--p-ink);
+  --navbar-bg: var(--nav-bg);
+  --navbar-text: var(--nav-ink);
+  --main-bg: var(--p-surface);
+  --card-bg: var(--p-bg);
+  --card-shadow: rgba(0, 0, 0, 0.2);
+  --input-border: var(--p-line);
+  --stack-item-bg: var(--p-cell);
+  --stack-item-text: var(--p-cell-ink);
+  --debug-bg: var(--p-surface);
+  --debug-text: var(--p-muted);
+  --empty-message: var(--p-muted);
+  --error-bg: var(--p-accent);
+  --error-border: var(--state-danger);
+  --error-text: var(--p-accent-ink);
+}

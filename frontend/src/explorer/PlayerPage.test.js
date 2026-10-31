@@ -6,8 +6,9 @@ jest.mock('./Explorer', () => (props) => (
   <div data-testid="explorer" data-embed={String(props.embed)}>{props.initialCommand}</div>
 ));
 
+const shownStyle = () => document.documentElement.dataset.style;
+
 beforeEach(() => {
-  document.body.className = '';
   localStorage.clear();
   window.history.pushState({}, '', '/');
   global.fetch = jest.fn(() =>
@@ -16,7 +17,6 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  document.body.className = '';
   localStorage.clear();
   window.history.pushState({}, '', '/');
 });
@@ -27,25 +27,23 @@ test('embed page passes the command, sets embed and applies theme=dark', () => {
   const explorer = screen.getByTestId('explorer');
   expect(explorer).toHaveTextContent('array.append(1)');
   expect(explorer).toHaveAttribute('data-embed', 'true');
-  expect(document.body).toHaveClass('dark-mode');
+  expect(shownStyle()).toBe('chalkboard');
 });
 
 test('embed page ignores the stored theme', () => {
-  localStorage.setItem('darkMode', 'true');
+  localStorage.setItem('ezds-theme', 'phosphor/green');
   window.history.pushState({}, '', '/embed?c=array');
   render(<PlayerPage embed />);
-  expect(document.body).not.toHaveClass('dark-mode');
+  expect(shownStyle()).toBe('toy-blocks');
 });
 
 test('view page defaults the command to array and follows the stored theme', () => {
-  localStorage.setItem('darkMode', 'true');
+  localStorage.setItem('ezds-theme', 'phosphor/green');
   window.history.pushState({}, '', '/v');
-  const { unmount } = render(<PlayerPage />);
+  render(<PlayerPage />);
   expect(screen.getByTestId('explorer')).toHaveTextContent(/^array$/);
   expect(screen.getByTestId('explorer')).toHaveAttribute('data-embed', 'false');
-  expect(document.body).toHaveClass('dark-mode');
-  unmount();
-  expect(document.body).not.toHaveClass('dark-mode');
+  expect(shownStyle()).toBe('phosphor');
 });
 
 test('App at / still shows the sidebar', () => {
