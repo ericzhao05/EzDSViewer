@@ -44,6 +44,22 @@ class ClassTests(unittest.TestCase):
         self.assertEqual(insert_interval([[1, 2]], [3, 4]), [[1, 2], [3, 4]])
         self.assertEqual(insert_interval([[5, 6]], [1, 2]), [[1, 2], [5, 6]])
 
+    def test_erase_random_matches_brute_force(self):
+        import itertools
+        import random
+        rng = random.Random(7)
+        for _ in range(300):
+            ivs = []
+            for _ in range(rng.randint(0, 7)):
+                a = rng.randint(0, 8)
+                ivs.append([a, a + rng.randint(1, 4)])
+            best = len(ivs)
+            for mask in range(1 << len(ivs)):
+                keep = [ivs[i] for i in range(len(ivs)) if mask >> i & 1]
+                if all(not overlaps(x, y) for x, y in itertools.combinations(keep, 2)):
+                    best = min(best, len(ivs) - len(keep))
+            self.assertEqual(erase_overlap_intervals(ivs), best, ivs)
+
     def test_erase(self):
         self.assertEqual(erase_overlap_intervals([[1, 2], [2, 3], [3, 4], [1, 3]]), 1)
         self.assertEqual(erase_overlap_intervals([[1, 2], [1, 2], [1, 2]]), 2)
@@ -96,13 +112,13 @@ class RouteTests(unittest.TestCase):
 
     def test_bad_input(self):
         bads = [
-            ("add", None), ("add", {}), ("add", {"interval": [3, 1]}), ("add", {"interval": [1]}),
+            ("add", None), ("add", {}), ("add", {"interval": [3, 1]}), ("add", {"interval": [3, 3]}), ("add", {"interval": [1]}),
             ("add", {"interval": ["a", 2]}), ("add", {"interval": [True, 2]}),
             ("add", {"interval": [1, 10 ** 9]}), ("add", {"interval": "12"}),
             ("remove", {"index": 99}), ("remove", {"index": -1}), ("remove", {}), ("remove", {"index": "0"}),
             ("build", {"intervals": "x"}), ("build", {"intervals": [[1, 2], [5]]}),
             ("build", {"intervals": [[0, 1]] * 31}),
-            ("overlap", {"a": [1, 2]}), ("insert", {}), ("insert", {"interval": [2, 1]}),
+            ("overlap", {"a": [1, 2]}), ("insert", {}), ("insert", {"interval": [2, 1]}), ("build", {"intervals": [[4, 4]]}), ("overlap", {"a": [1, 1], "b": [1, 2]}),
         ]
         for op, payload in bads:
             s, d = self.post(op, payload)

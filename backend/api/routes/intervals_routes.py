@@ -51,7 +51,7 @@ def _pair(v):
     if not isinstance(v, (list, tuple)) or len(v) != 2:
         return None
     a, b = _int(v[0]), _int(v[1])
-    if a is None or b is None or a > b:
+    if a is None or b is None or a >= b:
         return None
     return [a, b]
 
@@ -63,7 +63,7 @@ def _pairs(v):
     return None if any(p is None for p in out) else out
 
 
-PAIR_MSG = f"an interval is [start, end] of whole numbers, start <= end, absolute value up to {MAX_ABS}"
+PAIR_MSG = f"an interval is [start, end] of whole numbers, start < end, absolute value up to {MAX_ABS}"
 
 
 @bp.route("", methods=["GET"])

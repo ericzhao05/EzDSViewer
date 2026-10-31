@@ -76,3 +76,21 @@ test('shows a load error', async () => {
   render(<IntervalsView />);
   expect(await screen.findByRole('alert')).toHaveTextContent(/Could not load/);
 });
+
+test('caps the drawing width for huge values', async () => {
+  const huge = { intervals: [[0, 1000000]], size: 1, limits: {} };
+  global.fetch.mockImplementation(() => reply({ success: true, state: huge, result: null }));
+  render(<IntervalsView />);
+  const svg = await screen.findByTestId('intervals-main');
+  expect(Number(svg.getAttribute('width'))).toBeLessThanOrEqual(1300);
+});
+
+test('rejects a zero-length interval locally', async () => {
+  global.fetch.mockImplementation(() => reply({ success: true, state: base, result: null }));
+  render(<IntervalsView />);
+  await screen.findByTestId('intervals-main');
+  await userEvent.type(screen.getByLabelText('Interval'), '3, 3');
+  await userEvent.click(screen.getByRole('button', { name: 'Add' }));
+  expect(await screen.findByRole('alert')).toHaveTextContent(/smaller than end/);
+  expect(global.fetch).toHaveBeenCalledTimes(1);
+});

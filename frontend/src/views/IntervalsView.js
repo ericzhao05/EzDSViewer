@@ -17,7 +17,7 @@ const parsePairs = (text) => {
   const rest = t.replace(/\[?\s*-?\d+\s*,\s*-?\d+\s*\]?/g, '').replace(/[\s,;]/g, '');
   if (rest !== '') return null;
   const pairs = chunks.map(parsePair);
-  return pairs.some((p) => p === null || p[0] > p[1]) ? null : pairs;
+  return pairs.some((p) => p === null || p[0] >= p[1]) ? null : pairs;
 };
 
 const show = (p) => `[${p[0]}, ${p[1]}]`;
@@ -52,6 +52,7 @@ const LEFT = 8;
 const LANE_H = 26;
 const BAR_H = 18;
 const PX = 28;
+const MAX_W = 1200; // widest drawing; larger spans are scaled down
 
 function assignLanes(list) {
   const order = list.map((p, i) => ({ p, i })).sort((a, b) => a.p[0] - b.p[0] || a.p[1] - b.p[1]);
@@ -70,9 +71,10 @@ function assignLanes(list) {
   return { lane, count: Math.max(ends.length, 1) };
 }
 
-function Timeline({ list, lo, hi, label, testid, cls }) {
+function Timeline({ list, lo, hi, label, testid, cls, highlight }) {
   const span = Math.max(hi - lo, 1);
-  const width = Math.max(span * PX, 240) + LEFT * 2;
+  const width = Math.min(Math.max(span * PX, 240), MAX_W) + LEFT * 2;
+  const hlIndex = highlight ? list.findIndex((p) => p[0] === highlight[0] && p[1] === highlight[1]) : -1;
   const x = (v) => LEFT + ((v - lo) / span) * (width - LEFT * 2);
   const { lane, count } = assignLanes(list);
   const height = count * LANE_H + 28;
@@ -94,7 +96,7 @@ function Timeline({ list, lo, hi, label, testid, cls }) {
             <g key={i}>
               <rect
                 data-testid={`${testid}-bar`}
-                className={`intervals-bar ${cls || ''}`}
+                className={`intervals-bar ${cls || ''}${i === hlIndex ? ' intervals-bar-new' : ''}`}
                 x={x(p[0])}
                 y={lane[i] * LANE_H + 4}
                 width={w}
@@ -133,8 +135,8 @@ export default function IntervalsView() {
 
   const withPair = async (op) => {
     const p = parsePair(pairText);
-    if (!p || p[0] > p[1]) {
-      setLocalError('Enter an interval as start, end (two whole numbers, start no larger than end)');
+    if (!p || p[0] >= p[1]) {
+      setLocalError('Enter an interval as start, end (two whole numbers, start smaller than end)');
       return;
     }
     const data = await exec(op, { interval: p });
@@ -152,7 +154,7 @@ export default function IntervalsView() {
   const onBuild = () => {
     const pairs = parsePairs(buildText);
     if (pairs === null) {
-      setLocalError('Enter intervals like [1, 3], [2, 6] with start no larger than end');
+      setLocalError('Enter intervals like [1, 3], [2, 6] with start smaller than end');
       return;
     }
     exec('build', { intervals: pairs });
@@ -161,8 +163,8 @@ export default function IntervalsView() {
   const onOverlap = () => {
     const a = parsePair(aText);
     const b = parsePair(bText);
-    if (!a || !b || a[0] > a[1] || b[0] > b[1]) {
-      setLocalError('a and b must each be start, end (two whole numbers)');
+    if (!a || !b || a[0] >= a[1] || b[0] >= b[1]) {
+      setLocalError('a and b must each be start, end (two whole numbers, start smaller than end)');
       return;
     }
     exec('overlap', { a, b });
@@ -273,7 +275,7 @@ export default function IntervalsView() {
               {shown.list.length === 0 ? (
                 <p className="empty-message">Nothing to show.</p>
               ) : (
-                <Timeline list={shown.list} lo={lo} hi={hi} label={`${shown.title} intervals`} testid="intervals-shown" cls="intervals-bar-out" />
+                <Timeline list={shown.list} lo={lo} hi={hi} label={`${shown.title} intervals`} testid="intervals-shown" cls="intervals-bar-out" highlight={shown.newOne} />
               )}
             </section>
           )}
