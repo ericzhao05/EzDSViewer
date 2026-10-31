@@ -1,6 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import ArrayBoard from './ArrayBoard';
 import ArrayControls from './ArrayControls';
+import useArrayControls from './useArrayControls';
 
 const state = { data: [1, 2, null, null], size: 2, capacity: 4, resizes: 1 };
 const frame = (extra = {}) => ({ call: 0, state, highlight: [], pointers: {}, aux: null, note: '', ...extra });
@@ -33,9 +34,17 @@ test('renders without a frame', () => {
 });
 
 describe('ArrayControls', () => {
-  function setup(props = {}) {
+  // The default look, fed by the real hook over a small fake session.
+  function Harness({ session }) {
+    return <ArrayControls controls={useArrayControls(session)} />;
+  }
+  function setup({ onStartOver = jest.fn(), disabled = false } = {}) {
     const onCall = jest.fn();
-    render(<ArrayControls onCall={onCall} onUndo={jest.fn()} canUndo disabled={false} {...props} />);
+    const session = {
+      state, calls: [], frames: [], loading: disabled, canUndo: true,
+      runCall: onCall, undo: jest.fn(), startOver: onStartOver, goTo: jest.fn(),
+    };
+    render(<Harness session={session} />);
     return onCall;
   }
   const type = (label, value) => fireEvent.change(screen.getByLabelText(label), { target: { value } });

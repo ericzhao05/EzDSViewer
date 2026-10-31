@@ -1,0 +1,6 @@
+/* Layout 3. Keep every rule under .preset-3 so presets cannot affect each other. */
+.preset-3 .preset-note {
+  margin: 0 0 0.5rem;
+  font-size: var(--fs-small);
+  opacity: 0.7;
+}

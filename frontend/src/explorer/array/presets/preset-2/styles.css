@@ -1,0 +1,6 @@
+/* Layout 2. Keep every rule under .preset-2 so presets cannot affect each other. */
+.preset-2 .preset-note {
+  margin: 0 0 0.5rem;
+  font-size: var(--fs-small);
+  opacity: 0.7;
+}

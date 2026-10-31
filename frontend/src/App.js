@@ -6,6 +6,7 @@ import { GROUPS, STRUCTURES } from './structures/registry';
 import PlayerPage from './explorer/PlayerPage';
 import Explorer from './explorer/Explorer';
 import { BOARDS } from './explorer/boards';
+import PresetSwitcher, { usePreset, withPreset } from './explorer/array/presets/PresetSwitcher';
 import { encodeCommand, linkFor, MAX_LINK_CHARS } from './explorer/commandLang';
 
 const ARRAY = STRUCTURES[0].id;
@@ -51,6 +52,7 @@ function Shell() {
   const [start] = useState(readAddress);
   const [activeDS, setActiveDS] = useState(start.active);
   const { theme, pickTheme } = useTheme();
+  const [preset, setPreset] = usePreset(); // test branch: compare Array layouts
   // The array command to put back in the address when returning from a coming-soon item.
   const arrayCommand = useRef(start.active === ARRAY ? start.command : null);
 
@@ -60,12 +62,12 @@ function Shell() {
   const select = (id) => {
     setActiveDS(id);
     if (id !== ARRAY && !isAvailable(id)) {
-      setAddress('/', `?ds=${id}`);
+      setAddress('/', withPreset(`?ds=${id}`));
       return;
     }
     const cmd = arrayCommand.current;
     const tooLong = cmd && linkFor(window.location.origin, cmd).length > MAX_LINK_CHARS;
-    setAddress(window.location.pathname, cmd && !tooLong ? `?c=${encodeCommand(cmd)}` : '');
+    setAddress(window.location.pathname, withPreset(cmd && !tooLong ? `?c=${encodeCommand(cmd)}` : ''));
   };
 
   const current = STRUCTURES.find((s) => s.id === activeDS);
@@ -100,7 +102,9 @@ function Shell() {
         <main className="main-content">
           <div hidden={activeDS !== ARRAY}>
             <div className="ds-container">
+              <PresetSwitcher value={preset} onChange={setPreset} />
               <Explorer
+                preset={preset}
                 initialCommand={shared || STARTER_COMMAND}
                 autoplay={Boolean(shared)}
                 startAtEnd={!shared}
