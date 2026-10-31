@@ -14,6 +14,7 @@ from api.routes import (
     binary_tree_routes,
     bst_routes,
     heap_routes,
+    graph_routes,
     trie_routes,
 )
 
@@ -31,6 +32,7 @@ for module in (
     binary_tree_routes,
     bst_routes,
     heap_routes,
+    graph_routes,
     trie_routes,
 ):
     ds_api.register_blueprint(module.bp)
