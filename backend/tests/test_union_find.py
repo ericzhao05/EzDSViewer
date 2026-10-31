@@ -29,6 +29,23 @@ class UnionFindTests(unittest.TestCase):
         self.assertEqual(u.rank[0], 1)
         self.assertEqual(u.parent[2], 0)
 
+    def test_union_by_rank_keeps_higher_rank_as_root(self):
+        u = UnionFind(4)
+        u.union(0, 1)
+        u.union(2, 0)
+        self.assertEqual(u.parent, [0, 0, 0, 3])
+        self.assertEqual(u.rank[0], 1)
+        self.assertEqual(u.find(2), 0)
+
+    def test_connected_follows_roots_when_parents_differ(self):
+        u = UnionFind(5)
+        u.union(0, 1)
+        u.union(2, 3)
+        u.union(1, 3)
+        self.assertEqual(u.parent, [0, 0, 0, 2, 4])
+        self.assertNotEqual(u.parent[0], u.parent[3])
+        self.assertTrue(u.connected(0, 3))
+
     def test_path_compression(self):
         u = UnionFind(4)
         u.parent = [0, 0, 1, 2]
@@ -69,6 +86,22 @@ class UnionFindRouteTests(unittest.TestCase):
         self.assertTrue(self.post("connected", {"a": 0, "b": 1})[1]["result"]["connected"])
         self.assertFalse(self.post("connected", {"a": 0, "b": 5})[1]["result"]["connected"])
 
+    def test_rank_link_and_root_connected(self):
+        self.post("init", {"size": 4})
+        self.post("union", {"a": 0, "b": 1})
+        code, j = self.post("union", {"a": 2, "b": 0})
+        self.assertEqual(code, 200)
+        self.assertEqual(j["state"]["parent"], [0, 0, 0, 3])
+        self.assertEqual(j["state"]["rank"][0], 1)
+        self.post("init", {"size": 5})
+        self.post("union", {"a": 0, "b": 1})
+        self.post("union", {"a": 2, "b": 3})
+        code, j = self.post("union", {"a": 1, "b": 3})
+        self.assertTrue(j["result"]["merged"])
+        code, j = self.post("connected", {"a": 0, "b": 3})
+        self.assertEqual(code, 200)
+        self.assertTrue(j["result"]["connected"])
+
     def test_init_and_reset(self):
         code, j = self.post("init", {"size": 3})
         self.assertEqual(j["state"]["parent"], [0, 1, 2])
@@ -92,12 +125,15 @@ class UnionFindRouteTests(unittest.TestCase):
             ("init", {"size": "3"}),
             ("init", {"size": 2.5}),
         ]
+        before = self.c.get("/api/union-find").get_json()["state"]
         for op, data in bad:
             with self.subTest(op=op, data=data):
                 code, j = self.post(op, data)
                 self.assertEqual(code, 400)
                 self.assertFalse(j["success"])
-                self.assertIn("parent", j["state"])
+                self.assertEqual(j["state"]["parent"], before["parent"])
+                self.assertEqual(j["state"]["rank"], before["rank"])
+                self.assertEqual(j["state"]["components"], before["components"])
 
     def test_malformed_body(self):
         resp = self.c.post("/api/union-find/union", data="{oops", content_type="application/json")

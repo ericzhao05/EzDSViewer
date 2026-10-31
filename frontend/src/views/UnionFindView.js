@@ -34,7 +34,7 @@ function describe(op, result) {
     case 'union':
       return result.merged ? 'Merged the two groups.' : 'Already connected: nothing merged.';
     case 'find':
-      return `Root: ${result.root} (path: ${result.path.join(' → ')})`;
+      return `Root: ${result.root} (path before halving: ${result.path.join(' → ')})`;
     case 'connected':
       return result.connected ? 'Connected: same root.' : 'Not connected: different roots.';
     default:
@@ -64,6 +64,7 @@ export default function UnionFindView() {
     const a = parseNum(aText);
     const b = parseNum(bText);
     if (a === null || b === null) {
+      setMessage('');
       setLocalError('Enter whole numbers for both elements');
       return;
     }
@@ -73,6 +74,7 @@ export default function UnionFindView() {
   const single = () => {
     const x = parseNum(aText);
     if (x === null) {
+      setMessage('');
       setLocalError('Enter a whole number for element A');
       return;
     }
@@ -82,6 +84,7 @@ export default function UnionFindView() {
   const onInit = () => {
     const size = parseNum(sizeText);
     if (size === null) {
+      setMessage('');
       setLocalError('Size must be a whole number');
       return;
     }

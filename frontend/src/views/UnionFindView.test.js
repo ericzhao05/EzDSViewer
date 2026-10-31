@@ -59,6 +59,25 @@ test('shows backend errors', async () => {
   expect(await screen.findByRole('alert')).toHaveTextContent(/must be an element/);
 });
 
+test('local validation clears the previous success line', async () => {
+  global.fetch
+    .mockImplementationOnce(() => reply({ success: true, state, result: null }))
+    .mockImplementationOnce(() =>
+      reply({ success: true, state: { ...state, parent: [0, 0, 0, 2], components: 1 }, result: { merged: true } })
+    );
+  render(<UnionFindView />);
+  await screen.findByTestId('node-0');
+  await userEvent.type(screen.getByLabelText('Element A'), '1');
+  await userEvent.type(screen.getByLabelText('Element B'), '3');
+  await userEvent.click(screen.getByRole('button', { name: 'Union' }));
+  expect(await screen.findByText('Merged the two groups.')).toBeInTheDocument();
+  await userEvent.clear(screen.getByLabelText('Element A'));
+  await userEvent.clear(screen.getByLabelText('Element B'));
+  await userEvent.click(screen.getByRole('button', { name: 'Union' }));
+  expect(screen.getByRole('alert')).toHaveTextContent(/whole numbers/);
+  expect(screen.queryByText('Merged the two groups.')).not.toBeInTheDocument();
+});
+
 test('rejects non-numeric input locally', async () => {
   global.fetch.mockImplementation(() => reply({ success: true, state, result: null }));
   render(<UnionFindView />);
