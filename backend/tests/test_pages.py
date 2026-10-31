@@ -41,6 +41,8 @@ class PagesTest(unittest.TestCase):
         self.assertLess(html.index("og:title"), html.index("</head>"))
         csp = res.headers["Content-Security-Policy"]
         self.assertIn("default-src 'self'; script-src 'self'", csp)
+        self.assertIn("style-src 'self' 'unsafe-inline' https://fonts.googleapis.com", csp)
+        self.assertIn("font-src https://fonts.gstatic.com", csp)
         self.assertTrue(csp.endswith("; frame-ancestors 'none'"))
 
     def test_singular_operation(self):

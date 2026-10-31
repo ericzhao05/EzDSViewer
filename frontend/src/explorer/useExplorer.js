@@ -121,6 +121,7 @@ export default function useExplorer(initialCommand, onEdit) {
     command,
     // The command behind the board on screen; differs from `command` after a failed load.
     shownCommand: response.command || '',
+    shownCommandValid: response.success === true,
     structure: response.structure,
     calls: response.calls,
     frames: response.frames,
