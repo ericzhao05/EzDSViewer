@@ -229,12 +229,41 @@ function SinglyPanel({ onBusy }) {
   );
 }
 
-function describeDoubly(op, r) {
+const pointerText = (id) => (id === null ? 'null' : `#${id}`);
+
+// The response names the removed node and gives the list after the removal, but not the node's
+// old neighbours. Those come from the drawing, which another client may have outdated, so each
+// claim is checked against the list after the removal. If none holds, only the removal is stated.
+function describeRemoval(op, r, nodesBefore, after) {
+  const gone = `Removed value ${r.removed} (node #${r.node})`;
+  if (after.length === 0) {
+    return `${gone}: it was the only node, so the list is now empty and head and tail are null.`;
+  }
+  const inList = (id) => after.nodes.find((n) => n.id === id);
+  const old = nodesBefore.find((n) => n.id === r.node);
+  const head = inList(after.head);
+  const tail = inList(after.tail);
+
+  if (head && (op === 'pop-front' || (old && old.prev === null && old.next === head.id))) {
+    return `${gone}: it was the head, so node #${head.id} is now the head and its prev is ${pointerText(head.prev)}.`;
+  }
+  if (tail && (op === 'pop-back' || (old && old.next === null && old.prev === tail.id))) {
+    return `${gone}: it was the tail, so node #${tail.id} is now the tail and its next is ${pointerText(tail.next)}.`;
+  }
+  const before = old && inList(old.prev);
+  const next = old && inList(old.next);
+  if (before && next && before.next === next.id && next.prev === before.id) {
+    return `${gone}: node #${before.id}'s next now points to node #${next.id}, and node #${next.id}'s prev now points back to node #${before.id}.`;
+  }
+  return `${gone}.`;
+}
+
+function describeDoubly(op, r, nodesBefore, after) {
   switch (op) {
     case 'pop-front':
     case 'pop-back':
     case 'delete':
-      return `Removed value ${r.removed} (node #${r.node}): its neighbours now point at each other.`;
+      return describeRemoval(op, r, nodesBefore, after);
     case 'insert-after':
       return `Inserted node #${r.node} after node #${r.after}: only the neighbouring pointers changed.`;
     case 'find':
@@ -247,8 +276,6 @@ function describeDoubly(op, r) {
       return '';
   }
 }
-
-const pointerText = (id) => (id === null ? 'null' : `#${id}`);
 
 function DoublyPanel({ onBusy }) {
   const { state, error, loading, run } = useDsState('linked-list/doubly');
@@ -275,7 +302,7 @@ function DoublyPanel({ onBusy }) {
       return null;
     }
     const r = data.result;
-    setMessage(r ? describeDoubly(op, r) : '');
+    setMessage(r ? describeDoubly(op, r, nodes, data.state) : '');
     setHighlight(r && r.node !== undefined ? r.node : null);
     return data;
   };

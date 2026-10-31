@@ -169,6 +169,35 @@ test('doubly draws prev and next pointers, head and tail', async () => {
   expect(screen.queryByTestId('dlink-3')).not.toBeInTheDocument();
 });
 
+test('doubly draws the pointers it is given, not the array order', async () => {
+  // The chain is 1 -> 2 -> 3, listed as 3, 1, 2. A real response lists nodes in chain order;
+  // here the order disagrees on purpose, so a drawing taken from position cannot pass.
+  const shuffled = {
+    values: [30, 10, 20],
+    length: 3,
+    head: 1,
+    tail: 3,
+    nodes: [dnode(3, 30, 2, null), dnode(1, 10, null, 2), dnode(2, 20, 1, 3)],
+  };
+  serve(list, shuffled);
+  render(<LinkedListView />);
+  await toDoubly();
+  expect(screen.getByTestId('dnode-3-prev')).toHaveTextContent('prev #2');
+  expect(screen.getByTestId('dnode-3-next')).toHaveTextContent('next null');
+  expect(screen.getByTestId('dnode-1-prev')).toHaveTextContent('prev null');
+  expect(screen.getByTestId('dnode-1-next')).toHaveTextContent('next #2');
+  expect(screen.getByTestId('dnode-2-prev')).toHaveTextContent('prev #1');
+  expect(screen.getByTestId('dnode-2-next')).toHaveTextContent('next #3');
+  expect(screen.getByTestId('dnode-1')).toHaveTextContent('head');
+  expect(screen.getByTestId('dnode-3')).not.toHaveTextContent('head');
+  expect(screen.getByTestId('dnode-3')).toHaveTextContent('tail');
+  expect(screen.getByTestId('dnode-2')).not.toHaveTextContent('tail');
+  expect(screen.getByText(/^Head:/)).toHaveTextContent('Head: #1');
+  expect(screen.getByText(/^Tail:/)).toHaveTextContent('Tail: #3');
+  expect(screen.queryByTestId('dlink-3')).not.toBeInTheDocument();
+  expect(screen.getByTestId('dlink-2')).toBeInTheDocument();
+});
+
 test('doubly shows the figures from ds.md', async () => {
   serve(list, threeNodes);
   render(<LinkedListView />);
@@ -202,6 +231,197 @@ test('doubly push sends the value and redraws', async () => {
   expect(url).toMatch(/linked-list\/doubly\/push-back$/);
   expect(JSON.parse(opts.body)).toEqual({ value: 7 });
   expect(screen.getByTestId('dnode-6')).toHaveClass('linked-list-highlight');
+});
+
+test('doubly push front posts push-front and draws the new head', async () => {
+  const pushed = dstate([dnode(6, 7, null, 1), dnode(1, 10, 6, 2), dnode(2, 20, 1, 3), dnode(3, 30, 2, null)]);
+  serve(list, threeNodes, { 'push-front': { success: true, state: pushed, result: { node: 6 } } });
+  render(<LinkedListView />);
+  await toDoubly();
+  userEvent.type(screen.getByLabelText('Value'), '7');
+  userEvent.click(screen.getByRole('button', { name: 'Push front' }));
+  expect(await screen.findByTestId('dnode-6')).toHaveTextContent('head');
+  expect(posted()).toHaveLength(1);
+  const [url, opts] = posted()[0];
+  expect(url).toMatch(/linked-list\/doubly\/push-front$/);
+  expect(JSON.parse(opts.body)).toEqual({ value: 7 });
+  expect(screen.getByTestId('dnode-6')).toHaveClass('linked-list-highlight');
+  expect(screen.getByTestId('dnode-1-prev')).toHaveTextContent('prev #6');
+});
+
+// The whole message is compared, so a false claim added after a correct prefix still fails.
+const expectRemoval = async (text) => {
+  await waitFor(() => expect(screen.getByRole('status').textContent).toBe(text));
+};
+const onlyNode = dstate([dnode(4, 40, null, null)]);
+const removal = (state, removed, node) => ({ success: true, state, result: { removed, node } });
+
+test.each([
+  [
+    'pop front, head with a following node',
+    'Pop front',
+    'pop-front',
+    threeNodes,
+    dstate([dnode(2, 20, null, 3), dnode(3, 30, 2, null)]),
+    [10, 1],
+    'Removed value 10 (node #1): it was the head, so node #2 is now the head and its prev is null.',
+  ],
+  [
+    'pop back, tail with a preceding node',
+    'Pop back',
+    'pop-back',
+    threeNodes,
+    dstate([dnode(1, 10, null, 2), dnode(2, 20, 1, null)]),
+    [30, 3],
+    'Removed value 30 (node #3): it was the tail, so node #2 is now the tail and its next is null.',
+  ],
+  [
+    'pop front, only node',
+    'Pop front',
+    'pop-front',
+    onlyNode,
+    emptyDoubly,
+    [40, 4],
+    'Removed value 40 (node #4): it was the only node, so the list is now empty and head and tail are null.',
+  ],
+  [
+    'pop back, only node',
+    'Pop back',
+    'pop-back',
+    onlyNode,
+    emptyDoubly,
+    [40, 4],
+    'Removed value 40 (node #4): it was the only node, so the list is now empty and head and tail are null.',
+  ],
+])('doubly removal message: %s', async (_name, button, op, before, after, [removed, node], text) => {
+  serve(list, before, { [op]: removal(after, removed, node) });
+  render(<LinkedListView />);
+  await screen.findByTestId('node-0');
+  userEvent.click(screen.getByRole('button', { name: 'Doubly' }));
+  await screen.findByTestId(`dnode-${before.head}`);
+  userEvent.click(screen.getByRole('button', { name: button }));
+  await expectRemoval(text);
+  expect(posted()[0][0]).toMatch(new RegExp(`/doubly/${op}$`));
+});
+
+test.each([
+  [
+    'middle node',
+    threeNodes,
+    twoNodes,
+    [20, 2],
+    "Removed value 20 (node #2): node #1's next now points to node #3, and node #3's prev now points back to node #1.",
+  ],
+  [
+    'head with a following node',
+    threeNodes,
+    dstate([dnode(2, 20, null, 3), dnode(3, 30, 2, null)]),
+    [10, 1],
+    'Removed value 10 (node #1): it was the head, so node #2 is now the head and its prev is null.',
+  ],
+  [
+    'tail with a preceding node',
+    threeNodes,
+    dstate([dnode(1, 10, null, 2), dnode(2, 20, 1, null)]),
+    [30, 3],
+    'Removed value 30 (node #3): it was the tail, so node #2 is now the tail and its next is null.',
+  ],
+  [
+    'only node',
+    onlyNode,
+    emptyDoubly,
+    [40, 4],
+    'Removed value 40 (node #4): it was the only node, so the list is now empty and head and tail are null.',
+  ],
+])('doubly delete message: %s', async (_name, before, after, [removed, node], text) => {
+  serve(list, before, { delete: removal(after, removed, node) });
+  render(<LinkedListView />);
+  await screen.findByTestId('node-0');
+  userEvent.click(screen.getByRole('button', { name: 'Doubly' }));
+  await screen.findByTestId(`dnode-${node}`);
+  userEvent.click(screen.getByRole('button', { name: `Select node #${node}, value ${removed}` }));
+  userEvent.click(screen.getByRole('button', { name: 'Delete selected' }));
+  await expectRemoval(text);
+  expect(JSON.parse(posted()[0][1].body)).toEqual({ node });
+});
+
+test('pop names the new head from the response, not the drawing', async () => {
+  // Another client removed #2 first, so the drawn next of #1 is out of date.
+  serve(list, threeNodes, { 'pop-front': removal(dstate([dnode(3, 30, null, null)]), 10, 1) });
+  render(<LinkedListView />);
+  await toDoubly();
+  userEvent.click(screen.getByRole('button', { name: 'Pop front' }));
+  await expectRemoval('Removed value 10 (node #1): it was the head, so node #3 is now the head and its prev is null.');
+});
+
+test('pop back names the new tail from the response, not the drawing', async () => {
+  // Another client removed #2 first, so the drawn prev of #3 is out of date.
+  serve(list, threeNodes, { 'pop-back': removal(dstate([dnode(1, 10, null, null)]), 30, 3) });
+  render(<LinkedListView />);
+  await toDoubly();
+  userEvent.click(screen.getByRole('button', { name: 'Pop back' }));
+  await expectRemoval('Removed value 30 (node #3): it was the tail, so node #1 is now the tail and its next is null.');
+});
+
+test.each([
+  [
+    'a drawn head that is no longer the head',
+    1,
+    10,
+    dstate([dnode(8, 80, null, 2), dnode(2, 20, 8, 3), dnode(3, 30, 2, null)]),
+  ],
+  [
+    'a drawn tail that is no longer the tail',
+    3,
+    30,
+    dstate([dnode(1, 10, null, 2), dnode(2, 20, 1, 8), dnode(8, 80, 2, null)]),
+  ],
+  ['a drawn middle whose neighbour has gone', 2, 20, dstate([dnode(3, 30, null, null)])],
+])('delete claims no pointer change the response does not show: %s', async (_name, node, value, after) => {
+  serve(list, threeNodes, { delete: removal(after, value, node) });
+  render(<LinkedListView />);
+  await toDoubly();
+  userEvent.click(screen.getByRole('button', { name: `Select node #${node}, value ${value}` }));
+  userEvent.click(screen.getByRole('button', { name: 'Delete selected' }));
+  await expectRemoval(`Removed value ${value} (node #${node}).`);
+});
+
+const findThree = { success: true, state: threeNodes, result: { found: true, node: 3, index: 2 } };
+const findAndHighlight = async () => {
+  userEvent.type(screen.getByLabelText('Value'), '30');
+  userEvent.click(screen.getByRole('button', { name: 'Find value' }));
+  await waitFor(() => expect(screen.getByTestId('dnode-3')).toHaveClass('linked-list-highlight'));
+};
+
+test('a failed operation clears the highlight and the result message', async () => {
+  serve(list, threeNodes, {
+    find: findThree,
+    'pop-back': { success: false, error: 'List is empty', state: threeNodes },
+  });
+  render(<LinkedListView />);
+  await toDoubly();
+  await findAndHighlight();
+  expect(screen.getByRole('status')).toHaveTextContent('Found at index 2');
+  userEvent.click(screen.getByRole('button', { name: 'Pop back' }));
+  expect(await screen.findByRole('alert')).toHaveTextContent('List is empty');
+  expect(screen.getByTestId('dnode-3')).not.toHaveClass('linked-list-highlight');
+  expect(screen.queryByRole('status')).not.toBeInTheDocument();
+});
+
+test.each([
+  ['traverse forward', 'Traverse forward', 'traverse-forward', { direction: 'forward', values: [10, 20, 30], nodes: [1, 2, 3] }, 'Forward from head'],
+  ['traverse backward', 'Traverse backward', 'traverse-backward', { direction: 'backward', values: [30, 20, 10], nodes: [3, 2, 1] }, 'Backward from tail'],
+  ['reset', 'Reset', 'reset', null, 'List reset.'],
+  ['find that misses', 'Find value', 'find', { found: false, node: null, index: null }, 'Value not found'],
+])('an operation that names no node clears the highlight: %s', async (_name, button, op, result, text) => {
+  serve(list, threeNodes, { find: findThree });
+  render(<LinkedListView />);
+  await toDoubly();
+  await findAndHighlight();
+  serve(list, threeNodes, { [op]: { success: true, state: threeNodes, result } });
+  userEvent.click(screen.getByRole('button', { name: button }));
+  await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent(text));
+  expect(screen.getByTestId('dnode-3')).not.toHaveClass('linked-list-highlight');
 });
 
 test('doubly pop reports the removed value', async () => {
