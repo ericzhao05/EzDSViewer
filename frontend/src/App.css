@@ -323,3 +323,72 @@ body {
     opacity: 0;
   }
 }
+
+/* App shell: sidebar of structures beside the active view */
+.app-layout {
+  display: flex;
+  flex: 1;
+  align-items: stretch;
+}
+
+.ds-sidebar {
+  flex: 0 0 200px;
+  padding: 12px;
+  text-align: left;
+  background-color: var(--card-bg);
+  box-shadow: 1px 0 3px var(--card-shadow);
+}
+
+.ds-sidebar-group {
+  margin: 12px 0 4px;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--debug-text);
+}
+
+.ds-sidebar-item {
+  display: block;
+  width: 100%;
+  padding: 6px 8px;
+  border: none;
+  border-radius: 4px;
+  background: none;
+  color: var(--text-color);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.ds-sidebar-item:hover {
+  background-color: var(--main-bg);
+}
+
+.ds-sidebar-item.active {
+  background-color: var(--stack-item-bg);
+  color: var(--stack-item-text);
+}
+
+.theme-btn {
+  border: none;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.app-layout .main-content {
+  flex: 1;
+  min-width: 0;
+}
+
+@media (max-width: 700px) {
+  .app-layout {
+    flex-direction: column;
+  }
+
+  .ds-sidebar {
+    flex-basis: auto;
+    box-shadow: none;
+  }
+}
