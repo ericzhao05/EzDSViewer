@@ -1,0 +1,143 @@
+.b-tree-intro {
+  margin: 0.25rem 0;
+  max-width: 100%;
+}
+
+.b-tree-section {
+  margin: 1.5rem 0;
+}
+
+.b-tree-section h3 {
+  margin: 0.5rem 0;
+}
+
+.b-tree-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 0.25rem 0;
+}
+
+.b-tree-table {
+  border-collapse: collapse;
+  margin: 0.5rem auto;
+}
+
+.b-tree-table th,
+.b-tree-table td {
+  border: 1px solid var(--input-border);
+  padding: 0.3rem 0.6rem;
+  text-align: left;
+}
+
+.b-tree-controls {
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.b-tree-controls input {
+  min-width: 6rem;
+}
+
+.b-tree-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.b-tree-select {
+  padding: 0.5rem;
+  border: 1px solid var(--input-border);
+  border-radius: 4px;
+  background-color: var(--card-bg);
+  color: var(--text-color);
+}
+
+.b-tree-result {
+  margin: 0.75rem 0;
+  font-weight: bold;
+}
+
+.b-tree-events {
+  margin: 0.25rem 0 0;
+  padding-left: 1.5rem;
+  font-weight: normal;
+}
+
+.b-tree-meta {
+  margin: 0.75rem 0 0.25rem;
+  font-size: 0.9rem;
+}
+
+.b-tree-chain {
+  margin: 0.25rem 0;
+  white-space: nowrap;
+  font-size: 0.9rem;
+}
+
+.b-tree-svg {
+  display: block;
+  margin: 0 auto;
+}
+
+.b-tree-edge {
+  stroke: var(--input-border);
+  stroke-width: 2;
+}
+
+.b-tree-link {
+  stroke: var(--text-color);
+  stroke-width: 1.5;
+}
+
+.b-tree-link-hl {
+  stroke: #e67e22;
+  stroke-width: 3;
+}
+
+.b-tree-arrowhead {
+  fill: var(--text-color);
+}
+
+.b-tree-cell {
+  fill: var(--stack-item-bg);
+  stroke: var(--input-border);
+  stroke-width: 1.5;
+}
+
+.b-tree-cell-router {
+  fill: var(--card-bg);
+}
+
+.b-tree-cell-value {
+  fill: var(--card-bg);
+}
+
+.b-tree-cell-hit {
+  fill: #f5b041;
+}
+
+.b-tree-node-hl .b-tree-cell {
+  stroke: #e67e22;
+  stroke-width: 3;
+}
+
+.b-tree-text,
+.b-tree-value {
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+
+.b-tree-text {
+  fill: var(--stack-item-text);
+  font-weight: bold;
+  font-size: 13px;
+}
+
+.b-tree-text-router,
+.b-tree-value {
+  fill: var(--text-color);
+}
+
+.b-tree-value {
+  font-size: 12px;
+}
