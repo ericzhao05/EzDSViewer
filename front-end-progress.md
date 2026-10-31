@@ -67,6 +67,12 @@ Nothing is broken; these are cosmetic.
 - 13 of 24 pages per theme were checked at 390px by automated audit only.
 - Native select popups open, touch input, and browsers other than Chromium.
 
+## After merging the player pages from main
+
+PR #2 added /v and /embed, built on the removed `App.css` and dark mode. PlayerPage now uses the themes: /v follows the saved theme; /embed uses Chalkboard with `theme=dark` and Bubblegum otherwise. Their security policy blocks Google Fonts, so those pages show fallback fonts.
+
+288 frontend and 600 backend tests pass; the build compiles. Player pages checked in Chromium through Flask.
+
 ## After rebasing onto main
 
 218 tests pass and the production build compiles. The doubly list was checked in all 3 themes at 1440px by eye, and for overflow at 1440px and 390px. The full 72-combination audit was not re-run after the rebase.

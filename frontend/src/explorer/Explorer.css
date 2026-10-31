@@ -1,0 +1,107 @@
+.explorer {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 0 12px;
+  color: var(--text-color);
+}
+
+.explorer .array-controls label {
+  min-width: 0;
+}
+
+.explorer .array-controls input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.explorer-board {
+  min-width: 0;
+  max-width: 100%;
+  margin: 0.5rem 0;
+}
+
+.explorer-command {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.explorer-command label {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 12rem;
+  min-width: 0;
+  font-size: 0.85rem;
+}
+
+.explorer-command input {
+  min-height: 44px;
+  font-family: var(--f-data);
+}
+
+.explorer .control-btn,
+.explorer .array-controls input {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+.explorer .explorer-speed-on {
+  background-color: var(--stack-item-bg);
+  color: var(--stack-item-text);
+}
+
+.explorer-steps {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  margin: 0.5rem 0;
+  min-width: 0;
+}
+
+.explorer-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.explorer-slider {
+  flex: 1 1 8rem;
+  min-width: 0;
+  min-height: 44px;
+}
+
+.explorer-count {
+  white-space: nowrap;
+}
+
+.explorer-note {
+  min-height: 1.5em;
+  padding: 0.5rem 0.75rem;
+  border-left: 4px solid var(--stack-item-bg);
+  background-color: var(--debug-bg);
+  overflow-wrap: anywhere;
+}
+
+.explorer-inline-error {
+  color: var(--error-text);
+}
+
+.explorer-open {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--text-color);
+}
+
+.explorer-copy {
+  margin-top: 1rem;
+}
+
+.explorer .error-message {
+  overflow-wrap: anywhere;
+}
