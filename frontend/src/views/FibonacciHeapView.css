@@ -1,0 +1,188 @@
+.fibonacci-heap {
+  color: var(--text-color);
+  max-width: 100%;
+}
+
+.fibonacci-heap-intro,
+.fibonacci-heap-complexity,
+.fibonacci-heap-note,
+.fibonacci-heap-stats {
+  margin: 0.35rem 0;
+  max-width: 100%;
+  line-height: 1.45;
+}
+
+.fibonacci-heap-section {
+  margin-top: 1.25rem;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.fibonacci-heap-section h3 {
+  margin: 0.25rem 0;
+}
+
+.ds-controls.fibonacci-heap-controls {
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: flex-end;
+  max-width: 100%;
+}
+
+.fibonacci-heap .control-btn {
+  background: var(--stack-item-bg);
+  color: var(--stack-item-text);
+  border: 1px solid var(--input-border);
+}
+
+.fibonacci-heap-field {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+  flex: 1 1 9rem;
+  min-width: 0;
+  max-width: 16rem;
+  font-size: 0.9rem;
+}
+
+.fibonacci-heap-field input,
+.fibonacci-heap-field select {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 0.5rem;
+  border: 1px solid var(--input-border);
+  border-radius: 4px;
+  background: var(--card-bg);
+  color: var(--text-color);
+}
+
+.fibonacci-heap-result {
+  margin: 0.75rem 0 0.25rem;
+  font-weight: 700;
+  color: var(--text-color);
+}
+
+.fibonacci-heap-steps {
+  margin: 0.25rem 0 0.75rem;
+  color: var(--text-color);
+}
+
+.fibonacci-heap-steps p {
+  margin: 0.15rem 0;
+}
+
+.fibonacci-heap-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  border: 1px solid var(--input-border);
+  border-radius: 8px;
+  background: var(--card-bg);
+  padding: 0.5rem 0.25rem 0.75rem;
+}
+
+.fibonacci-heap-canvas {
+  position: relative;
+  margin: 0 auto;
+}
+
+.fibonacci-heap-svg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  overflow: visible;
+}
+
+.fibonacci-heap-edge,
+.fibonacci-heap-root-link,
+.fibonacci-heap-root-wrap {
+  stroke: var(--input-border);
+  stroke-width: 2;
+  fill: none;
+}
+
+.fibonacci-heap-root-wrap {
+  stroke-dasharray: 5 4;
+}
+
+.fibonacci-heap-arrow {
+  fill: var(--input-border);
+}
+
+.fibonacci-heap-node {
+  position: absolute;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  border-radius: 8px;
+  border: 2px solid var(--input-border);
+  background: var(--stack-item-bg);
+  color: var(--stack-item-text);
+  font-weight: 700;
+  line-height: 1.05;
+  cursor: pointer;
+}
+
+.fibonacci-heap-node:disabled {
+  cursor: default;
+  opacity: 1;
+}
+
+.fibonacci-heap-node-min {
+  box-shadow: 0 0 0 3px var(--text-color);
+}
+
+.fibonacci-heap-node-mark {
+  background: var(--card-bg);
+  color: var(--text-color);
+  border-style: dashed;
+  border-width: 3px;
+}
+
+.fibonacci-heap-node-selected {
+  outline: 3px solid var(--text-color);
+  outline-offset: 2px;
+}
+
+.fibonacci-heap-node:focus-visible {
+  outline: 3px solid var(--text-color);
+  outline-offset: 2px;
+}
+
+.fibonacci-heap-key {
+  font-size: 0.95rem;
+}
+
+.fibonacci-heap-deg {
+  font-size: 0.62rem;
+  font-weight: 600;
+  opacity: 0.8;
+}
+
+.fibonacci-heap-min {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--text-color);
+  pointer-events: none;
+}
+
+.fibonacci-heap-min::after {
+  content: '';
+  display: block;
+  margin: 2px auto 0;
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 5px solid var(--text-color);
+}
