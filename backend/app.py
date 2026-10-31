@@ -9,13 +9,15 @@ from flask_cors import CORS
 
 # Import your routes from the api folder
 from api.ds_routes import ds_api  # a Blueprint (like a route module)
+from api.pages import bp as pages_bp
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder=None)
 # Make sure the CORS configuration is correct
 CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
 # Register the routes with a prefix
 app.register_blueprint(ds_api, url_prefix="/api")
+app.register_blueprint(pages_bp)
 
 # Add a route that prints all registered routes for debugging
 @app.route('/routes')
