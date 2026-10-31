@@ -1,0 +1,99 @@
+.stack-view-intro,
+.stack-view-complexity {
+  max-width: 600px;
+  margin: 0.5rem auto;
+  text-align: left;
+}
+
+.stack-view-stats {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin: 1rem 0 0;
+}
+
+.stack-view-board {
+  min-height: 240px;
+  max-height: 420px;
+  overflow: auto;
+  margin: 1rem 0;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  border: 1px solid var(--input-border);
+  border-radius: 8px;
+  background-color: var(--main-bg);
+}
+
+.stack-view-items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column-reverse;
+  width: 100%;
+  max-width: 400px;
+}
+
+.stack-view-item {
+  position: relative;
+  margin: 0.25rem 0;
+  padding: 0.6rem 0.75rem;
+  border-radius: 4px;
+  font-weight: bold;
+  background-color: var(--stack-item-bg);
+  color: var(--stack-item-text);
+  box-shadow: 0 2px 5px var(--card-shadow);
+  overflow-wrap: anywhere;
+}
+
+.stack-view-item.stack-view-top::after {
+  content: "\2190 top";
+  position: absolute;
+  right: 0.75rem;
+  font-weight: normal;
+  font-size: 0.8rem;
+}
+
+.stack-view-item.stack-view-new {
+  animation: stack-view-push 0.6s ease forwards;
+}
+
+.stack-view-item.stack-view-removing {
+  animation: stack-view-pop 0.4s ease forwards;
+}
+
+.stack-view-result {
+  margin: 0.5rem 0;
+  font-weight: bold;
+}
+
+.stack-view-algos {
+  margin-top: 1.5rem;
+  text-align: left;
+}
+
+.stack-view-algo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.5rem 0;
+}
+
+.stack-view-algo input {
+  flex: 1 1 200px;
+  min-width: 0;
+}
+
+@keyframes stack-view-push {
+  0% { transform: translateY(-80px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes stack-view-pop {
+  0% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(-80px); opacity: 0; }
+}

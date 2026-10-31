@@ -1,263 +1,202 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import useDsState from '../hooks/useDsState';
+import './StackView.css';
 
-function StackView() {
-  const [stack, setStack] = useState([]);
-  const [inputValue, setInputValue] = useState('');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [animatingItemId, setAnimatingItemId] = useState(null);
-  const [removingItemId, setRemovingItemId] = useState(null);
-  
-  // Reference to keep track of whether we're animating
-  const isAnimating = useRef(false);
+const POP_MS = 400;
+const PUSH_MS = 600;
 
-  // Load initial stack state when component mounts
+const parseInts = (text) =>
+  text
+    .split(',')
+    .map((t) => t.trim())
+    .filter((t) => t !== '')
+    .map((t) => (/^-?\d+$/.test(t) ? Number(t) : NaN));
+
+function describe(op, result) {
+  switch (op) {
+    case 'push':
+      return `Pushed ${result}.`;
+    case 'pop':
+      return `Popped ${result}.`;
+    case 'peek':
+      return `Top of stack: ${result} (not removed).`;
+    case 'valid-parentheses':
+      return result ? 'Valid: every bracket is matched and the stack ends empty.' : 'Not valid.';
+    case 'min-stack':
+      return 'Min stack, (value, min so far): ' +
+        (result.length ? result.map((r) => `(${r.value}, ${r.min})`).join(' ') : 'no values');
+    case 'daily-temperatures':
+      return `Days until warmer: [${result.join(', ')}]`;
+    default:
+      return '';
+  }
+}
+
+export default function StackView() {
+  const { state, error, loading, run } = useDsState('stack');
+  const [input, setInput] = useState('');
+  const [parenText, setParenText] = useState('({[]})');
+  const [minText, setMinText] = useState('3, 1, 2');
+  const [tempText, setTempText] = useState('73, 74, 75, 71, 69, 72, 76, 73');
+  const [message, setMessage] = useState('');
+  const [localError, setLocalError] = useState('');
+  const [newIndex, setNewIndex] = useState(null);
+  const [removing, setRemoving] = useState(false);
+  const timers = useRef([]);
+
   useEffect(() => {
-    fetch('http://127.0.0.1:5000/api/stack')
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Failed to fetch stack data');
-        }
-        return response.json();
-      })
-      .then(data => {
-        setStack(data.stack);
-      })
-      .catch(error => {
-        console.error('Error fetching stack:', error);
-        setError('Could not load stack data. Make sure the backend is running.');
-      });
+    const list = timers.current;
+    return () => list.forEach(clearTimeout);
   }, []);
 
-  // Push to stack with animation
-  const handlePush = () => {
-    if (!inputValue.trim()) {
-      setError('Please enter a value to push');
+  const busy = loading || removing;
+  const loaded = state !== null;
+  const items = loaded ? state.items : [];
+
+  const exec = async (op, payload) => {
+    setLocalError('');
+    const data = await run(op, payload);
+    setMessage(data ? describe(op, data.result) : '');
+    return data;
+  };
+
+  const onPush = async () => {
+    if (input.trim() === '') {
+      setLocalError('Please enter a value to push');
       return;
     }
-    
-    if (isAnimating.current) {
-      return; // Don't allow new push while animating
+    const text = input.trim();
+    const value = /^-?\d+$/.test(text) && Math.abs(Number(text)) <= 1e9 ? Number(text) : input;
+    const data = await exec('push', { value });
+    if (data) {
+      setInput('');
+      setNewIndex(data.state.items.length - 1);
+      timers.current.push(setTimeout(() => setNewIndex(null), PUSH_MS));
     }
-    
-    setLoading(true);
-    setError('');
-    
-    // Generate a unique ID for the new item for animation tracking
-    const newItemId = Date.now().toString();
-    
-    // Set animating flag
-    isAnimating.current = true;
-    
-    fetch('http://127.0.0.1:5000/api/stack/push', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ value: inputValue }),
-    })
-      .then(response => {
-        if (!response.ok) {
-          return response.json().then(data => {
-            throw new Error(data.error || 'Failed to push to stack');
-          });
-        }
-        return response.json();
-      })
-      .then(data => {
-        // Instead of immediately updating the stack, we prepare for animation
-        const newStack = data.stack;
-        
-        // The new item is the last one in the stack
-        if (newStack.length > 0) {
-          setAnimatingItemId(newItemId);
-          
-          // Update the stack with our temporary array that includes animation data
-          const stackWithAnimationData = newStack.map((item, index) => {
-            // Mark the newly added item
-            if (index === newStack.length - 1) {
-              return { value: item, id: newItemId, isNew: true };
-            }
-            // Preserve existing IDs for other items or assign new ones
-            const existingItem = stack.length > index ? stack[index] : null;
-            return {
-              value: item,
-              id: existingItem && existingItem.id ? existingItem.id : `stack-item-${index}`,
-              isNew: false
-            };
-          });
-          
-          setStack(stackWithAnimationData);
-          setInputValue('');
-          
-          // Reset the animation state after animation completes
-          setTimeout(() => {
-            setAnimatingItemId(null);
-            isAnimating.current = false;
-          }, 1100); // A bit longer than the animation duration
-        }
-      })
-      .catch(error => {
-        console.error('Error pushing to stack:', error);
-        setError(error.message || 'Failed to push to stack');
-        isAnimating.current = false;
-      })
-      .finally(() => {
-        setLoading(false);
-      });
   };
 
-  // Pop from stack with animation
-  const handlePop = () => {
-    if (isAnimating.current || stack.length === 0) {
-      return; // Don't allow pop while animating or if stack is empty
-    }
-    
-    setLoading(true);
-    setError('');
-    
-    // Set animating flag
-    isAnimating.current = true;
-    
-    // Get the item we're about to pop (for animation)
-    const itemToPop = stack[stack.length - 1];
-    setRemovingItemId(itemToPop.id || 'popping-item');
-    
-    // Wait for animation to start before sending API request
-    setTimeout(() => {
-      fetch('http://127.0.0.1:5000/api/stack/pop', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({}),
-      })
-        .then(response => {
-          if (!response.ok) {
-            return response.json().then(data => {
-              throw new Error(data.error || 'Failed to pop from stack');
-            });
-          }
-          return response.json();
-        })
-        .then(data => {
-          // Allow animation to complete before updating state
-          setTimeout(() => {
-            // Update stack with IDs preserved
-            const newStack = data.stack.map((item, index) => {
-              const existingItem = stack.length > index ? stack[index] : null;
-              return {
-                value: item,
-                id: existingItem && existingItem.id ? existingItem.id : `stack-item-${index}`,
-                isNew: false
-              };
-            });
-            
-            setStack(newStack);
-            setRemovingItemId(null);
-            isAnimating.current = false;
-          }, 700); // Animation duration
-        })
-        .catch(error => {
-          console.error('Error popping from stack:', error);
-          setError(error.message || 'Failed to pop from stack');
-          setRemovingItemId(null);
-          isAnimating.current = false;
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    }, 50); // Small delay to ensure animation starts
+  const onPop = () => {
+    if (items.length === 0) return;
+    setLocalError('');
+    setRemoving(true);
+    timers.current.push(
+      setTimeout(async () => {
+        await exec('pop');
+        setRemoving(false);
+      }, POP_MS)
+    );
   };
 
-  // Add a new function to test the API connection
-  const testApiConnection = () => {
-    setError('');
-    setLoading(true);
-    
-    fetch('http://127.0.0.1:5000/api/data')
-      .then(response => response.json())
-      .then(data => {
-        alert('API connection successful! Response: ' + JSON.stringify(data));
-        setError('');
-      })
-      .catch(error => {
-        console.error('API test failed:', error);
-        setError('API connection failed. Check your browser console for details.');
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+  const onParens = () => exec('valid-parentheses', { text: parenText });
+  const onMin = () => {
+    const values = parseInts(minText);
+    if (values.some(Number.isNaN)) {
+      setLocalError('Values must be whole numbers separated by commas');
+      return;
+    }
+    exec('min-stack', { values });
   };
+  const onTemps = () => {
+    const temps = parseInts(tempText);
+    if (temps.some(Number.isNaN)) {
+      setLocalError('Temperatures must be whole numbers separated by commas');
+      return;
+    }
+    exec('daily-temperatures', { temps });
+  };
+
+  const shownError = localError || error;
 
   return (
     <div className="ds-container">
       <h2>Stack Visualization</h2>
-      
-      {error && (
-        <div className="error-message">
-          {error}
+      <p className="stack-view-intro">
+        Last in, first out. Push, pop, and peek are all O(1). It can be backed by an array or a
+        linked list. Function calls use one, which is why any recursion can be rewritten with an
+        explicit stack.
+      </p>
+      <p className="stack-view-complexity">
+        Push, pop, peek: O(1). Monotonic stack scans: O(n), since each element is pushed and popped
+        at most once.
+      </p>
+
+      {shownError && <div className="error-message" role="alert">{shownError}</div>}
+
+      {loaded && (
+        <div className="stack-view-stats">
+          <span>Size: <strong>{state.size}</strong></span>
+          <span>Capacity: <strong>{state.capacity}</strong></span>
         </div>
       )}
-      
-      <div className="stack-visualization">
-        {stack.length === 0 ? (
+
+      <div className="stack-view-board" data-testid="stack-board">
+        {!loaded && !shownError && <p className="empty-message">Loading...</p>}
+        {loaded && items.length === 0 && (
           <p className="empty-message">Stack is empty. Push some elements!</p>
-        ) : (
-          <div className="stack-items">
-            {stack.map((item, index) => (
-              <div 
-                key={item.id || `stack-item-${index}`}
-                className={`stack-item ${
-                  animatingItemId === item.id ? 'new-item' : ''
-                } ${
-                  removingItemId === item.id ? 'remove-item' : ''
-                }`}
-              >
-                {item.value}
-              </div>
-            ))}
-          </div>
+        )}
+        {items.length > 0 && (
+          <ul className="stack-view-items" aria-label="Stack items">
+            {items.map((item, i) => {
+              const isTop = i === items.length - 1;
+              const cls = [
+                'stack-view-item',
+                isTop ? 'stack-view-top' : '',
+                i === newIndex ? 'stack-view-new' : '',
+                isTop && removing ? 'stack-view-removing' : '',
+              ].filter(Boolean).join(' ');
+              return (
+                <li key={i} className={cls}>{String(item)}</li>
+              );
+            })}
+          </ul>
         )}
       </div>
-      
+
+      {message && <div className="stack-view-result" role="status">{message}</div>}
+
       <div className="ds-controls">
         <input
           type="text"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
+          aria-label="Value"
           placeholder="Enter value to push"
-          onKeyDown={(e) => e.key === 'Enter' && !isAnimating.current && handlePush()}
-          disabled={loading || isAnimating.current}
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && !busy && onPush()}
+          disabled={busy}
         />
-        <button 
-          className="control-btn push-btn" 
-          onClick={handlePush}
-          disabled={loading || isAnimating.current}
+        <button className="control-btn" onClick={onPush} disabled={busy}>Push</button>
+        <button className="control-btn" onClick={onPop} disabled={busy || items.length === 0}>Pop</button>
+        <button className="control-btn" onClick={() => exec('peek')} disabled={busy || items.length === 0}>Peek</button>
+        <button
+          className="control-btn"
+          onClick={async () => {
+            setLocalError('');
+            const d = await run('reset');
+            setMessage(d ? 'Stack reset.' : '');
+          }}
+          disabled={busy}
         >
-          {loading && !isAnimating.current ? 'Pushing...' : 'Push'}
-        </button>
-        <button 
-          className="control-btn pop-btn" 
-          onClick={handlePop}
-          disabled={loading || isAnimating.current || stack.length === 0}
-        >
-          {loading && !isAnimating.current ? 'Popping...' : 'Pop'}
+          Reset
         </button>
       </div>
-      
-      <div className="debug-info">
-        <p>Backend URL: http://127.0.0.1:5000</p>
-        <p>API endpoint: /api/stack/push (POST)</p>
-        <button 
-          onClick={testApiConnection} 
-          className="test-api-btn"
-        >
-          Test API Connection
-        </button>
+
+      <div className="stack-view-algos">
+        <div className="stack-view-algo">
+          <input type="text" aria-label="Brackets" value={parenText}
+            onChange={(e) => setParenText(e.target.value)} disabled={busy} />
+          <button className="control-btn" onClick={onParens} disabled={busy}>Check parentheses</button>
+        </div>
+        <div className="stack-view-algo">
+          <input type="text" aria-label="Min stack values" value={minText}
+            onChange={(e) => setMinText(e.target.value)} disabled={busy} />
+          <button className="control-btn" onClick={onMin} disabled={busy}>Min stack</button>
+        </div>
+        <div className="stack-view-algo">
+          <input type="text" aria-label="Temperatures" value={tempText}
+            onChange={(e) => setTempText(e.target.value)} disabled={busy} />
+          <button className="control-btn" onClick={onTemps} disabled={busy}>Daily temperatures</button>
+        </div>
       </div>
     </div>
   );
 }
-
-export default StackView;
