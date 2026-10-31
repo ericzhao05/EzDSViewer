@@ -382,7 +382,7 @@
 
 .p3-note-spot {
   position: relative;
-  flex: 0 1 var(--note-w);
+  flex: 0 1 auto;
   min-width: 0;
   max-width: 100%;
   margin-top: var(--note-down);
@@ -415,8 +415,12 @@
   perspective: 1600px;
 }
 
+/* Both sides sit in one grid cell, so the note is as big as its longer side needs. Width comes from
+   the code's longest line, or the note's usual width if that's more; the front's text just wraps. */
 .p3-note-flip {
   position: relative;
+  display: grid;
+  grid-template-columns: minmax(var(--note-w), max-content);
   transform-style: preserve-3d;
   transition: transform 0.5s cubic-bezier(0.3, 0.9, 0.35, 1);
 }
@@ -427,7 +431,15 @@
 
 .p3-note,
 .p3-note-back {
+  grid-area: 1 / 1;
   backface-visibility: hidden;
+}
+
+/* Themes give forms a margin, which would make the two sides differ */
+.App .main-content .p3-notes .p3-note-flip > .p3-note {
+  width: 0;
+  min-width: 100%;
+  margin: 0;
 }
 
 .p3-note-spot[data-flipped='true'] .p3-note {
@@ -452,17 +464,15 @@
 }
 
 .p3-note-back {
-  position: absolute;
-  top: 0;
-  left: 50%;
+  position: relative;
+  min-width: 0;
   box-sizing: border-box;
-  width: min(32rem, calc(100vw - 2rem));
   padding: var(--note-pad);
   border: var(--border-width) var(--border-style) var(--panel-border);
   border-radius: var(--radius-md);
   background-color: var(--panel-bg);
   color: var(--p-ink);
-  transform: translateX(calc(-50% - var(--back-shift, 0px))) rotateY(180deg);
+  transform: rotateY(180deg);
 }
 
 .p3-notes .p3-note-back h4 {
@@ -474,9 +484,8 @@
   overflow-x: auto;
   font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
   font-size: 0.8125rem;
-  line-height: 1.55;
+  line-height: 1.5;
   text-align: left;
-  tab-size: 4;
 }
 
 .p3-note-back code {
@@ -627,7 +636,8 @@
   --note-ink: var(--p-bg);
 }
 
-[data-style='chalkboard'] .p3-note {
+[data-style='chalkboard'] .p3-note,
+[data-style='chalkboard'] .p3-note-back {
   --p-ink: var(--note-ink);
   --p-muted: color-mix(in srgb, var(--note-ink) 78%, var(--note-paper));
   --p-accent: var(--note-ink);
@@ -646,7 +656,8 @@
 }
 
 /* The pin it hangs from */
-[data-style='chalkboard'] .p3-note::before {
+[data-style='chalkboard'] .p3-note::before,
+[data-style='chalkboard'] .p3-note-back::before {
   content: '';
   position: absolute;
   top: -0.55rem;
@@ -667,15 +678,15 @@
   text-underline-offset: 0.15em;
 }
 
+[data-style='chalkboard'] .main-content .p3-note-back code {
+  color: var(--note-ink);
+}
+
+[data-style='chalkboard'] .p3-note-back button:focus-visible,
+[data-style='chalkboard'] .p3-note-back pre:focus-visible,
 [data-style='chalkboard'] .p3-note input:focus-visible,
 [data-style='chalkboard'] .p3-note button:focus-visible {
   outline-color: var(--note-ink);
-}
-
-/* The note's back is a small piece of slate, written on in the board's chalk */
-[data-style='chalkboard'] .p3-note-back {
-  border-radius: 2px 2px 1.1rem 2px;
-  background-color: var(--p-bg);
 }
 
 /* Toy blocks: chunky blocks with a coloured cap and a solid underside, stood on a peg */
@@ -763,6 +774,11 @@
     flex-basis: 100%;
     margin-top: 0;
     margin-left: 0;
+  }
+
+  /* A phone's width is the limit: the note fills it, and only a line too long for that scrolls */
+  .p3-note-flip {
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .p3-notes-find label {

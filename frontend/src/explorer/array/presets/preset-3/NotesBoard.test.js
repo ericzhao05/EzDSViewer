@@ -230,6 +230,8 @@ describe('turning a note over', () => {
     await open('array.append(2).append(1)');
     fireEvent.click(code('Heap sort'));
     expect(document.querySelector('[data-note="merge_sort"]')).toHaveAttribute('data-flipped', 'false');
+    // Both sides are always there, so they can share one size.
+    expect(document.querySelectorAll('.p3-note-back')).toHaveLength(10);
     expect(Object.keys(CODE).sort()).toEqual([...document.querySelectorAll('[data-note]')].map((n) => n.dataset.note).sort());
   });
 
