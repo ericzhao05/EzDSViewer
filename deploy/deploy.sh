@@ -4,7 +4,7 @@
 # Usage: deploy/deploy.sh [ssh-host]
 set -euo pipefail
 
-HOST="${1:-eric-vps}"
+HOST="${1:-eric-vps-ezdsviewer}"
 cd "$(git rev-parse --show-toplevel)"
 
 if [ -n "$(git status --porcelain)" ]; then
