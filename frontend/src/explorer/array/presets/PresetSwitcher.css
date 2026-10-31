@@ -1,9 +1,40 @@
-/* Test branch only, with PresetSwitcher.js. */
+/* Test branch only, with PresetSwitcher.js. A strip of labelled choices; the pressed one is underlined and bold as well as filled. */
 .preset-switcher {
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 0.5rem;
-  margin-bottom: 0.75rem;
+  max-width: 100%;
+  margin-bottom: var(--space-md);
+  padding: var(--space-sm);
+  border: var(--border-width) var(--border-style) var(--panel-border);
+  border-radius: var(--radius-lg);
+  background-color: var(--panel-bg);
   font-size: var(--fs-small);
+}
+
+.preset-switcher-label {
+  margin-right: var(--space-xs);
+  color: var(--p-muted);
+}
+
+.preset-switcher .control-btn {
+  min-height: 2.25rem;
+  max-width: 100%;
+  white-space: normal;
+  text-align: left;
+}
+
+.preset-switcher .control-btn[aria-pressed='true'] {
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+.preset-switcher-num {
+  display: inline-block;
+  min-width: 1.1em;
+  text-align: center;
 }

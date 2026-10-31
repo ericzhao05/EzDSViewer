@@ -1,10 +1,5 @@
 /* Layout 1, The Workbench. Colour, type, radii and strokes all come from theme tokens. */
 
-/* The shared page card is 900px wide, too narrow for two panes. This only applies while this layout is mounted. */
-.ds-container:has(.preset-1) {
-  max-width: 1360px;
-}
-
 .preset-1 {
   container-type: inline-size;
   min-width: 0;
@@ -520,16 +515,5 @@
     .preset-1 .p1-log button {
       scroll-margin-top: 17rem;
     }
-  }
-}
-
-/* The page card's padding costs a phone too much of its width. */
-@media (max-width: 700px) {
-  .main-content:has(.preset-1) {
-    padding: var(--space-sm);
-  }
-
-  .ds-container:has(.preset-1) {
-    padding: var(--space-sm);
   }
 }

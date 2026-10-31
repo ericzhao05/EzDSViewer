@@ -47,11 +47,10 @@ export default function PresetSwitcher({ value, onChange }) {
         <button
           key={p.id}
           className="control-btn"
-          aria-label={p.name}
           aria-pressed={value === p.id}
           onClick={() => onChange(p.id)}
         >
-          {p.id}
+          <span className="preset-switcher-num">{p.id}</span> {p.name}
         </button>
       ))}
     </div>

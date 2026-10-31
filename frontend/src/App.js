@@ -6,6 +6,7 @@ import { GROUPS, STRUCTURES } from './structures/registry';
 import PlayerPage from './explorer/PlayerPage';
 import Explorer from './explorer/Explorer';
 import { BOARDS } from './explorer/boards';
+import { PRESETS } from './explorer/array/presets';
 import PresetSwitcher, { usePreset, withPreset } from './explorer/array/presets/PresetSwitcher';
 import { encodeCommand, linkFor, MAX_LINK_CHARS } from './explorer/commandLang';
 
@@ -71,6 +72,8 @@ function Shell() {
   };
 
   const current = STRUCTURES.find((s) => s.id === activeDS);
+  // A layout that needs room asks for the wide column; the coming-soon panel never does.
+  const wide = activeDS === ARRAY && Boolean(PRESETS.find((p) => p.id === preset)?.wide);
 
   return (
     <div className="App">
@@ -99,9 +102,9 @@ function Shell() {
             );
           })}
         </aside>
-        <main className="main-content">
+        <main className={wide ? 'main-content main-content--wide' : 'main-content'}>
           <div hidden={activeDS !== ARRAY}>
-            <div className="ds-container">
+            <div className={wide ? 'ds-container ds-container--wide' : 'ds-container'}>
               <PresetSwitcher value={preset} onChange={setPreset} />
               <Explorer
                 preset={preset}

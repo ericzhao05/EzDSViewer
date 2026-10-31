@@ -382,6 +382,53 @@ body {
   font-style: italic;
 }
 
+/* Wide page: set by the app shell for layouts that ask for it. The extra classes outrank each style's own .ds-container width. */
+.main-content .ds-container.ds-container--wide {
+  max-width: 1360px;
+}
+
+@media (max-width: 700px) {
+  .main-content.main-content--wide,
+  .main-content .ds-container.ds-container--wide {
+    padding: var(--space-sm);
+  }
+}
+
+/* Sidebar: a structure that is not built yet. Small and plain, so the list still reads as the full set. */
+.ds-sidebar-soon {
+  margin-left: var(--space-xs);
+  font-size: var(--fs-small);
+  font-style: italic;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+/* Coming-soon panel. A dashed edge marks it as not ready, in every theme, whatever the colours. */
+.coming-soon {
+  box-sizing: border-box;
+  max-width: 36rem;
+  margin: var(--space-lg) auto;
+  padding: var(--space-lg);
+  border: var(--border-width) dashed var(--p-muted);
+  border-radius: var(--radius-lg);
+  text-align: left;
+}
+
+.coming-soon h2 {
+  margin: 0 0 var(--space-sm);
+}
+
+/* Beats the toy-blocks rule that centres every paragraph in the page card. */
+.main-content .ds-container .coming-soon p {
+  max-width: 60ch;
+  margin: 0 0 var(--space-md);
+  text-align: left;
+}
+
+.coming-soon .control-btn {
+  min-height: 2.75rem;
+}
+
 /* Diagrams: anything a view has not classed itself still follows the style */
 :where(.main-content) :where(svg text) {
   font-family: var(--f-data);

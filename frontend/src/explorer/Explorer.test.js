@@ -2,6 +2,13 @@ import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
 import Explorer from './Explorer';
 import { questionFor } from './commandLang';
 
+// These tests cover the plain layout's behaviour; the layouts have their own preset.test.js files.
+jest.mock('./array/presets', () => {
+  const DefaultLayout = require('./array/presets/DefaultLayout').default;
+  return { PRESETS: ['1', '2', '3', '4', '5'].map((id) => ({ id, name: `Plain ${id}`, Component: DefaultLayout })) };
+});
+
+
 function reply(body, ok = true) {
   return Promise.resolve({ ok, status: ok ? 200 : 400, json: () => Promise.resolve(body) });
 }

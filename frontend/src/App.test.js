@@ -1,12 +1,19 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from './App';
 import { STRUCTURES } from './structures/registry';
 
+// These tests cover the plain layout's behaviour; the layouts have their own preset.test.js files.
+jest.mock('./explorer/array/presets', () => {
+  const DefaultLayout = require('./explorer/array/presets/DefaultLayout').default;
+  return { PRESETS: ['1', '2', '3', '4', '5'].map((id) => ({ id, name: `Plain ${id}`, Component: DefaultLayout })) };
+});
+
+
 beforeEach(() => {
-  global.fetch = jest.fn(() =>
-    Promise.resolve({ ok: true, json: () => Promise.resolve({ success: true, state: null, stack: [] }) })
-  );
+  // These tests are about the shell, not the Array's replies, so the starter's request stays pending
+  // rather than answering after a test has finished and updating the page outside act().
+  global.fetch = jest.fn(() => new Promise(() => {}));
 });
 
 test('lists every registered structure and switches views', async () => {
@@ -113,9 +120,10 @@ describe('one app at / and /v', () => {
     expect(screen.getByRole('button', { name: 'Append' })).toBeInTheDocument();
   });
 
-  test('/embed renders no sidebar', () => {
+  test('/embed renders no sidebar', async () => {
     window.history.replaceState(null, '', '/embed?c=array');
     render(<App />);
+    await act(async () => {}); // let the player's request settle
     expect(screen.queryByRole('complementary')).toBeNull();
   });
 
@@ -143,8 +151,9 @@ describe('one app at / and /v', () => {
     expect(await screen.findByRole('button', { name: 'Pause' })).toBeInTheDocument();
   });
 
-  test('all 24 structures are listed; only Array lacks the Soon label', () => {
+  test('all 24 structures are listed; only Array lacks the Soon label', async () => {
     render(<App />);
+    await act(async () => {});
     const nav = screen.getByRole('complementary', { name: 'Data structures' });
     expect(nav.querySelectorAll('button')).toHaveLength(24);
     expect(nav.querySelectorAll('.ds-sidebar-soon')).toHaveLength(23);
@@ -180,13 +189,15 @@ describe('one app at / and /v', () => {
     expect(new URLSearchParams(window.location.search).get('c')).toBe('array.append(1).append(3).append(5).append(7).append(9)');
   });
 
-  test('?ds= selects a coming-soon item on load, and an unknown one falls back to Array', () => {
+  test('?ds= selects a coming-soon item on load, and an unknown one falls back to Array', async () => {
     window.history.replaceState(null, '', '/?ds=trie');
     const { unmount } = render(<App />);
+    await act(async () => {});
     expect(screen.getByRole('heading', { name: 'Trie' })).toBeInTheDocument();
     unmount();
     window.history.replaceState(null, '', '/?ds=nope');
     render(<App />);
+    await act(async () => {});
     expect(screen.getByRole('button', { name: /^Array$/ })).toHaveAttribute('aria-current', 'page');
   });
 

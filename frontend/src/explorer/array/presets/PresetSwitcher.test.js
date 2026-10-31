@@ -24,7 +24,7 @@ beforeEach(() => {
 });
 afterEach(() => window.history.replaceState(null, '', '/'));
 
-const pressed = () => PRESETS.filter((p) => screen.getByRole('button', { name: p.name }).getAttribute('aria-pressed') === 'true').map((p) => p.id);
+const pressed = () => PRESETS.filter((p) => screen.getByRole('button', { name: `${p.id} ${p.name}` }).getAttribute('aria-pressed') === 'true').map((p) => p.id);
 
 test('there are five presets with ids 1 to 5', () => {
   expect(PRESETS.map((p) => p.id)).toEqual(['1', '2', '3', '4', '5']);
@@ -35,7 +35,7 @@ test('the preset comes from the URL, and an invalid one means 1', async () => {
   const { unmount } = render(<App />);
   await screen.findByText(/Step 1 of 1/);
   expect(pressed()).toEqual(['3']);
-  expect(screen.getByText('Layout 3')).toBeInTheDocument();
+  expect(screen.getByRole('heading', { name: 'What you have done so far' })).toBeInTheDocument();
   unmount();
   window.history.replaceState(null, '', '/?c=array.append(1)&preset=9');
   render(<App />);
@@ -49,8 +49,7 @@ test('pressing a layout updates the URL and keeps the history, without refetchin
   await screen.findByText(/Step 1 of 2/);
   fireEvent.click(screen.getByRole('button', { name: 'Next step' }));
   const fetched = global.fetch.mock.calls.length;
-  fireEvent.click(screen.getByRole('button', { name: 'Layout 2' }));
-  expect(screen.getByText('Layout 2')).toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: '2 Filmstrip' }));
   expect(new URLSearchParams(window.location.search).get('preset')).toBe('2');
   expect(new URLSearchParams(window.location.search).get('c')).toBe('array.append(1).append(2)');
   expect(screen.getByText('Step 2 of 2')).toBeInTheDocument();
@@ -59,14 +58,14 @@ test('pressing a layout updates the URL and keeps the history, without refetchin
 });
 
 test('the preset survives an edit and stays out of the copied links', async () => {
-  window.history.replaceState(null, '', '/?c=array.append(1).append(2)&preset=4');
+  window.history.replaceState(null, '', '/?c=array.append(1).append(2)&preset=2');
   render(<App />);
   await screen.findByText(/Step 1 of 2/);
-  fireEvent.change(screen.getByLabelText('Value'), { target: { value: '5' } });
+  fireEvent.change(screen.getByLabelText('Append value'), { target: { value: '5' } });
   await act(async () => { fireEvent.click(screen.getByRole('button', { name: 'Append' })); });
   await screen.findByText(/of 3/);
   const params = new URLSearchParams(window.location.search);
-  expect(params.get('preset')).toBe('4');
+  expect(params.get('preset')).toBe('2');
   expect(params.get('c')).toBe('array.append(1).append(2).append(5)');
   await act(async () => { fireEvent.click(screen.getByRole('button', { name: 'Copy link' })); });
   expect(navigator.clipboard.writeText.mock.calls[0][0]).not.toContain('preset');

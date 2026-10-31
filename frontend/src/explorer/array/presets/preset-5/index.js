@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import './styles.css';
 
 // Layout 5, the lesson notebook. A running log of notes sits beside three numbered sections:
@@ -306,17 +306,6 @@ export default function Preset5({ session, controls, intro: Intro, Board, title 
   const ranSomething = useRef(false);
   const callCount = session.calls.length;
   const seenCalls = useRef(callCount);
-
-  // The page's 900px column leaves no room for a margin of notes, so it widens while this layout is up.
-  useLayoutEffect(() => {
-    const column = root.current && root.current.closest('.ds-container');
-    if (!column) return undefined;
-    const before = column.style.maxWidth;
-    column.style.maxWidth = '1240px';
-    return () => {
-      column.style.maxWidth = before;
-    };
-  }, []);
 
   // Whatever was just run, bring the array into view so the person sees it happen.
   useEffect(() => {
