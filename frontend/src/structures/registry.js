@@ -8,6 +8,7 @@ import MatrixView from '../views/MatrixView';
 import BinaryTreeView from '../views/BinaryTreeView';
 import BstView from '../views/BstView';
 import HeapView from '../views/HeapView';
+import TrieView from '../views/TrieView';
 
 // Groups follow the Contents section of ds.md.
 export const GROUPS = ['Core', 'Second-tier', 'Specialized'];
@@ -23,4 +24,5 @@ export const STRUCTURES = [
   { id: 'binary-tree', label: 'Binary Tree', group: 'Core', Component: BinaryTreeView },
   { id: 'bst', label: 'Binary Search Tree', group: 'Core', Component: BstView },
   { id: 'heap', label: 'Heap', group: 'Core', Component: HeapView },
+  { id: 'trie', label: 'Trie', group: 'Second-tier', Component: TrieView },
 ];
