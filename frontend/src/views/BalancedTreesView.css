@@ -1,0 +1,167 @@
+.balanced-trees-intro,
+.balanced-trees-note,
+.balanced-trees-stats,
+.balanced-trees-step-count {
+  margin: 0.25rem 0;
+  max-width: 100%;
+}
+
+.balanced-trees-section {
+  margin: 1rem 0;
+}
+
+.balanced-trees-section h3 {
+  margin: 0.5rem 0;
+}
+
+.balanced-trees-result {
+  margin: 0.5rem 0;
+  font-weight: bold;
+}
+
+.balanced-trees-scroll {
+  max-width: 100%;
+  overflow: auto;
+  padding: 0.5rem 0;
+}
+
+.balanced-trees-controls {
+  flex-wrap: wrap;
+}
+
+.balanced-trees-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.control-btn.balanced-trees-on {
+  outline: 3px solid var(--text-color);
+  outline-offset: 1px;
+}
+
+.balanced-trees-table {
+  border-collapse: collapse;
+  color: var(--text-color);
+}
+
+.balanced-trees-table caption {
+  margin-bottom: 0.25rem;
+  text-align: left;
+  font-weight: bold;
+}
+
+.balanced-trees-table th,
+.balanced-trees-table td {
+  padding: 0.35rem 0.6rem;
+  border: 1px solid var(--input-border);
+  text-align: left;
+  vertical-align: top;
+}
+
+.balanced-trees-edge {
+  stroke: var(--input-border);
+  stroke-width: 2;
+}
+
+.balanced-trees-disc {
+  fill: var(--stack-item-bg);
+  stroke: var(--input-border);
+  stroke-width: 2;
+}
+
+.balanced-trees-node text {
+  fill: var(--stack-item-text);
+  font-weight: bold;
+  font-size: 13px;
+}
+
+.balanced-trees-node .balanced-trees-balance {
+  fill: var(--text-color);
+  font-weight: normal;
+  font-size: 11px;
+}
+
+.balanced-trees-ring {
+  fill: none;
+  stroke: none;
+}
+
+.balanced-trees-node-mark .balanced-trees-ring {
+  stroke: var(--text-color);
+  stroke-width: 3;
+}
+
+.balanced-trees-node-red .balanced-trees-disc,
+.balanced-trees-node-unbalanced .balanced-trees-disc,
+.balanced-trees-swatch-red {
+  fill: var(--error-border);
+  background: var(--error-border);
+}
+
+.balanced-trees-node-red .balanced-trees-disc,
+.balanced-trees-swatch-red {
+  stroke: var(--text-color);
+  stroke-dasharray: 4 3;
+  border: 2px dashed var(--text-color);
+}
+
+.balanced-trees-node-black .balanced-trees-disc,
+.balanced-trees-swatch-black {
+  fill: var(--navbar-bg);
+  stroke: var(--text-color);
+  background: var(--navbar-bg);
+  border: 2px solid var(--text-color);
+}
+
+.balanced-trees-node-red text,
+.balanced-trees-node-black text,
+.balanced-trees-node-unbalanced text:not(.balanced-trees-balance) {
+  fill: var(--navbar-text);
+}
+
+.balanced-trees-swatch {
+  display: inline-block;
+  width: 0.8rem;
+  height: 0.8rem;
+  border-radius: 50%;
+  vertical-align: middle;
+}
+
+.balanced-trees-steps {
+  margin-top: 0.5rem;
+}
+
+.balanced-trees-step-list {
+  margin: 0.5rem 0;
+  padding-left: 1.5rem;
+}
+
+.balanced-trees-step {
+  padding: 0.15rem 0.4rem;
+  border: 1px solid transparent;
+  background: none;
+  color: var(--text-color);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.balanced-trees-step[aria-current='step'] {
+  border-color: var(--text-color);
+  font-weight: bold;
+}
+
+.balanced-trees-pair {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.balanced-trees-arrow {
+  font-weight: bold;
+}
