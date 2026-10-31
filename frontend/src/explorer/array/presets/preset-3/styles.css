@@ -465,7 +465,7 @@
   transform: translateX(calc(-50% - var(--back-shift, 0px))) rotateY(180deg);
 }
 
-.p3-note-back h4 {
+.p3-notes .p3-note-back h4 {
   margin: 0 0 var(--space-sm);
 }
 
