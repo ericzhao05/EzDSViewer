@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Builds the site here (the server has too little memory to build it) and deploys the current commit.
+# Deploys the current commit. The server clones the backend from GitHub, so push first.
+# The React site is built here because the server has too little memory to build it.
 # Usage: deploy/deploy.sh [ssh-host]
 set -euo pipefail
 
@@ -11,13 +12,25 @@ if [ -n "$(git status --porcelain)" ]; then
   exit 1
 fi
 
+SHA="$(git rev-parse HEAD)"
+if ! git branch -r --contains "$SHA" | grep -q .; then
+  echo "Push this commit to GitHub first." >&2
+  exit 1
+fi
+
 RELEASE="$(date -u +%Y%m%d%H%M%S)-$(git rev-parse --short HEAD)"
 DIR="/opt/ezdsviewer/releases/$RELEASE"
+REPO=/opt/ezdsviewer/repo
 
 (cd frontend && npm ci --no-audit --no-fund && npm run build)
 
-ssh "$HOST" "mkdir -p '$DIR'"
-git archive HEAD backend | ssh "$HOST" "tar -x -C '$DIR' --no-same-owner"
+ssh "$HOST" "bash -s" <<CLONE
+set -euo pipefail
+[ -d $REPO/.git ] || git clone --quiet --depth 1 https://github.com/ericzhao05/EzDSViewer.git $REPO
+git -C $REPO fetch --quiet --depth 1 origin $SHA
+mkdir -p $DIR
+git -C $REPO archive $SHA backend | tar -x -C $DIR --no-same-owner
+CLONE
 COPYFILE_DISABLE=1 tar --no-xattrs -c frontend/build | ssh "$HOST" "tar -x -C '$DIR' --no-same-owner"
 
 ssh "$HOST" "bash -s '$DIR'" <<'REMOTE'
