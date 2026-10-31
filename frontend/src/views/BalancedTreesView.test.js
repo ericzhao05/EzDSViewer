@@ -136,6 +136,77 @@ test('insert shows the rotation steps and steps back through the pictures', asyn
   expect(screen.queryByTestId('balanced-trees-node-10')).not.toBeInTheDocument();
 });
 
+test('the rightmost balance label has room inside the svg', async () => {
+  // jsdom cannot see clipping, so check the width left after the label starts. "+2" is about 12px wide.
+  const skewed = avlNode(30, 2, avlNode(20, 1, avlNode(10, 0)));
+  const state = { ...full, avl: { ...full.avl, tree: skewed } };
+  serve(state);
+  render(<BalancedTreesView />);
+  const node = await screen.findByTestId('balanced-trees-node-30');
+  const label = within(node).getByText('+2');
+  const svg = screen.getByRole('img', { name: 'AVL tree' });
+  const room = Number(svg.getAttribute('width')) - Number(label.getAttribute('x'));
+  expect(room).toBeGreaterThanOrEqual(14);
+});
+
+test('a rejected op replaces the earlier success message', async () => {
+  serve(full, {
+    'avl-insert': () =>
+      reply({ success: true, state: full, result: { value: 5, steps: [], rotations: 0 } }),
+    'avl-delete': () => reply({ success: false, error: '5 is not in the tree', state: full }, false),
+  });
+  render(<BalancedTreesView />);
+  await screen.findByTestId('balanced-trees-node-20');
+  await userEvent.type(screen.getByLabelText('Value'), '5');
+  await userEvent.click(screen.getByRole('button', { name: 'Insert' }));
+  expect(await screen.findByText(/Inserted 5/)).toBeInTheDocument();
+  await userEvent.click(screen.getByRole('button', { name: 'Delete' }));
+  expect(await screen.findByText('5 is not in the tree')).toBeInTheDocument();
+  expect(screen.queryByText(/Inserted 5/)).not.toBeInTheDocument();
+});
+
+test('stats are labelled when stepped back and controls lock while loading', async () => {
+  const steps = [
+    { kind: 'start', text: 'Before inserting 5.', tree: avlNode(20, 0) },
+    { kind: 'place', text: 'Place 5 as a leaf.', pivot: 5, tree: avlNode(20, 1, avlNode(5, 0)) },
+  ];
+  let release;
+  serve(full, {
+    'avl-insert': () =>
+      reply({ success: true, state: full, result: { value: 5, steps, rotations: 0 } }),
+    'avl-search': () =>
+      new Promise((resolve) => {
+        release = () =>
+          resolve({
+            ok: true,
+            status: 200,
+            json: () =>
+              Promise.resolve({
+                success: true,
+                state: full,
+                result: { value: 5, found: false, path: [] },
+              }),
+          });
+      }),
+  });
+  render(<BalancedTreesView />);
+  await screen.findByTestId('balanced-trees-node-20');
+  await userEvent.type(screen.getByLabelText('Value'), '5');
+  await userEvent.click(screen.getByRole('button', { name: 'Insert' }));
+  await screen.findByText('Step 2 of 2');
+  expect(screen.queryByText(/Finished tree, not this step/)).not.toBeInTheDocument();
+  await userEvent.click(screen.getByRole('button', { name: 'Previous step' }));
+  expect(screen.getByText(/Finished tree, not this step/)).toBeInTheDocument();
+
+  await userEvent.click(screen.getByRole('button', { name: 'Search' }));
+  expect(screen.getByRole('button', { name: 'Red-black' })).toBeDisabled();
+  expect(screen.getByRole('button', { name: 'Next step' })).toBeDisabled();
+  expect(screen.getByRole('button', { name: 'Place 5 as a leaf.' })).toBeDisabled();
+  release();
+  expect(await screen.findByText(/Did not find 5/)).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: 'Red-black' })).toBeEnabled();
+});
+
 test('shows the server error and rejects a non-number before sending', async () => {
   serve(full, {
     'avl-delete': () => reply({ success: false, error: '99 is not in the tree', state: full }, false),

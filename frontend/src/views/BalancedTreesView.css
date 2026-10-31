@@ -63,7 +63,7 @@
 }
 
 .balanced-trees-edge {
-  stroke: var(--input-border);
+  stroke: var(--empty-message);
   stroke-width: 2;
 }
 

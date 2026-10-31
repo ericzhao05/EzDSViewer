@@ -7,6 +7,9 @@ const X_GAP = 48;
 const Y_GAP = 62;
 const R = 18;
 const PAD = 26;
+// A balance label starts this far right of its node's centre and needs this much room.
+const BALANCE_X = R + 2;
+const BALANCE_ROOM = 18;
 
 const KIND_NAME = { avl: 'AVL', rb: 'Red-black' };
 
@@ -50,7 +53,9 @@ function layout(tree) {
   };
   walk(tree, 0);
   const deepest = nodes.reduce((most, n) => Math.max(most, n.y), 0);
-  return { nodes, edges, width: Math.max(counter - 1, 0) * X_GAP + PAD * 2, height: deepest + PAD };
+  const hasBalance = nodes.some((n) => n.balance !== undefined);
+  const rightMargin = hasBalance ? BALANCE_X + BALANCE_ROOM : PAD;
+  return { nodes, edges, width: Math.max(counter - 1, 0) * X_GAP + PAD + rightMargin, height: deepest + PAD };
 }
 
 function nodeName(n) {
@@ -85,7 +90,7 @@ function TreeDrawing({ tree, label, marks = [], testIds = false }) {
             <circle className="balanced-trees-disc" cx={n.x} cy={n.y} r={R} />
             <text x={n.x} y={n.y} textAnchor="middle" dominantBaseline="central">{n.val}</text>
             {n.balance !== undefined && (
-              <text className="balanced-trees-balance" x={n.x + R + 2} y={n.y - R} textAnchor="start">
+              <text className="balanced-trees-balance" x={n.x + BALANCE_X} y={n.y - R} textAnchor="start">
                 {signed(n.balance)}
               </text>
             )}
@@ -121,6 +126,7 @@ export default function BalancedTreesView() {
 
   const exec = async (op, payload, onDone) => {
     setLocalError('');
+    setMessage('');
     const data = await run(op, payload);
     if (data) onDone(data.result);
   };
@@ -228,6 +234,7 @@ export default function BalancedTreesView() {
   const step = steps && steps.length > 0 ? steps[Math.min(stepIdx, steps.length - 1)] : null;
   const drawn = step ? step.tree : current && current.tree;
   const marks = step ? (step.pivot !== undefined ? [step.pivot] : []) : path;
+  const steppedBack = step !== null && stepIdx < steps.length - 1;
 
   return (
     <div className="ds-container">
@@ -296,6 +303,7 @@ export default function BalancedTreesView() {
       {loaded && (
         <section className="balanced-trees-section" aria-label={`${KIND_NAME[kind]} tree`}>
           <p className="balanced-trees-stats">
+            {steppedBack && 'Finished tree, not this step: '}
             Nodes: {current.count}. Height: {current.height} (in levels; one node is 1).
             {current.height_bound !== null && (
               <>
@@ -336,14 +344,14 @@ export default function BalancedTreesView() {
                 <button
                   className="control-btn"
                   onClick={() => setStepIdx((i) => i - 1)}
-                  disabled={stepIdx <= 0}
+                  disabled={loading || stepIdx <= 0}
                 >
                   Previous step
                 </button>
                 <button
                   className="control-btn"
                   onClick={() => setStepIdx((i) => i + 1)}
-                  disabled={stepIdx >= steps.length - 1}
+                  disabled={loading || stepIdx >= steps.length - 1}
                 >
                   Next step
                 </button>
@@ -355,6 +363,7 @@ export default function BalancedTreesView() {
                       className={`balanced-trees-step balanced-trees-step-${s.kind}`}
                       aria-current={i === stepIdx ? 'step' : undefined}
                       onClick={() => setStepIdx(i)}
+                      disabled={loading}
                     >
                       {s.text}
                     </button>
