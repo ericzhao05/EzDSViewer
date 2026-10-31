@@ -1,0 +1,78 @@
+.bloom-filter-intro,
+.bloom-filter-complexity {
+  margin: 0.25rem 0;
+  max-width: 100%;
+}
+
+.bloom-filter-section {
+  margin: 1rem 0;
+}
+
+.bloom-filter-section h3 {
+  margin: 0.5rem 0;
+}
+
+.bloom-filter-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 0.25rem 0;
+}
+
+.bloom-filter-row {
+  display: inline-flex;
+  gap: 0.25rem;
+  white-space: nowrap;
+}
+
+.bloom-filter-slot {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.bloom-filter-bit {
+  min-width: 1.9rem;
+  text-align: center;
+  padding: 0.35rem 0.25rem;
+  border: 1px solid var(--input-border);
+  border-radius: 4px;
+  background: var(--card-bg);
+  color: var(--text-color);
+  font-weight: bold;
+}
+
+.bloom-filter-on {
+  background: var(--stack-item-bg);
+  color: var(--stack-item-text);
+}
+
+.bloom-filter-hit {
+  outline: 3px solid var(--text-color);
+  outline-offset: 1px;
+}
+
+.bloom-filter-index {
+  font-size: 0.75rem;
+}
+
+.bloom-filter-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.bloom-filter-items li {
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--input-border);
+  border-radius: 4px;
+  overflow-wrap: anywhere;
+}
+
+.bloom-filter-result {
+  margin: 0.5rem 0;
+  overflow-wrap: anywhere;
+}
