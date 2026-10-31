@@ -1,4 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
+import NotesBoard from './NotesBoard';
+import { Blank, Flags } from './Fields';
 import PlayerBar from './PlayerBar';
 import './styles.css';
 
@@ -10,63 +13,7 @@ const SENTENCES = {
   get: { verb: 'Read', words: ['index', { input: 'get-index' }] },
 };
 
-// What each algorithm asks of the array, and its complexity in plain words.
-const ALGORITHMS = {
-  two_sum_sorted: {
-    needs: 'A sorted array of numbers, and a target.',
-    cost: 'It looks at each value at most once.',
-  },
-  binary_search: {
-    needs: 'A sorted array of numbers, and a target.',
-    cost: 'Each step halves what is left, so 1,000 values take about 10 steps.',
-  },
-  max_subarray: {
-    needs: 'At least one number. There is nothing to fill in.',
-    cost: 'It walks the array once.',
-  },
-  prefix_sums: {
-    needs: 'Numbers only. There is nothing to fill in.',
-    cost: 'It walks the array once.',
-  },
-};
-
 const reducedMotion = () => window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
-
-function Blank({ item, input }) {
-  const isIndex = input.label === 'Index';
-  return (
-    <input
-      className="p3-blank"
-      aria-label={`${item.label} ${input.label.toLowerCase()}`}
-      aria-describedby={`p3-about-${item.id}`}
-      data-needed={input.kind !== 'optional-number' && input.value.trim() === ''}
-      value={input.value}
-      placeholder={input.placeholder}
-      onChange={(e) => input.setValue(e.target.value)}
-      inputMode={isIndex ? 'numeric' : undefined}
-      enterKeyHint="go"
-      autoComplete="off"
-      spellCheck={false}
-    />
-  );
-}
-
-// A blocked reason or a missing-input message, written next to the thing it is about.
-function Flags({ item }) {
-  return (
-    <>
-      {item.blockedReason && (
-        <span className="p3-flag">
-          <span className="p3-flag-lead">Can't do this yet: </span>
-          <span>{item.blockedReason}</span>
-        </span>
-      )}
-      <span className="p3-message" aria-live="polite">
-        {item.message}
-      </span>
-    </>
-  );
-}
 
 function Sentence({ item, onSubmit, echo }) {
   const { verb, words } = SENTENCES[item.id];
@@ -89,47 +36,6 @@ function Sentence({ item, onSubmit, echo }) {
         {item.summary} Takes {item.complexity}.
       </p>
       {echo && <p className="p3-echo" aria-hidden="true">{echo}</p>}
-    </li>
-  );
-}
-
-function AlgorithmCard({ item, onSubmit }) {
-  const { needs, cost } = ALGORITHMS[item.id];
-  return (
-    <li className="p3-card">
-      <form aria-label={item.label} onSubmit={(e) => onSubmit(e, item)}>
-        <h4>{item.label}</h4>
-        <dl>
-          <div>
-            <dt>What it does</dt>
-            <dd id={`p3-about-${item.id}`}>{item.summary}</dd>
-          </div>
-          <div>
-            <dt>What it needs</dt>
-            <dd>{needs}</dd>
-          </div>
-          <div>
-            <dt>How long it takes</dt>
-            <dd>
-              <strong>{item.complexity}.</strong> {cost}
-            </dd>
-          </div>
-        </dl>
-        <div className="p3-card-go">
-          {item.inputs.map((input) => (
-            <label key={input.id} className="p3-card-field">
-              {input.label}
-              <Blank item={item} input={input} />
-            </label>
-          ))}
-          <button type="submit" className="control-btn p3-run" disabled={!!item.blockedReason} aria-describedby={`p3-about-${item.id}`}>
-            Run {item.label.toLowerCase()}
-          </button>
-        </div>
-        <div className="p3-card-flags">
-          <Flags item={item} />
-        </div>
-      </form>
     </li>
   );
 }
@@ -185,14 +91,18 @@ function ShareArea({ session, onCommandRun }) {
 }
 
 // Layout 3, The Sentences. The controls read as English and each verb is its own button;
-// algorithms are separate, larger explained cards. The timeline and note sit above the array,
-// and the array alone stays in view when there is room.
+// algorithms are notes pinned below the board, rendered into the app shell's slot. The timeline
+// and note sit above the array, and the array alone stays in view when there is room.
 export default function Preset3({ session, controls, intro: Intro, Board, title }) {
   const player = useRef(null);
   // Which sentence sent the latest edit, so its answer can be repeated beside it on small screens.
   const sentFrom = useRef(null);
   const [echoFor, setEchoFor] = useState(null);
   const firstCommand = useRef(true);
+  const [notesSlot, setNotesSlot] = useState(null);
+
+  // The slot is the app shell's, and only exists in the page once this has mounted.
+  useEffect(() => setNotesSlot(document.getElementById('below-board-slot')), []);
 
   const reveal = () => {
     const el = player.current;
@@ -289,20 +199,13 @@ export default function Preset3({ session, controls, intro: Intro, Board, title 
               </li>
             </ul>
           </section>
-
-          <section className="p3-section" aria-labelledby="p3-algorithms">
-            <h3 id="p3-algorithms">Algorithms</h3>
-            <p className="p3-lead">These work through the array one step at a time while you watch. They don't change its values.</p>
-            <ul className="p3-cards">
-              {controls.algorithms.map((item) => (
-                <AlgorithmCard key={item.id} item={item} onSubmit={(e, it) => send(e, it, null)} />
-              ))}
-            </ul>
-          </section>
         </>
       )}
 
       <ShareArea session={session} onCommandRun={() => { sentFrom.current = null; }} />
+
+      {notesSlot && session.structure && Board &&
+        createPortal(<NotesBoard session={session} controls={controls} onSubmit={(e, it) => send(e, it, null)} />, notesSlot)}
     </div>
   );
 }

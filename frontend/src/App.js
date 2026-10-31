@@ -117,6 +117,8 @@ function Shell() {
                 }}
               />
             </div>
+            {/* A layout may portal extra content here, below the framed panel. Empty otherwise. */}
+            <div id="below-board-slot" />
           </div>
           {activeDS !== ARRAY && (
             <div className="ds-container">

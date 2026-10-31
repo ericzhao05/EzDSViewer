@@ -117,6 +117,15 @@
   max-width: 100%;
 }
 
+/* Phosphor's buttons are bare text; an icon has no brackets, so it gets a real outline. Dashed when it can't be pressed. */
+[data-style='phosphor'] .App .main-content .preset-3 .p3-icon-btn {
+  border: 1px solid var(--p-muted);
+}
+
+[data-style='phosphor'] .App .main-content .preset-3 .p3-icon-btn:disabled {
+  border-style: dashed;
+}
+
 /* Sections */
 .preset-3 .p3-section {
   margin-top: var(--space-xl);
@@ -160,7 +169,7 @@
   white-space: nowrap;
 }
 
-.preset-3 .p3-blank {
+:is(.preset-3, .p3-notes) .p3-blank {
   width: 5.5em;
   min-width: 44px;
   min-height: 44px;
@@ -193,8 +202,8 @@
 }
 
 /* A blocked reason and a message: text with a thick mark, so not just a colour */
-.preset-3 .p3-flag,
-.preset-3 .p3-message:not(:empty) {
+:is(.preset-3, .p3-notes) .p3-flag,
+:is(.preset-3, .p3-notes) .p3-message:not(:empty) {
   display: block;
   padding-left: var(--space-sm);
   border-left: calc(var(--border-width) + 2px) dashed var(--state-danger);
@@ -202,87 +211,13 @@
   font-size: var(--fs-base);
 }
 
-.preset-3 .p3-message:empty {
+:is(.preset-3, .p3-notes) .p3-message:empty {
   display: none;
 }
 
 .preset-3 .p3-section > .p3-flag,
 .preset-3 .p3-section > .p3-message {
   margin: var(--space-sm) 0 0;
-}
-
-/* The algorithm cards: a different kind of object from the sentences above */
-.preset-3 .p3-cards {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--space-md);
-}
-
-.preset-3 .p3-card {
-  min-width: 0;
-  padding: var(--space-md);
-  border: var(--border-width) var(--border-style) var(--panel-border);
-  border-radius: var(--radius-lg);
-  background-color: var(--panel-bg);
-  box-shadow: var(--panel-shadow);
-}
-
-.preset-3 .p3-card form {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-.preset-3 .p3-card h4 {
-  margin: 0 0 var(--space-sm);
-  font-size: var(--fs-h3);
-  text-align: left;
-}
-
-.preset-3 .p3-card dl {
-  flex: 1;
-  margin: 0;
-}
-
-.preset-3 .p3-card dl > div {
-  margin-bottom: var(--space-sm);
-}
-
-.preset-3 .p3-card dt {
-  color: var(--p-muted);
-  font-size: var(--fs-small);
-}
-
-.preset-3 .p3-card dd {
-  margin: 0;
-}
-
-.preset-3 .p3-card-go {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  gap: var(--p3-gap);
-  margin-top: var(--space-sm);
-}
-
-.preset-3 .p3-card-field {
-  display: flex;
-  flex-direction: column;
-  font-size: var(--fs-small);
-}
-
-.preset-3 .p3-card-field .p3-blank {
-  font-size: var(--fs-base);
-}
-
-.preset-3 .p3-card-flags {
-  display: grid;
-  gap: var(--space-xs);
-}
-
-.preset-3 .p3-card-flags .p3-flag,
-.preset-3 .p3-card-flags .p3-message:not(:empty) {
-  margin-top: var(--space-sm);
 }
 
 /* The Command box */
@@ -305,12 +240,6 @@
   width: 100%;
   min-height: 44px;
   font-family: var(--f-data);
-}
-
-@media (min-width: 1000px) {
-  .preset-3 .p3-cards {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
 }
 
 /* With room to spare, the array stays on screen so a Run can be watched from where it was pressed */
@@ -341,5 +270,353 @@
 @media (prefers-reduced-motion: reduce) {
   .preset-3 .p3-note-text {
     animation: none;
+  }
+}
+
+/* The algorithm notes. They are portalled below the board, so they sit outside .preset-3 and .explorer:
+   every rule here has to stand on its own. */
+.p3-notes {
+  --note-pad: var(--space-md);
+  --tilt-scale: 1;
+  --drift-scale: 1;
+  /* Holds the page's height while a search shrinks the list, so the search box doesn't jump as you type */
+  min-height: 90vh;
+  max-width: 1360px;
+  margin: var(--space-xl) auto 0;
+  padding: 0 var(--space-xs) var(--space-xl);
+  /* A tilted note's corner must not widen the page */
+  overflow-x: clip;
+  text-align: left;
+}
+
+.p3-notes h3 {
+  margin: 0 0 var(--space-xs);
+  text-align: left;
+}
+
+.p3-notes-lead {
+  max-width: 72ch;
+  margin: 0 0 var(--space-md);
+  color: var(--p-muted);
+}
+
+.p3-notes-find {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-xs) var(--space-md);
+}
+
+.p3-notes-find label {
+  display: flex;
+  flex: 0 1 26rem;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.p3-notes-find input {
+  width: 100%;
+  min-height: 44px;
+  font-family: var(--f-data);
+}
+
+.p3-notes-count {
+  margin: 0;
+  padding-bottom: 0.5em;
+}
+
+.p3-notes-none {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-sm) var(--space-md);
+  margin-top: var(--space-lg);
+}
+
+.p3-notes-none p {
+  margin: 0;
+}
+
+/* A real flowing layout: each spot holds its own room, and the gap is wider than two notes can drift together */
+.p3-notes-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--space-lg) 2rem;
+  margin: var(--space-lg) 0 0;
+  padding: 0.75rem 0 var(--space-md);
+  list-style: none;
+}
+
+.p3-note-spot {
+  position: relative;
+  flex: 0 1 var(--note-w);
+  min-width: 0;
+  max-width: 100%;
+  margin-top: var(--note-down);
+  margin-left: var(--note-across);
+}
+
+/* Up over its neighbours while someone is using it */
+.p3-note-spot:hover,
+.p3-note-spot:focus-within {
+  z-index: 2;
+}
+
+.p3-note-drift {
+  animation: p3-drift var(--drift-time) ease-in-out var(--drift-delay) infinite;
+}
+
+/* Paused, not removed, so it stops where it is rather than jumping home */
+.p3-note-spot:hover .p3-note-drift,
+.p3-note-spot:focus-within .p3-note-drift {
+  animation-play-state: paused;
+}
+
+@keyframes p3-drift {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+
+  25% {
+    transform: translate(calc(var(--drift-x) * var(--drift-scale)), calc(var(--drift-y) * var(--drift-scale) * -0.6));
+  }
+
+  50% {
+    transform: translate(calc(var(--drift-x) * var(--drift-scale) * -0.4), calc(var(--drift-y) * var(--drift-scale)));
+  }
+
+  75% {
+    transform: translate(calc(var(--drift-x) * var(--drift-scale) * -1), calc(var(--drift-y) * var(--drift-scale) * 0.3));
+  }
+}
+
+.p3-note {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  box-sizing: border-box;
+  padding: var(--note-pad);
+  border: var(--border-width) var(--border-style) var(--panel-border);
+  border-radius: var(--radius-md);
+  background-color: var(--panel-bg);
+  color: var(--p-ink);
+  /* It hangs from the top, and swings straight from there */
+  transform: rotate(calc(var(--note-tilt) * var(--tilt-scale)));
+  transform-origin: 50% 0;
+  transition: transform 0.18s ease-out;
+}
+
+.p3-note-spot:hover .p3-note,
+.p3-note-spot:focus-within .p3-note {
+  transform: rotate(0deg);
+}
+
+.p3-note h4 {
+  margin: 0;
+  font-size: var(--fs-h3);
+  line-height: 1.1;
+  text-align: left;
+}
+
+.p3-note p {
+  margin: 0;
+  max-width: none;
+  text-align: left;
+}
+
+.p3-note dl {
+  display: grid;
+  gap: var(--space-xs);
+  margin: 0;
+}
+
+.p3-note dt {
+  color: var(--p-muted);
+  font-size: var(--fs-small);
+}
+
+.p3-note dd {
+  margin: 0;
+}
+
+.p3-note-go {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-sm);
+  margin-top: var(--space-xs);
+}
+
+.p3-note-field {
+  display: flex;
+  flex-direction: column;
+  font-size: var(--fs-small);
+}
+
+.p3-note-field .p3-blank {
+  font-size: var(--fs-base);
+}
+
+/* Outranks each theme's own control sizes, which are written for inside the explorer */
+.App .main-content .p3-notes .p3-note .p3-run,
+.App .main-content .p3-notes .p3-notes-none .control-btn {
+  min-height: 44px;
+  white-space: normal;
+}
+
+.p3-note-flags {
+  display: grid;
+  gap: var(--space-xs);
+}
+
+.p3-note-flags:empty {
+  display: none;
+}
+
+.p3-notes .p3-note-flags .p3-flag,
+.p3-notes .p3-note-flags .p3-message:not(:empty) {
+  font-size: var(--fs-small);
+  overflow-wrap: anywhere;
+}
+
+/* Which family a note belongs to shows in its tint and in its name and tags, never by tint alone */
+.p3-note-spot[data-kind='sort'] {
+  --note-tint: var(--island-1);
+}
+
+.p3-note-spot[data-kind='search'] {
+  --note-tint: var(--island-5);
+}
+
+.p3-note-spot[data-kind='sum'] {
+  --note-tint: var(--island-4);
+}
+
+/* Chalkboard: pale slips of paper pinned to the wall under the board. The page's tokens flip inside
+   a note, so the theme's controls, placeholders and flags all draw in dark ink on the paper. */
+[data-style='chalkboard'] .p3-notes {
+  --note-paper: var(--p-ink);
+  --note-ink: var(--p-bg);
+}
+
+[data-style='chalkboard'] .p3-note {
+  --p-ink: var(--note-ink);
+  --p-muted: color-mix(in srgb, var(--note-ink) 78%, var(--note-paper));
+  --p-accent: var(--note-ink);
+  --btn-ink: var(--note-ink);
+  --btn-border: var(--note-ink);
+  --btn-hover-bg: var(--note-ink);
+  --btn-hover-ink: var(--note-paper);
+  --input-ink: var(--note-ink);
+  --input-border-color: var(--note-ink);
+  --focus-ring: var(--note-ink);
+  --state-danger: var(--note-ink);
+  padding-top: calc(var(--note-pad) + 0.3rem);
+  border: 0;
+  border-radius: 2px 2px 1.1rem 2px;
+  background-color: color-mix(in srgb, var(--note-tint) 28%, var(--note-paper));
+}
+
+/* The pin it hangs from */
+[data-style='chalkboard'] .p3-note::before {
+  content: '';
+  position: absolute;
+  top: -0.55rem;
+  left: calc(50% - 0.55rem);
+  width: 1.1rem;
+  height: 1.1rem;
+  box-sizing: border-box;
+  border: var(--border-width) solid var(--note-ink);
+  border-radius: 50%;
+  background-color: var(--note-tint);
+}
+
+/* The theme's pink chalk emphasis doesn't read on paper */
+[data-style='chalkboard'] .main-content .p3-note strong {
+  color: var(--note-ink);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.15em;
+}
+
+[data-style='chalkboard'] .p3-note input:focus-visible,
+[data-style='chalkboard'] .p3-note button:focus-visible {
+  outline-color: var(--note-ink);
+}
+
+/* Toy blocks: chunky blocks with a coloured cap and a solid underside, stood on a peg */
+[data-style='toy-blocks'] .p3-note {
+  --note-pad: 1.1rem;
+  border: 0;
+  border-radius: var(--radius-lg);
+  background-color: var(--p-surface);
+  box-shadow: 0 8px 0 var(--tb-under-plain);
+}
+
+[data-style='toy-blocks'] .p3-note h4 {
+  margin: calc(var(--note-pad) * -1) calc(var(--note-pad) * -1) 0;
+  padding: 0.9rem var(--note-pad) 0.7rem;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  background-color: var(--note-tint);
+  color: var(--island-ink);
+}
+
+[data-style='toy-blocks'] .p3-notes-list {
+  row-gap: calc(var(--space-lg) + 8px);
+}
+
+/* Phosphor: terminal cards. A screen barely tilts, so the lean is slight; state stays in the line style and text. */
+[data-style='phosphor'] .p3-notes {
+  --tilt-scale: 0.35;
+}
+
+[data-style='phosphor'] .p3-note {
+  border: 1px dashed var(--p-muted);
+  background-color: var(--p-bg);
+}
+
+[data-style='phosphor'] .p3-note-spot:hover .p3-note,
+[data-style='phosphor'] .p3-note-spot:focus-within .p3-note {
+  border-style: solid;
+}
+
+[data-style='phosphor'] .main-content .p3-note h4::before {
+  content: '> ' / '';
+  color: var(--p-muted);
+}
+
+/* Phones: one column, nearly still */
+@media (max-width: 640px) {
+  .p3-notes {
+    --tilt-scale: 0.25;
+    --drift-scale: 0.2;
+    margin-top: var(--space-lg);
+  }
+
+  [data-style='phosphor'] .p3-notes {
+    --tilt-scale: 0.15;
+  }
+
+  .p3-note-spot {
+    flex-basis: 100%;
+    margin-top: 0;
+    margin-left: 0;
+  }
+
+  .p3-notes-find label {
+    flex-basis: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .p3-note-drift {
+    animation: none;
+  }
+
+  .p3-note {
+    transition: none;
   }
 }

@@ -35,7 +35,7 @@ test('the preset comes from the URL, and an invalid one means 1', async () => {
   const { unmount } = render(<App />);
   await screen.findByText(/Step 1 of 1/);
   expect(pressed()).toEqual(['3']);
-  expect(screen.getByRole('heading', { name: 'What you have done so far' })).toBeInTheDocument();
+  expect(screen.getByRole('heading', { name: 'Change or read the array' })).toBeInTheDocument();
   unmount();
   window.history.replaceState(null, '', '/?c=array.append(1)&preset=9');
   render(<App />);
