@@ -73,8 +73,15 @@ describe('ArrayControls', () => {
     expect(onCall).toHaveBeenLastCalledWith('max_subarray()');
     press('Prefix sums');
     expect(onCall).toHaveBeenLastCalledWith('prefix_sums()');
-    press('Reset');
-    expect(onCall).toHaveBeenLastCalledWith('reset()');
+  });
+
+  test('Start over calls onStartOver and there is no Reset button', () => {
+    const onStartOver = jest.fn();
+    const onCall = setup({ onStartOver });
+    expect(screen.queryByRole('button', { name: 'Reset' })).toBeNull();
+    press('Start over');
+    expect(onStartOver).toHaveBeenCalledTimes(1);
+    expect(onCall).not.toHaveBeenCalled();
   });
 
   test('Pop with no index pops the end', () => {

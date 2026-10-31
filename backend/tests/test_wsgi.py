@@ -1,12 +1,20 @@
+import os
+import tempfile
 import unittest
-from urllib.parse import parse_qs, urlparse
 
-from commands.engine import run
+from api import pages
 from wsgi import MAX_RUNS_PER_MINUTE, create_app
 
 
 class PublicAppTest(unittest.TestCase):
     def setUp(self):
+        tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(tmp.cleanup)
+        with open(os.path.join(tmp.name, "index.html"), "w") as f:
+            f.write("<html><head></head><body>app</body></html>")
+        original = pages.BUILD_DIR
+        pages.BUILD_DIR = tmp.name
+        self.addCleanup(setattr, pages, "BUILD_DIR", original)
         self.client = create_app().test_client()
 
     def test_run_works(self):
@@ -24,12 +32,12 @@ class PublicAppTest(unittest.TestCase):
         res = self.client.get("/api/run?cmd=array", headers={"Origin": "https://example.com"})
         self.assertNotIn("Access-Control-Allow-Origin", res.headers)
 
-    def test_home_redirects_to_a_working_example(self):
-        res = self.client.get("/")
-        self.assertEqual(res.status_code, 302)
-        target = urlparse(res.headers["Location"])
-        self.assertEqual(target.path, "/v")
-        self.assertTrue(run(parse_qs(target.query)["c"][0])["success"])
+    def test_home_serves_the_app_page(self):
+        for path in ("/", "/v"):
+            res = self.client.get(path)
+            self.assertEqual(res.status_code, 200, path)
+            self.assertIn("app", res.get_data(as_text=True))
+            self.assertTrue(res.headers["Content-Security-Policy"].endswith("; frame-ancestors 'none'"))
 
     def test_limit_returns_json_with_retry_after(self):
         for _ in range(MAX_RUNS_PER_MINUTE):
@@ -51,7 +59,7 @@ class PublicAppTest(unittest.TestCase):
     def test_limit_applies_only_to_run(self):
         for _ in range(MAX_RUNS_PER_MINUTE + 1):
             self.client.get("/api/run?cmd=array")
-        self.assertEqual(self.client.get("/").status_code, 302)
+        self.assertEqual(self.client.get("/").status_code, 200)
 
     def test_limit_resets_in_the_next_minute(self):
         now = [1000.0]

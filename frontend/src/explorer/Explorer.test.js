@@ -406,3 +406,101 @@ test('copy buttons keep describing the command on screen after a failed load', a
   );
   await screen.findByText('Copied');
 });
+
+describe('main app behaviour', () => {
+  // A backend-shaped response where the last call made several frames.
+  function algorithm(cmd) {
+    const calls = parseCalls(cmd);
+    const frames = [];
+    calls.forEach((c, i) => {
+      const n = c.startsWith('max') ? 3 : 1;
+      for (let k = 0; k < n; k += 1) frames.push({ call: i, state: arrayState([1]), highlight: [], pointers: {}, aux: null, note: `${c} ${k}` });
+    });
+    return { ...success(calls, calls.map(() => 1)), frames };
+  }
+
+  test('startAtEnd shows the last step, and autoplay={false} does not play', async () => {
+    render(<Explorer initialCommand={SAMPLE} autoplay={false} startAtEnd />);
+    await screen.findByText('Step 2 of 2');
+    expect(screen.getByRole('button', { name: 'Play' })).toBeInTheDocument();
+  });
+
+  test('an algorithm call starts at its first frame and plays to the last', async () => {
+    jest.useFakeTimers();
+    global.fetch = jest.fn((url) => reply(algorithm(new URL(url, 'http://x.test').searchParams.get('cmd'))));
+    render(<Explorer initialCommand="array.append(1)" autoplay={false} />);
+    await act(async () => {});
+    await act(async () => { fireEvent.click(screen.getByRole('button', { name: 'Max subarray' })); });
+    expect(screen.getByText('Step 2 of 4')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Pause' })).toBeInTheDocument();
+    act(() => { jest.advanceTimersByTime(900); });
+    expect(screen.getByText('Step 3 of 4')).toBeInTheDocument();
+    act(() => { jest.advanceTimersByTime(900); });
+    expect(screen.getByText('Step 4 of 4')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Play' })).toBeInTheDocument();
+  });
+
+  test('an algorithm call does not play with reduced motion, and a control press stops it', async () => {
+    jest.useFakeTimers();
+    global.fetch = jest.fn((url) => reply(algorithm(new URL(url, 'http://x.test').searchParams.get('cmd'))));
+    window.matchMedia = jest.fn(() => ({ matches: true }));
+    render(<Explorer initialCommand="array.append(1)" autoplay={false} />);
+    await act(async () => {});
+    await act(async () => { fireEvent.click(screen.getByRole('button', { name: 'Max subarray' })); });
+    expect(screen.getByText('Step 2 of 4')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Play' })).toBeInTheDocument();
+    window.matchMedia = undefined;
+    await act(async () => { fireEvent.click(screen.getByRole('button', { name: 'Max subarray' })); });
+    expect(screen.getByRole('button', { name: 'Pause' })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Previous step' }));
+    expect(screen.getByRole('button', { name: 'Play' })).toBeInTheDocument();
+  });
+
+  test('Start over replaces Reset, loads the bare structure and updates the address', async () => {
+    window.history.replaceState(null, '', '/?c=array.append(1).append(2)');
+    await renderLoaded({ autoplay: false });
+    expect(screen.queryByRole('button', { name: 'Reset' })).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: 'Start over' }));
+    await screen.findByText('No steps yet');
+    expect(requested()).toBe('array');
+    expect(new URLSearchParams(window.location.search).get('c')).toBe('array');
+    window.history.replaceState(null, '', '/');
+  });
+
+  test('Command and Run live inside a collapsed Share details with the copy buttons', async () => {
+    const { container } = render(<Explorer initialCommand={SAMPLE} />);
+    await screen.findByText(/Step 1 of 2/);
+    const share = container.querySelector('details');
+    expect(share).not.toHaveAttribute('open');
+    expect(share.querySelector('summary')).toHaveTextContent('Share');
+    ['Command', 'Run', 'Copy link', 'Copy embed code', 'Copy question for Claude'].forEach((name) => {
+      const el = name === 'Command' ? screen.getByLabelText(name) : screen.getByRole('button', { name });
+      expect(share).toContainElement(el);
+    });
+  });
+
+  test('a failed first load opens Share', async () => {
+    global.fetch = jest.fn(() => Promise.reject(new Error('Network down')));
+    const { container } = render(<Explorer initialCommand={SAMPLE} />);
+    await screen.findByRole('alert');
+    await waitFor(() => expect(container.querySelector('details')).toHaveAttribute('open'));
+  });
+
+  test('the heading and intro show in the main app but not in embeds', async () => {
+    const { unmount } = render(<Explorer initialCommand={SAMPLE} />);
+    expect(await screen.findByRole('heading', { name: 'Array / Dynamic Array' })).toBeInTheDocument();
+    expect(screen.getByText(/Elements sit in contiguous memory/)).toBeInTheDocument();
+    expect(screen.getByText(/Access O\(1\)/)).toBeInTheDocument();
+    unmount();
+    render(<Explorer initialCommand={SAMPLE} embed />);
+    await screen.findByText(/Step 1 of 2/);
+    expect(screen.queryByRole('heading', { name: 'Array / Dynamic Array' })).toBeNull();
+    expect(screen.queryByText(/Elements sit in contiguous memory/)).toBeNull();
+  });
+
+  test('an inactive explorer ignores the keyboard', async () => {
+    await renderLoaded({ autoplay: false, active: false });
+    fireEvent.keyDown(document.body, { key: 'ArrowRight' });
+    expect(screen.getByText('Step 1 of 2')).toBeInTheDocument();
+  });
+});

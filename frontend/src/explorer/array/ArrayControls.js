@@ -15,7 +15,7 @@ function parseWhole(text) {
 }
 
 // Builds one call string per button and hands it to onCall.
-export default function ArrayControls({ onCall, onUndo, canUndo, disabled }) {
+export default function ArrayControls({ onCall, onUndo, onStartOver, canUndo, disabled }) {
   const [value, setValue] = useState('');
   const [index, setIndex] = useState('');
   const [target, setTarget] = useState('');
@@ -75,7 +75,7 @@ export default function ArrayControls({ onCall, onUndo, canUndo, disabled }) {
         {btn('Insert', insert)}
         {btn('Pop', pop)}
         {btn('Get', withIndex((i) => send('get', [i])))}
-        {btn('Reset', () => send('reset', []))}
+        {btn('Start over', () => { setMessage(''); onStartOver(); })}
         {btn('Undo', onUndo, !canUndo)}
       </div>
       <div className="ds-controls array-buttons">

@@ -18,7 +18,7 @@ function join(structure, calls) {
 
 // Holds the explorer's command, animation frames and current step.
 // Only the most recent request may update state, so late replies are ignored.
-export default function useExplorer(initialCommand, onEdit) {
+export default function useExplorer(initialCommand, onEdit, { startAtEnd = false } = {}) {
   const [command, setCommand] = useState(initialCommand || '');
   const [response, setResponse] = useState(EMPTY);
   const [step, setStep] = useState(0);
@@ -52,14 +52,14 @@ export default function useExplorer(initialCommand, onEdit) {
   const lastFrame = (data) => Math.max(0, data.frames.length - 1);
 
   const load = useCallback(
-    async (text) => {
+    async (text, { atEnd = false } = {}) => {
       setCommand(text);
       const data = await request(text);
       if (!data) return;
       setResponse(data);
       if (data.success) {
         setCommand(data.command);
-        setStep(0);
+        setStep(atEnd ? lastFrame(data) : 0);
         setError(null);
       } else {
         setStep(lastFrame(data));
@@ -69,21 +69,24 @@ export default function useExplorer(initialCommand, onEdit) {
     [request]
   );
 
+  // Resolves to how many frames the new call made, or null if it was superseded or failed.
   const applyCall = useCallback(
     async (callText) => {
-      if (!response.structure) return;
+      if (!response.structure) return null;
       const data = await request(join(response.structure, [...response.calls, callText]));
-      if (!data) return;
+      if (!data) return null;
       if (!data.success) {
         setError(toError(data));
-        return;
+        return null;
       }
-      const first = data.frames.findIndex((f) => f.call === data.calls.length - 1);
+      const newest = data.calls.length - 1;
+      const first = data.frames.findIndex((f) => f.call === newest);
       setResponse(data);
       setCommand(data.command);
       setStep(first >= 0 ? first : lastFrame(data));
       setError(null);
       if (editHook.current) editHook.current(data.command);
+      return data.frames.filter((f) => f.call === newest).length;
     },
     [request, response]
   );
@@ -91,6 +94,22 @@ export default function useExplorer(initialCommand, onEdit) {
   const undo = useCallback(async () => {
     if (!response.structure || response.calls.length === 0) return;
     const data = await request(join(response.structure, response.calls.slice(0, -1)));
+    if (!data) return;
+    if (!data.success) {
+      setError(toError(data));
+      return;
+    }
+    setResponse(data);
+    setCommand(data.command);
+    setStep(lastFrame(data));
+    setError(null);
+    if (editHook.current) editHook.current(data.command);
+  }, [request, response]);
+
+  // Loads just the structure name, which clears the history.
+  const startOver = useCallback(async () => {
+    if (!response.structure) return;
+    const data = await request(response.structure);
     if (!data) return;
     if (!data.success) {
       setError(toError(data));
@@ -111,7 +130,7 @@ export default function useExplorer(initialCommand, onEdit) {
   const prev = useCallback(() => goTo(step - 1), [goTo, step]);
 
   useEffect(() => {
-    if (initialCommand) load(initialCommand);
+    if (initialCommand) load(initialCommand, { atEnd: startAtEnd });
     // Only the first command is loaded automatically.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -134,6 +153,7 @@ export default function useExplorer(initialCommand, onEdit) {
     load,
     applyCall,
     undo,
+    startOver,
     goTo,
     next,
     prev,

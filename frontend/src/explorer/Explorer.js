@@ -13,8 +13,15 @@ const SPEEDS = [
 const reducedMotion = () => window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
 
 // Steps through a command's animation frames and lets people edit the command.
-export default function Explorer({ initialCommand, embed = false }) {
-  // On /v, keep the address bar in step with edits so a refresh keeps them.
+export default function Explorer({
+  initialCommand,
+  embed = false,
+  autoplay = true,
+  startAtEnd = false,
+  active = true,
+  onEdit: onEditNotify,
+}) {
+  // Keep the address bar in step with edits so a refresh keeps them.
   const onEdit = useCallback(
     (cmd) => {
       if (embed) return;
@@ -28,12 +35,22 @@ export default function Explorer({ initialCommand, embed = false }) {
     },
     [embed]
   );
-  const x = useExplorer(initialCommand, onEdit);
+  const notifyRef = useRef(onEditNotify);
+  notifyRef.current = onEditNotify;
+  const handleEdit = useCallback(
+    (cmd) => {
+      onEdit(cmd);
+      if (notifyRef.current) notifyRef.current(cmd);
+    },
+    [onEdit]
+  );
+  const x = useExplorer(initialCommand, handleEdit, { startAtEnd });
   const { command, structure, calls, frames, step, frame, state, error, loading } = x;
   const [text, setText] = useState(initialCommand || '');
   const [playing, setPlaying] = useState(false);
   const [speed, setSpeed] = useState(900);
   const [copyNote, setCopyNote] = useState('');
+  const [shareOpen, setShareOpen] = useState(false);
   const settled = useRef(false);
 
   const last = frames.length - 1;
@@ -45,8 +62,14 @@ export default function Explorer({ initialCommand, embed = false }) {
   useEffect(() => {
     if (settled.current || loading || !(structure || error)) return;
     settled.current = true;
-    if (structure && !error && frames.length > 0 && !reducedMotion()) setPlaying(true);
-  }, [loading, structure, error, frames.length]);
+    if (error) setShareOpen(true);
+    if (autoplay && structure && !error && frames.length > 0 && !reducedMotion()) setPlaying(true);
+  }, [loading, structure, error, frames.length, autoplay]);
+
+  // A hidden explorer neither plays nor answers the keyboard.
+  useEffect(() => {
+    if (!active) setPlaying(false);
+  }, [active]);
 
   useEffect(() => {
     if (!playing) return undefined;
@@ -67,6 +90,16 @@ export default function Explorer({ initialCommand, embed = false }) {
     []
   );
 
+  // After an edit: one new frame is simply shown; an algorithm's frames play from the first.
+  const edited = useCallback(
+    async (callText) => {
+      setPlaying(false);
+      const made = await x.applyCall(callText);
+      if (made !== null && made > 1 && !reducedMotion()) setPlaying(true);
+    },
+    [x.applyCall] // eslint-disable-line react-hooks/exhaustive-deps
+  );
+
   const togglePlay = () => {
     if (playing) return setPlaying(false);
     if (step >= last) x.goTo(0);
@@ -76,7 +109,7 @@ export default function Explorer({ initialCommand, embed = false }) {
   const { goTo, next, prev } = x;
   useEffect(() => {
     const onKey = (e) => {
-      if (e.altKey || e.ctrlKey || e.metaKey || frames.length === 0) return;
+      if (!active || e.altKey || e.ctrlKey || e.metaKey || frames.length === 0) return;
       if (['INPUT', 'TEXTAREA', 'BUTTON'].includes(e.target.tagName)) return;
       const actions = {
         ArrowLeft: () => { setPlaying(false); prev(); },
@@ -116,20 +149,12 @@ export default function Explorer({ initialCommand, embed = false }) {
 
   const Board = board && board.Board;
   const Controls = board && board.Controls;
+  const Intro = board && board.intro;
 
   return (
     <div className="explorer">
-      {!embed && (
-        <form className="explorer-command" onSubmit={submit}>
-          <label>
-            Command
-            <input value={text} onChange={(e) => setText(e.target.value)} spellCheck={false} />
-          </label>
-          <button type="submit" className="control-btn" disabled={loading}>
-            Run
-          </button>
-        </form>
-      )}
+      {!embed && board && board.title && <h2>{board.title}</h2>}
+      {!embed && Intro && <Intro />}
 
       {error && (
         <div className="error-message" role="alert">
@@ -194,8 +219,9 @@ export default function Explorer({ initialCommand, embed = false }) {
 
           {!embed && (
             <Controls
-              onCall={stopping(x.applyCall)}
+              onCall={edited}
               onUndo={stopping(x.undo)}
+              onStartOver={stopping(x.startOver)}
               canUndo={calls.length > 0}
               disabled={loading}
             />
@@ -208,7 +234,21 @@ export default function Explorer({ initialCommand, embed = false }) {
           Open in EzDSViewer
         </a>
       ) : (
-        <div className="explorer-copy">
+        <details
+          className="explorer-copy"
+          open={shareOpen}
+          onToggle={(e) => setShareOpen(e.currentTarget.open)}
+        >
+          <summary>Share</summary>
+          <form className="explorer-command" onSubmit={submit}>
+            <label>
+              Command
+              <input value={text} onChange={(e) => setText(e.target.value)} spellCheck={false} />
+            </label>
+            <button type="submit" className="control-btn" disabled={loading}>
+              Run
+            </button>
+          </form>
           <div className="explorer-buttons">
             <button className="control-btn" disabled={tooLong || !shown} onClick={() => copy(viewLink)}>
               Copy link
@@ -228,7 +268,7 @@ export default function Explorer({ initialCommand, embed = false }) {
           </div>
           {tooLong && <p className="array-legend">This command is too long to share as a link</p>}
           {copyNote && <p className="array-legend" aria-live="polite">{copyNote}</p>}
-        </div>
+        </details>
       )}
     </div>
   );

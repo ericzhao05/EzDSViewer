@@ -240,3 +240,40 @@ test('values with %, +, space, quotes, backslash and ) survive buildCall, encodi
   expect(global.fetch.mock.calls[0][0]).toContain(`cmd=${encodeCommand(text)}`);
   expect(requestedCommand()).toBe(text);
 });
+
+test('applyCall resolves to how many frames the new call made, or null on failure', async () => {
+  const { result } = await loaded(['append(1)'], [frame(0, 1)]);
+  global.fetch.mockReturnValueOnce(reply(success(['append(1)', 'max_subarray()'], [frame(0, 1), frame(1, 2), frame(1, 3), frame(1, 4)])));
+  let made;
+  await act(async () => { made = await result.current.applyCall('max_subarray()'); });
+  expect(made).toBe(3);
+  global.fetch.mockReturnValueOnce(reply(failure('array.append(1).max_subarray().x(', ['append(1)', 'max_subarray()'], []), false));
+  await act(async () => { made = await result.current.applyCall('x('); });
+  expect(made).toBeNull();
+});
+
+test('startAtEnd shows the last frame of the first load', async () => {
+  global.fetch.mockReturnValue(reply(success(['append(1)', 'append(2)'], [frame(0, 1), frame(1, 2)])));
+  const { result } = renderHook(() => useExplorer('array.append(1).append(2)', undefined, { startAtEnd: true }));
+  await waitFor(() => expect(result.current.structure).toBe('array'));
+  expect(result.current.step).toBe(1);
+});
+
+test('startOver loads just the structure name, clears the calls and reports the edit', async () => {
+  const onEdit = jest.fn();
+  global.fetch.mockReturnValueOnce(reply(success(['append(1)', 'append(2)'], [frame(0, 1), frame(1, 2)])));
+  const { result } = renderHook(() => useExplorer(undefined, onEdit));
+  await act(async () => { await result.current.load('array.append(1).append(2)'); });
+  global.fetch.mockReturnValueOnce(reply(success([], [], { n: 'empty' })));
+  await act(async () => { await result.current.startOver(); });
+  expect(requestedCommand()).toBe('array');
+  expect(result.current.calls).toEqual([]);
+  expect(result.current.command).toBe('array');
+  expect(onEdit).toHaveBeenLastCalledWith('array');
+});
+
+test('startOver does nothing before a structure has loaded', async () => {
+  const { result } = renderHook(() => useExplorer());
+  await act(async () => { await result.current.startOver(); });
+  expect(global.fetch).not.toHaveBeenCalled();
+});

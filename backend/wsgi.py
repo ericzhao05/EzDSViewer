@@ -9,16 +9,14 @@ gunicorn --workers 1 --threads 4 wsgi:app
 
 import threading
 import time
-from urllib.parse import quote
 
-from flask import Flask, jsonify, redirect, request
+from flask import Flask, jsonify, request
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 from api.pages import bp as pages_bp
 from api.routes.run_routes import bp as run_bp
 
 MAX_RUNS_PER_MINUTE = 120
-HOME_COMMAND = "array.append(1).append(3).append(5).append(7).two_sum_sorted(10)"
 
 
 def create_app(clock=time.time):
@@ -49,10 +47,6 @@ def create_app(clock=time.time):
         res.status_code = 429
         res.headers["Retry-After"] = str(60 - int(now % 60))
         return res
-
-    @app.route("/")
-    def home():
-        return redirect("/v?c=" + quote(HOME_COMMAND, safe=""))
 
     return app
 

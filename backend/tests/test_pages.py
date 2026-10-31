@@ -45,6 +45,17 @@ class PagesTest(unittest.TestCase):
         self.assertIn("font-src 'self' https://fonts.gstatic.com", csp)
         self.assertTrue(csp.endswith("; frame-ancestors 'none'"))
 
+    def test_home_is_the_app_page_with_the_same_headers_as_view(self):
+        res = self.client.get("/", query_string={"c": "array.append(1)"})
+        self.assertEqual(res.status_code, 200)
+        html = res.get_data(as_text=True)
+        self.assertIn('<meta property="og:title" content="Array: 1 operation">', html)
+        self.assertIn('<meta name="robots" content="noindex">', html)
+        self.assertTrue(res.headers["Content-Security-Policy"].endswith("; frame-ancestors 'none'"))
+
+    def test_home_without_a_command_has_the_default_title(self):
+        self.assertIn('og:title" content="EzDSViewer"', self.html("/"))
+
     def test_singular_operation(self):
         self.assertIn("Array: 1 operation\"", self.html("/v", c="array.append(1)"))
 
@@ -69,7 +80,7 @@ class PagesTest(unittest.TestCase):
 
     def test_missing_build_is_503(self):
         pages.BUILD_DIR = os.path.join(self.tmp.name, "missing")
-        for path in ("/v", "/embed"):
+        for path in ("/", "/v", "/embed"):
             res = self.client.get(path)
             self.assertEqual(res.status_code, 503)
             self.assertIn("Frontend build not found. Run npm run build in frontend/.", res.get_data(as_text=True))
