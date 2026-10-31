@@ -210,3 +210,67 @@ describe('what layouts need', () => {
     expect(s.runCall).toHaveBeenCalledWith('pop()');
   });
 });
+
+describe('sorts', () => {
+  const ids = ['bubble_sort', 'selection_sort', 'insertion_sort', 'merge_sort', 'quick_sort', 'heap_sort'];
+  const sr = (c) => Object.fromEntries(c.sorts.map((o) => [o.id, o.blockedReason]));
+  const range = (n) => Array.from({ length: n }, (_, i) => n - i);
+
+  test('lists six sorts with labels and complexity', () => {
+    const { result } = renderHook(() => useArrayControls(sessionWith([2, 1])));
+    expect(result.current.sorts.map((o) => o.id)).toEqual(ids);
+    expect(result.current.sorts.map((o) => o.label)).toEqual([
+      'Bubble sort', 'Selection sort', 'Insertion sort', 'Merge sort', 'Quick sort', 'Heap sort',
+    ]);
+    expect(result.current.sorts.map((o) => o.complexity)).toEqual([
+      'O(n²)', 'O(n²)', 'O(n²)', 'O(n log n)', 'O(n log n), O(n²) at worst', 'O(n log n)',
+    ]);
+    result.current.sorts.forEach((o) => {
+      expect(typeof o.summary).toBe('string');
+      expect(o.inputs).toEqual([]);
+      expect(typeof o.run).toBe('function');
+    });
+  });
+
+  test('run sends the call with no arguments', () => {
+    const session = sessionWith([2, 1]);
+    const { result } = renderHook(() => useArrayControls(session));
+    act(() => { result.current.sorts[3].run(); });
+    expect(session.runCall).toHaveBeenCalledWith('merge_sort()');
+  });
+
+  test('nothing is blocked for a small numeric array, sorted or not', () => {
+    const { result } = renderHook(() => useArrayControls(sessionWith([3, 1, 2])));
+    Object.values(sr(result.current)).forEach((r) => expect(r).toBeNull());
+  });
+
+  test('a string blocks every sort and run does nothing', () => {
+    const session = sessionWith([1, 'a']);
+    const { result } = renderHook(() => useArrayControls(session));
+    Object.values(sr(result.current)).forEach((r) => expect(r).toBe('Needs numbers only'));
+    act(() => { result.current.sorts[0].run(); });
+    expect(session.runCall).not.toHaveBeenCalled();
+  });
+
+  test('an empty array blocks every sort', () => {
+    const { result } = renderHook(() => useArrayControls(sessionWith([])));
+    Object.values(sr(result.current)).forEach((r) => expect(r).toBe('Needs at least one value'));
+  });
+
+  test('over 40 values blocks the slow sorts only', () => {
+    const { result } = renderHook(() => useArrayControls(sessionWith(range(41))));
+    const r = sr(result.current);
+    ['bubble_sort', 'selection_sort', 'insertion_sort', 'quick_sort'].forEach((id) => expect(r[id]).toBe('Needs 40 values or fewer'));
+    ['merge_sort', 'heap_sort'].forEach((id) => expect(r[id]).toBeNull());
+  });
+
+  test('exactly 40 values is allowed', () => {
+    const { result } = renderHook(() => useArrayControls(sessionWith(range(40))));
+    Object.values(sr(result.current)).forEach((r) => expect(r).toBeNull());
+  });
+
+  test('controls.algorithms is unchanged', () => {
+    const { result } = renderHook(() => useArrayControls(sessionWith([1, 2])));
+    expect(result.current.algorithms.map((o) => o.id)).toEqual(['two_sum_sorted', 'binary_search', 'max_subarray', 'prefix_sums']);
+  });
+});

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { PlayerControls } from '../../../parts';
+import PlayerBar from './PlayerBar';
 import './styles.css';
 
 // The words around each operation's inputs. A string is plain text; { input } is an input's id.
@@ -31,35 +31,6 @@ const ALGORITHMS = {
 };
 
 const reducedMotion = () => window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
-
-// One past call as an English sentence. A call this page doesn't know stays as written.
-export function describeCall(call) {
-  const match = /^(\w+)\((.*)\)$/s.exec(call);
-  if (!match) return call;
-  const [, method, args] = match;
-  switch (method) {
-    case 'append':
-      return `Appended ${args} to the end`;
-    case 'insert': {
-      const parts = /^(-?\d+),\s*(.*)$/s.exec(args);
-      return parts ? `Inserted ${parts[2]} at index ${parts[1]}` : call;
-    }
-    case 'pop':
-      return args ? `Removed the value at index ${args}` : 'Removed the last value';
-    case 'get':
-      return `Read index ${args}`;
-    case 'two_sum_sorted':
-      return `Looked for two numbers that add up to ${args}`;
-    case 'binary_search':
-      return `Searched for ${args}`;
-    case 'max_subarray':
-      return 'Looked for the run with the biggest sum';
-    case 'prefix_sums':
-      return 'Built running totals';
-    default:
-      return call;
-  }
-}
 
 function Blank({ item, input }) {
   const isIndex = input.label === 'Index';
@@ -268,7 +239,7 @@ export default function Preset3({ session, controls, intro: Intro, Board, title 
       {session.structure && Board && (
         <>
           <div className="p3-player" ref={player}>
-            <PlayerControls session={session} />
+            <PlayerBar session={session} />
             <div className="explorer-note" role="status">
               <span key={session.step} className="p3-note-text">
                 {session.note || inviting}
@@ -327,43 +298,6 @@ export default function Preset3({ session, controls, intro: Intro, Board, title 
                 <AlgorithmCard key={item.id} item={item} onSubmit={(e, it) => send(e, it, null)} />
               ))}
             </ul>
-          </section>
-
-          <section className="p3-section" aria-labelledby="p3-story">
-            <h3 id="p3-story">What you have done so far</h3>
-            {controls.history.length === 0 ? (
-              <p className="p3-lead">Nothing yet. Each thing you do is written here, and you can press it to go back to that moment.</p>
-            ) : (
-              <>
-                <p className="p3-lead">Press a line to go back to that moment. It stays in your history.</p>
-                <ol className="p3-story">
-                  {controls.history.map((entry) => (
-                    <li key={entry.index}>
-                      {entry.firstFrame >= 0 ? (
-                        <button
-                          type="button"
-                          className="control-btn"
-                          aria-current={entry.active ? 'step' : undefined}
-                          onClick={() => {
-                            controls.goToCall(entry.index);
-                            reveal();
-                          }}
-                        >
-                          <span>{describeCall(entry.call)}</span>
-                          <code>{entry.call}</code>
-                          {entry.active && <span className="p3-now">Showing now</span>}
-                        </button>
-                      ) : (
-                        <span className="p3-story-flat">
-                          <span>{describeCall(entry.call)}</span>
-                          <code>{entry.call}</code>
-                        </span>
-                      )}
-                    </li>
-                  ))}
-                </ol>
-              </>
-            )}
           </section>
         </>
       )}

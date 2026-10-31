@@ -1,6 +1,5 @@
-import { render, screen, fireEvent, act, within } from '@testing-library/react';
+import { render, screen, fireEvent, act, within, waitFor } from '@testing-library/react';
 import App from '../../../../App';
-import { describeCall } from './index';
 
 function reply(body) {
   return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve(body) });
@@ -51,13 +50,11 @@ test('an append sends the right call, by the verb or by Enter', async () => {
   await open('array.append(1)');
   fireEvent.change(screen.getByRole('textbox', { name: 'Append value' }), { target: { value: '7' } });
   fireEvent.click(screen.getByRole('button', { name: 'Append' }));
-  await screen.findByText('Appended 7 to the end');
-  expect(sentCommands()).toContain('array.append(1).append(7)');
+  await waitFor(() => expect(sentCommands()).toContain('array.append(1).append(7)'));
 
   fireEvent.change(screen.getByRole('textbox', { name: 'Append value' }), { target: { value: '9' } });
   fireEvent.submit(screen.getByRole('form', { name: 'Append' }));
-  await screen.findByText('Appended 9 to the end');
-  expect(sentCommands()).toContain('array.append(1).append(7).append(9)');
+  await waitFor(() => expect(sentCommands()).toContain('array.append(1).append(7).append(9)'));
 });
 
 test('insert keeps its value and index apart', async () => {
@@ -65,8 +62,7 @@ test('insert keeps its value and index apart', async () => {
   fireEvent.change(screen.getByRole('textbox', { name: 'Insert value' }), { target: { value: '9' } });
   fireEvent.change(screen.getByRole('textbox', { name: 'Insert index' }), { target: { value: '2' } });
   fireEvent.click(screen.getByRole('button', { name: 'Insert' }));
-  await screen.findByText('Inserted 9 at index 2');
-  expect(sentCommands()).toContain('array.append(1).insert(2, 9)');
+  await waitFor(() => expect(sentCommands()).toContain('array.append(1).insert(2, 9)'));
 });
 
 test('a missing input shows its message beside that sentence and moves focus to the blank', async () => {
@@ -106,13 +102,31 @@ test('the step controls work, and the slider is labelled', async () => {
   expect(within(speed).getByRole('button', { name: 'Fast' })).toHaveAttribute('aria-pressed', 'true');
 });
 
-test('a line of the story jumps to its step and says which one is showing', async () => {
+test('the step controls are icon buttons with names and tooltips, and speed shares their row', async () => {
   await open('array.append(1).append(2)');
-  fireEvent.click(await screen.findByRole('button', { name: 'Pause' }));
-  fireEvent.click(screen.getByRole('button', { name: /^Appended 1 to the end/ }));
-  expect(screen.getByText('Step 1 of 2')).toBeInTheDocument();
-  expect(screen.getByRole('button', { name: /^Appended 1 to the end/ })).toHaveAttribute('aria-current', 'step');
-  expect(screen.getByText('Showing now')).toBeInTheDocument();
+  await screen.findByRole('button', { name: 'Pause' });
+  ['Previous step', 'Next step', 'Restart', 'Pause'].forEach((name) => {
+    const b = screen.getByRole('button', { name });
+    expect(b).toHaveAttribute('title', name);
+    expect(b.textContent).toBe('');
+    expect(b.querySelector('svg[aria-hidden="true"]')).not.toBeNull();
+  });
+  const pauseIcon = screen.getByRole('button', { name: 'Pause' }).innerHTML;
+  fireEvent.click(screen.getByRole('button', { name: 'Pause' }));
+  const play = screen.getByRole('button', { name: 'Play' });
+  expect(play).toHaveAttribute('title', 'Play');
+  expect(play.innerHTML).not.toBe(pauseIcon);
+  const speed = screen.getByRole('group', { name: 'Speed' });
+  expect(speed.parentElement).toBe(play.parentElement.parentElement);
+  expect(within(speed).getAllByRole('button')).toHaveLength(3);
+});
+
+test('the history section is gone but the history still drives undo', async () => {
+  await open('array.append(1).append(2)');
+  expect(screen.queryByRole('heading', { name: 'What you have done so far' })).toBeNull();
+  expect(document.querySelector('.p3-story')).toBeNull();
+  fireEvent.click(screen.getByRole('button', { name: 'Undo' }));
+  await screen.findByText('Step 1 of 1');
 });
 
 test('undo, start over and the share area are all on the page', async () => {
@@ -131,18 +145,10 @@ test('undo, start over and the share area are all on the page', async () => {
 
   fireEvent.change(screen.getByRole('textbox', { name: 'Command' }), { target: { value: 'array.append(4)' } });
   fireEvent.click(screen.getByRole('button', { name: 'Run' }));
-  await screen.findByText('Appended 4 to the end');
+  await waitFor(() => expect(sentCommands()).toContain('array.append(4)'));
 
   fireEvent.click(screen.getByRole('button', { name: 'Start over' }));
   await screen.findByText('No steps yet');
-});
-
-test('calls read as English, and unknown ones stay as written', () => {
-  expect(describeCall('pop()')).toBe('Removed the last value');
-  expect(describeCall('pop(2)')).toBe('Removed the value at index 2');
-  expect(describeCall("insert(1, 'a, b')")).toBe("Inserted 'a, b' at index 1");
-  expect(describeCall('two_sum_sorted(10)')).toBe('Looked for two numbers that add up to 10');
-  expect(describeCall('reset()')).toBe('reset()');
 });
 
 test('no layout number is printed on the page', async () => {

@@ -3,6 +3,7 @@ import { buildCall } from '../commandLang';
 
 const WHOLE = /^-?\d+$/;
 const MAX_SIZE = 64;
+const MAX_SLOW_SORT = 40;
 
 // A whole number becomes an integer, anything else stays a string.
 function parseValue(text) {
@@ -62,6 +63,9 @@ export default function useArrayControls(session) {
     binarySearch: hasString ? 'Needs numbers only' : !ascending ? 'Needs a sorted array' : null,
     maxSubarray: hasString ? 'Needs numbers only' : values && size === 0 ? 'Needs at least one value' : null,
     prefixSums: hasString ? 'Needs numbers only' : null,
+    sortAny: hasString ? 'Needs numbers only' : values && size === 0 ? 'Needs at least one value' : null,
+    // The animation of the slower sorts gets too long past 40 values.
+    sortSmall: hasString ? 'Needs numbers only' : values && size === 0 ? 'Needs at least one value' : size > MAX_SLOW_SORT ? `Needs ${MAX_SLOW_SORT} values or fewer` : null,
   };
 
   // A blocked item does nothing; the backend's rules stay the final check.
@@ -138,6 +142,17 @@ export default function useArrayControls(session) {
     item('prefix_sums', 'Prefix sums', 'Build running totals of the values.', 'O(n)', [], () => send('prefix_sums', []), 'prefixSums'),
   ];
 
+  const sort = (id, label, summary, complexity, key) =>
+    item(id, label, summary, complexity, [], () => send(id, []), key);
+  const sorts = [
+    sort('bubble_sort', 'Bubble sort', 'Swap neighbours that are out of order, pass after pass.', 'O(n²)', 'sortSmall'),
+    sort('selection_sort', 'Selection sort', 'Pick the smallest value left and move it to the front.', 'O(n²)', 'sortSmall'),
+    sort('insertion_sort', 'Insertion sort', 'Slide each value back into its place among the sorted ones.', 'O(n²)', 'sortSmall'),
+    sort('merge_sort', 'Merge sort', 'Split the array in halves, sort each, then merge them.', 'O(n log n)', 'sortAny'),
+    sort('quick_sort', 'Quick sort', 'Split the values around a pivot and sort each side.', 'O(n log n), O(n²) at worst', 'sortSmall'),
+    sort('heap_sort', 'Heap sort', 'Build a heap, then take out the biggest value each time.', 'O(n log n)', 'sortAny'),
+  ];
+
   const activeCall = session.frame && Number.isInteger(session.frame.call) ? session.frame.call : null;
   // The calls made so far, each with the first frame it produced (-1 if it made none).
   const history = session.calls.map((call, index) => ({
@@ -154,6 +169,7 @@ export default function useArrayControls(session) {
   return {
     operations,
     algorithms,
+    sorts,
     undo: session.undo,
     canUndo: session.canUndo,
     startOver: () => {

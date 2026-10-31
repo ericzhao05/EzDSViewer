@@ -33,7 +33,7 @@
 }
 
 /* Only the verbs and the Run buttons carry the theme's main button look */
-.preset-3 :is(.p3-story, .p3-share-rows, .p3-row-undo) {
+.preset-3 :is(.p3-share-rows, .p3-row-undo) {
   --btn-bg: var(--input-bg);
   --btn-ink: var(--p-ink);
   --btn-shadow: var(--panel-shadow);
@@ -82,16 +82,39 @@
   flex-wrap: wrap;
 }
 
-/* Buttons and speed on one line, then a full-width timeline with the count at its end */
+/* Icon buttons on the left, speed at the right end of the same row, then a full-width timeline with the count */
+.preset-3 .p3-bar .p3-speed {
+  margin-left: auto;
+  justify-content: flex-end;
+}
+
+.preset-3 .p3-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.preset-3 .p3-icon {
+  display: block;
+  width: 1.5rem;
+  height: 1.5rem;
+  flex: none;
+}
+
+/* A theme's decorative button brackets would crowd an icon */
+.App .main-content .preset-3 .p3-icon-btn::before,
+.App .main-content .preset-3 .p3-icon-btn::after {
+  content: none;
+}
+
 .preset-3 .explorer-slider {
-  order: 2;
   flex: 1 1 calc(100% - 9rem);
   min-width: 8rem;
   max-width: 100%;
-}
-
-.preset-3 .explorer-steps .explorer-count {
-  order: 2;
 }
 
 /* Sections */
@@ -260,68 +283,6 @@
 .preset-3 .p3-card-flags .p3-flag,
 .preset-3 .p3-card-flags .p3-message:not(:empty) {
   margin-top: var(--space-sm);
-}
-
-/* The story so far: a numbered list because it is a real sequence */
-.preset-3 .p3-story {
-  display: grid;
-  gap: var(--space-xs);
-  max-height: 24rem;
-  overflow-y: auto;
-  padding: var(--space-xs);
-  padding-left: 2.6em;
-  list-style: decimal;
-}
-
-.preset-3 .p3-story button,
-.preset-3 .p3-story-flat {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  column-gap: var(--p3-gap);
-  width: 100%;
-  min-height: 44px;
-  box-sizing: border-box;
-  text-align: left;
-  overflow-wrap: anywhere;
-}
-
-.preset-3 .p3-story-flat {
-  padding: 0.45rem 0.9rem;
-}
-
-.preset-3 .p3-story code {
-  background: none;
-  color: inherit;
-  font-family: var(--f-data);
-  font-size: var(--fs-small);
-  opacity: 0.85;
-  overflow-wrap: anywhere;
-}
-
-.preset-3 .p3-story button[aria-current='step'] {
-  border-width: calc(var(--border-width) + 1px);
-}
-
-.preset-3 .p3-now {
-  margin-left: auto;
-  text-decoration: underline;
-}
-
-/* A long line wraps inside its button, whatever the theme does with button text */
-.App .main-content .preset-3 .p3-story button {
-  white-space: normal;
-}
-
-.preset-3 .p3-story button > span,
-.preset-3 .p3-story button > code {
-  min-width: 0;
-}
-
-/* A theme's decorative button brackets would strand on their own lines when a row wraps */
-.App .main-content .preset-3 .p3-story button::before,
-.App .main-content .preset-3 .p3-story button::after {
-  content: none;
 }
 
 /* The Command box */
