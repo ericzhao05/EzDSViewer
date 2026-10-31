@@ -1,6 +1,479 @@
-/* Layout 4. Keep every rule under .preset-4 so presets cannot affect each other. */
+/* Layout 4, Hands on. Colours, fonts and radii come from the theme tokens. */
+.preset-4 {
+  --p4-slot: 66px;
+  --p4-gap: 32px;
+  min-width: 0;
+  text-align: left;
+}
+
+.App .main-content .preset-4 h2,
+.App .main-content .preset-4 p,
+.App .main-content .preset-4 .p4-field {
+  margin-inline: 0;
+  text-align: left;
+}
+
+.App .main-content .preset-4 .p4-note {
+  width: auto;
+  max-width: none;
+  margin-inline: 0;
+  text-align: left;
+}
+
 .preset-4 .preset-note {
   margin: 0 0 0.5rem;
   font-size: var(--fs-small);
-  opacity: 0.7;
+  color: var(--p-muted);
+}
+
+.preset-4 .p4-small {
+  margin: 0;
+  font-size: var(--fs-small);
+  color: var(--p-muted);
+  overflow-wrap: anywhere;
+}
+
+.preset-4 .p4-blocked,
+.preset-4 .p4-message,
+.preset-4 .p4-now {
+  margin: 0;
+  font-size: var(--fs-small);
+  font-weight: var(--fw-control);
+  color: var(--p-ink);
+  overflow-wrap: anywhere;
+}
+
+/* Text after a mark, so a blocked reason does not rely on colour. */
+.preset-4 .p4-blocked {
+  padding-left: var(--space-sm);
+  border-left: 3px var(--border-style) var(--p-ink);
+}
+
+/* The stage */
+.preset-4 .p4-stage {
+  margin-top: var(--space-lg);
+  scroll-margin-top: var(--space-md);
+}
+
+.preset-4 .p4-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm) var(--space-lg);
+}
+
+.preset-4 .p4-top .array-stats {
+  margin: 0;
+  justify-content: flex-start;
+}
+
+.preset-4 .p4-top-actions,
+.preset-4 .p4-row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.preset-4 .control-btn {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+.preset-4 .p4-note {
+  margin: var(--space-sm) 0;
+}
+
+/* The array and its bar are one object. */
+.preset-4 .p4-work {
+  min-width: 0;
+  border: 2px var(--border-style) var(--panel-border);
+  border-radius: var(--radius-lg);
+  background: var(--panel-bg);
+}
+
+.preset-4 .p4-scroll {
+  padding: var(--space-md) var(--space-sm);
+  border: 0;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  background: none;
+}
+
+.App .main-content .preset-4 .array-cells.p4-row {
+  gap: 0;
+  padding: 6px 6px 0;
+  min-height: calc(var(--p4-slot) + 3.5rem);
+  margin-inline: 0;
+}
+
+/* Each wrap keeps its place among its siblings, so the themes' alternating cells still work. */
+.preset-4 .p4-wrap {
+  flex-direction: row;
+  align-items: flex-start;
+  flex: none;
+}
+
+.preset-4 .p4-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 48px;
+}
+
+/* A gap is always drawn: it has to read as a control before anyone has pressed one. */
+.preset-4 .p4-gap {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--p4-gap);
+  height: var(--p4-slot);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: none;
+  box-shadow: none;
+  color: var(--p-muted);
+  cursor: pointer;
+}
+
+.preset-4 .p4-gap-mark {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: 1px var(--border-style) currentColor;
+  border-radius: var(--radius-md);
+  font-family: var(--f-data);
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.preset-4 .p4-gap:hover:not([aria-disabled='true']),
+.preset-4 .p4-gap:focus-visible {
+  color: var(--p-ink);
+}
+
+.preset-4 .p4-gap:hover:not([aria-disabled='true']) .p4-gap-mark,
+.preset-4 .p4-gap:focus-visible .p4-gap-mark {
+  border-color: var(--btn-hover-bg);
+  background: var(--btn-hover-bg);
+  color: var(--btn-hover-ink);
+}
+
+.preset-4 .p4-gap[aria-disabled='true'] {
+  cursor: not-allowed;
+}
+
+.preset-4 .p4-gap[aria-disabled='true'] .p4-gap-mark {
+  border-style: dotted;
+}
+
+/* A cell is a button around the theme's own cell. */
+.preset-4 .p4-cell-btn,
+.preset-4 .p4-spare-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 48px;
+  height: var(--p4-slot);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: none;
+  box-shadow: none;
+  color: inherit;
+  font: inherit;
+}
+
+.preset-4 .p4-cell-btn {
+  cursor: pointer;
+}
+
+.preset-4 .p4-cell-btn:hover .array-cell {
+  transform: translateY(-2px);
+}
+
+.preset-4 .p4-cell-btn[aria-pressed='true'] {
+  outline: 3px dashed var(--p-ink);
+  outline-offset: 2px;
+}
+
+.preset-4 .p4-picked {
+  margin-top: 2px;
+  font-size: var(--fs-small);
+  font-weight: var(--fw-control);
+  color: var(--p-ink);
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.preset-4 .p4-spare {
+  margin-left: var(--p4-gap);
+}
+
+/* The slot at the end */
+.preset-4 .p4-end {
+  margin-left: var(--p4-gap);
+}
+
+.preset-4 .p4-append {
+  min-width: 5.5rem;
+  height: var(--p4-slot);
+  margin: 0;
+  padding: 0 var(--space-sm);
+  border: 2px dashed var(--p-ink);
+  border-radius: var(--radius-sm);
+  background: none;
+  box-shadow: none;
+  color: var(--p-ink);
+  font-family: var(--f-body);
+  font-size: var(--fs-base);
+  font-weight: var(--fw-control);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.preset-4 .p4-append:hover:not([aria-disabled='true']) {
+  background: var(--btn-hover-bg);
+  color: var(--btn-hover-ink);
+}
+
+.preset-4 .p4-append[aria-disabled='true'] {
+  border-style: dotted;
+  cursor: not-allowed;
+}
+
+/* The place a new value will land, opened up in the row. */
+.preset-4 .p4-new {
+  flex: none;
+  margin: 0 var(--space-xs);
+  animation: p4-open 0.18s ease-out;
+}
+
+.preset-4 .p4-new-input {
+  box-sizing: border-box;
+  width: 5.5rem;
+  height: var(--p4-slot);
+  margin: 0;
+  padding: 0 var(--space-xs);
+  border: 3px solid var(--p-ink);
+  border-radius: var(--radius-sm);
+  background: var(--input-bg);
+  color: var(--input-ink);
+  font-family: var(--f-data);
+  font-size: var(--fs-base);
+  text-align: center;
+}
+
+@keyframes p4-open {
+  from {
+    width: var(--p4-gap);
+    opacity: 0;
+  }
+  to {
+    width: 5.5rem;
+    opacity: 1;
+  }
+}
+
+.preset-4 .p4-prefix {
+  padding: 0 var(--space-md) var(--space-sm);
+  overflow-wrap: anywhere;
+}
+
+.preset-4 .p4-gap:focus-visible,
+.preset-4 .p4-cell-btn:focus-visible,
+.preset-4 .p4-append:focus-visible,
+.preset-4 .p4-new-input:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+/* The bar directly under the array */
+.preset-4 .p4-bar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  border-top: 2px var(--border-style) var(--panel-border);
+}
+
+.preset-4 .p4-bar-head {
+  margin: 0;
+  color: var(--p-ink);
+  font-weight: var(--fw-control);
+  overflow-wrap: anywhere;
+}
+
+.preset-4 .p4-new-bar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.preset-4 .p4-cell-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-sm);
+}
+
+.preset-4 .p4-index {
+  flex: 0 1 6rem;
+}
+
+/* Append sits apart: it adds to the array, where the others act on one cell. */
+.preset-4 .p4-add {
+  margin-left: auto;
+}
+
+.preset-4 .p4-guide {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-xs) var(--space-lg);
+  margin: 0;
+  padding: var(--space-sm) 0 0;
+  border-top: 1px var(--border-style) var(--panel-border);
+  list-style: none;
+}
+
+.preset-4 .p4-guide li {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.preset-4 .p4-op {
+  color: var(--p-ink);
+  font-weight: var(--fw-control);
+}
+
+.preset-4 .p4-field {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  font-size: var(--fs-small);
+  color: var(--p-ink);
+}
+
+.preset-4 .p4-field input {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 44px;
+  font-family: var(--f-data);
+}
+
+.preset-4 [aria-disabled='true'].control-btn {
+  border-style: dotted;
+  cursor: not-allowed;
+}
+
+/* Stepping sits under the object it replays. */
+.preset-4 .explorer-steps {
+  margin: var(--space-md) 0 0;
+  justify-content: flex-start;
+}
+
+/* The algorithms are a separate place, not more buttons. */
+.preset-4 .p4-band {
+  margin-top: var(--space-xl);
+  padding: var(--space-lg);
+  border-top: 6px double var(--p-ink);
+  background: var(--p-surface);
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+}
+
+.preset-4 .p4-band h3 {
+  margin: 0;
+}
+
+.preset-4 .p4-band-lead {
+  margin: var(--space-xs) 0 var(--space-md);
+  color: var(--p-ink);
+}
+
+.preset-4 .p4-algos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-lg);
+}
+
+.preset-4 .p4-algo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  min-width: 0;
+}
+
+.preset-4 .p4-algo-name {
+  margin: 0;
+  color: var(--p-ink);
+  font-family: var(--f-body);
+  font-size: var(--fs-base);
+  font-weight: var(--fw-control);
+}
+
+.preset-4 .p4-algo-run {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-sm);
+  margin-top: auto;
+}
+
+.preset-4 .p4-algo-run .p4-field {
+  flex: 0 1 6rem;
+}
+
+/* Touch screens: gaps are full tap targets. */
+@media (any-pointer: coarse), (max-width: 600px) {
+  .preset-4 {
+    --p4-gap: 44px;
+  }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .preset-4 .p4-keys {
+    display: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .preset-4 .p4-guide,
+  .preset-4 .p4-algos {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .preset-4 .p4-note {
+    min-height: 3em;
+  }
+
+  .preset-4 .p4-bar,
+  .preset-4 .p4-band {
+    padding: var(--space-sm);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .preset-4 .p4-new {
+    animation: none;
+  }
+
+  .preset-4 .p4-cell-btn:hover .array-cell {
+    transform: none;
+  }
+}
+
+/* The Share toggle is a tap target too. */
+.preset-4 .explorer-copy summary {
+  box-sizing: border-box;
+  min-height: 44px;
+  padding-block: 0.6rem;
+  cursor: pointer;
 }

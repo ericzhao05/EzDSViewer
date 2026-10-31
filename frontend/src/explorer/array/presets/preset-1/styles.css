@@ -1,6 +1,535 @@
-/* Layout 1. Keep every rule under .preset-1 so presets cannot affect each other. */
-.preset-1 .preset-note {
-  margin: 0 0 0.5rem;
+/* Layout 1, The Workbench. Colour, type, radii and strokes all come from theme tokens. */
+
+/* The shared page card is 900px wide, too narrow for two panes. This only applies while this layout is mounted. */
+.ds-container:has(.preset-1) {
+  max-width: 1360px;
+}
+
+.preset-1 {
+  container-type: inline-size;
+  min-width: 0;
+  text-align: left;
+}
+
+.preset-1 h3 {
+  margin: 0;
+}
+
+.preset-1 p {
+  margin: 0;
+}
+
+/* Repeated class: one theme centres page text and stats with stronger rules. */
+.preset-1.preset-1.preset-1.preset-1.preset-1 :is(p, h2, h3, label, .p1-note) {
+  text-align: left;
+}
+
+/* Header */
+.preset-1 .p1-header {
+  margin-bottom: var(--space-lg);
+}
+
+.preset-1 .p1-intro {
+  max-width: 72ch;
+}
+
+.preset-1 .p1-intro p {
+  margin: 0 0 var(--space-sm);
+}
+
+/* Two panes */
+.preset-1 .p1-workbench {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-lg);
+  align-items: start;
+}
+
+.preset-1 .p1-stage {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  min-width: 0;
+}
+
+/* Stage: the array and what the step means */
+.preset-1 .p1-view {
+  min-width: 0;
+  background-color: var(--card-bg);
+}
+
+.preset-1.preset-1.preset-1.preset-1.preset-1 .array-stats {
+  justify-content: flex-start;
+  margin-top: 0;
+}
+
+/* Room for the pointer row is kept from the start, so nothing jumps when one appears. */
+.preset-1 .array-scroll {
+  position: relative;
+  min-height: 9rem;
+  box-sizing: border-box;
+}
+
+.preset-1 .array-prefix {
+  margin-top: var(--space-sm);
+  overflow-wrap: anywhere;
+}
+
+.preset-1.preset-1.preset-1.preset-1 .p1-note {
+  min-height: 3em;
+  margin-top: var(--space-md);
+  font-size: var(--fs-h3);
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+/* Step bar */
+.preset-1 .p1-bar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  min-width: 0;
+}
+
+.preset-1 .p1-transport {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 7.5rem), 1fr));
+  gap: var(--space-sm);
+}
+
+.preset-1 .p1-transport .control-btn {
+  min-width: 0;
+  padding-inline: var(--space-sm);
+  line-height: 1.15;
+}
+
+.preset-1 .p1-scrub {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 var(--space-md);
+}
+
+.preset-1 .p1-scrub .explorer-slider {
+  flex: 1 1 10rem;
+}
+
+.preset-1 .p1-speed {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.preset-1 .p1-speed > span {
+  margin-right: var(--space-xs);
+  color: var(--p-muted);
+}
+
+/* Your steps */
+.preset-1 .p1-log {
+  min-width: 0;
+  padding-top: var(--space-md);
+  border-top: var(--border-width) var(--border-style) var(--panel-border);
+}
+
+.preset-1 .p1-log-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-sm);
+}
+
+.preset-1 .p1-log-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.preset-1 .p1-tape {
+  position: relative;
+  display: flex;
+  gap: var(--space-sm);
+  margin: 0;
+  padding: var(--space-xs) var(--space-xs) var(--space-sm);
+  overflow-x: auto;
+  list-style: none;
+}
+
+.preset-1 .p1-tape li {
+  flex: none;
+}
+
+.preset-1 .p1-tape-empty {
+  color: var(--p-muted);
+}
+
+.preset-1 .p1-chip {
+  min-height: 44px;
+  padding: 0.25rem 0.75rem;
+  border: var(--border-width) solid var(--p-line);
+  border-radius: var(--radius-md);
+  background: transparent;
+  box-shadow: none;
+  color: var(--p-ink);
+  font-family: var(--f-data);
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.preset-1 .p1-chip:hover:not([aria-disabled='true']) {
+  background: var(--p-surface);
+  color: var(--p-ink);
+}
+
+/* An algorithm in the list reads differently from an edit, in shape as well as words. */
+.preset-1 .p1-chip-run {
+  border-style: double;
+  border-width: 4px;
+}
+
+.preset-1 .p1-chip[aria-current='step'],
+.preset-1 .p1-chip[aria-current='step']:hover {
+  background: var(--p-ink);
+  color: var(--p-bg);
+  font-weight: var(--fw-control);
+}
+
+.preset-1 .p1-chip[aria-disabled='true'] {
+  border-style: dashed;
+  color: var(--p-muted);
+  cursor: not-allowed;
+}
+
+/* Panel */
+.preset-1 .p1-panel {
+  min-width: 0;
+  padding: var(--space-md);
+  border: var(--border-width) var(--border-style) var(--panel-border);
+  border-radius: var(--radius-lg);
+  background-color: var(--main-bg);
+  box-shadow: var(--panel-shadow);
+}
+
+.preset-1 .p1-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-sm);
+}
+
+/* The chosen tab is inverted and carries a notch that points at its contents, so colour isn't the only cue. */
+.preset-1 .p1-tab {
+  position: relative;
+  min-width: 0;
+  min-height: 3.5rem;
+  padding: var(--space-sm);
+  border: var(--border-width) dashed var(--p-line);
+  border-radius: var(--radius-md);
+  background: transparent;
+  box-shadow: none;
+  color: var(--p-ink);
+  font-family: var(--f-display);
+  font-size: var(--fs-h3);
+  font-weight: var(--fw-heading);
+  line-height: 1.1;
+}
+
+.preset-1 .p1-tab:hover {
+  background: var(--p-bg);
+  color: var(--p-ink);
+}
+
+.preset-1 .p1-tab[aria-selected='true'],
+.preset-1 .p1-tab[aria-selected='true']:hover {
+  border: var(--border-width) solid var(--p-ink);
+  background: var(--p-ink);
+  color: var(--p-bg);
+}
+
+.preset-1 .p1-tab[aria-selected='true']::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -0.55rem;
+  border: 0.55rem solid transparent;
+  border-top-color: var(--p-ink);
+  border-bottom-width: 0;
+}
+
+.preset-1 .p1-lead {
+  margin: var(--space-lg) 0 var(--space-sm);
+  color: var(--p-muted);
+}
+
+.preset-1 .p1-error-pointer {
+  margin-top: var(--space-lg);
+  font-weight: var(--fw-control);
+}
+
+.preset-1 .p1-item {
+  padding: var(--space-md) 0;
+  border-top: var(--border-width) var(--border-style) var(--panel-border);
+}
+
+.preset-1 .p1-item:last-child {
+  padding-bottom: 0;
+}
+
+.preset-1 .p1-item-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0 var(--space-md);
+}
+
+.preset-1 .p1-cost {
+  color: var(--p-muted);
+  font-family: var(--f-data);
   font-size: var(--fs-small);
-  opacity: 0.7;
+}
+
+.preset-1 .p1-summary {
+  margin-bottom: var(--space-sm);
+  font-size: var(--fs-small);
+}
+
+.preset-1 .p1-item-do {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-sm);
+}
+
+.preset-1 .p1-field {
+  display: flex;
+  flex: 1 1 5rem;
+  flex-direction: column;
+  min-width: 0;
+  font-size: var(--fs-small);
+}
+
+.preset-1 .p1-field input {
+  width: 100%;
+  min-height: 44px;
+  box-sizing: border-box;
+}
+
+.preset-1 .p1-noinput {
+  flex: 1 1 8rem;
+  align-self: center;
+  color: var(--p-muted);
+  font-size: var(--fs-small);
+}
+
+.preset-1 .p1-help {
+  margin-top: var(--space-sm);
+}
+
+/* A reason: dashed box, so it isn't only a change of colour. */
+.preset-1 .p1-blocked {
+  display: inline-block;
+  padding: 0.1rem 0.5rem;
+  border: var(--border-width) dashed var(--p-ink);
+  border-radius: var(--radius-sm);
+  font-weight: var(--fw-control);
+}
+
+.preset-1 .p1-message {
+  font-weight: var(--fw-control);
+}
+
+/* A button that can't act right now. Repeated class so it outranks the themes' button rules. */
+.preset-1.preset-1.preset-1.preset-1.preset-1 .control-btn[aria-disabled='true'],
+.preset-1.preset-1.preset-1.preset-1.preset-1 .control-btn[aria-disabled='true']:hover {
+  border: var(--border-width) dashed var(--p-line);
+  background: transparent;
+  box-shadow: none;
+  color: var(--p-muted);
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Share */
+.preset-1 .p1-share {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-lg);
+  margin-top: var(--space-xl);
+  padding-top: var(--space-lg);
+  border-top: var(--border-width) var(--border-style) var(--panel-border);
+}
+
+.preset-1 .p1-share-copy p:not(.p1-share-note) {
+  margin-bottom: var(--space-sm);
+  max-width: 60ch;
+}
+
+.preset-1 .p1-share-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.preset-1 .p1-share-note {
+  min-height: 1.5em;
+  margin-top: var(--space-xs);
+}
+
+.preset-1 .p1-share-note:empty {
+  min-height: 0;
+}
+
+.preset-1 .p1-command {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  align-content: start;
+  gap: var(--space-sm);
+}
+
+.preset-1 .p1-command .p1-field {
+  flex: 1 1 12rem;
+}
+
+.preset-1 .p1-command input {
+  font-family: var(--f-data);
+}
+
+.preset-1 .p1-command-hint {
+  flex: 1 0 100%;
+  color: var(--p-muted);
+  font-size: var(--fs-small);
+}
+
+.preset-1 .control-btn {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Wide: two panes, with the stage holding still beside a longer panel */
+@container (min-width: 50rem) {
+  .preset-1 .p1-workbench {
+    grid-template-columns: minmax(0, 1fr) minmax(21rem, 26rem);
+    gap: var(--space-xl);
+  }
+
+  .preset-1 .p1-share {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--space-xl);
+  }
+
+  .preset-1.preset-1.preset-1.preset-1 .p1-note {
+    min-height: 4em;
+  }
+
+  /* A large stage gets large cells. Repeated class so this outranks the themes' cell sizes. */
+  .preset-1.preset-1.preset-1.preset-1 .array-cell {
+    min-width: 4.5rem;
+    height: 4.5rem;
+    font-size: 1.5rem;
+  }
+}
+
+@media (min-height: 700px) {
+  @container (min-width: 50rem) {
+    /* The stage fills the screen: the array box takes the spare height, the step bar sits under it. */
+    .preset-1 .p1-stage {
+      position: sticky;
+      top: var(--space-md);
+      min-height: min(calc(100vh - 2 * var(--space-md)), 52rem);
+    }
+
+    .preset-1 .p1-view {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+    }
+
+    .preset-1 .array-board {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+    }
+
+    .preset-1 .array-scroll {
+      display: flex;
+      flex: 1;
+      align-items: center;
+    }
+
+    /* A fixed row height, so a pointer appearing doesn't shift the centred row. */
+    .preset-1 .array-cells {
+      align-items: flex-start;
+      min-height: 8.5rem;
+    }
+  }
+}
+
+/* Narrow: the array stays pinned above the panel, so its animation stays in view while you work below it.
+   display: contents lets the pin last for the whole workbench, not only the stage. */
+@container (max-width: 49.99rem) {
+  .preset-1 .p1-workbench {
+    gap: var(--space-md);
+  }
+
+  .preset-1 .p1-stage {
+    display: contents;
+  }
+
+  .preset-1 .array-scroll {
+    min-height: 7rem;
+    padding-block: var(--space-sm);
+  }
+
+  .preset-1 .array-stats {
+    gap: var(--space-md);
+    margin-bottom: var(--space-xs);
+  }
+
+  .preset-1.preset-1.preset-1.preset-1 .p1-note {
+    margin-top: var(--space-sm);
+    font-size: var(--fs-base);
+  }
+
+  .preset-1 .p1-panel {
+    padding: var(--space-sm);
+  }
+
+  .preset-1 .p1-log {
+    padding-top: var(--space-sm);
+  }
+}
+
+@media (min-height: 600px) {
+  @container (max-width: 49.99rem) {
+    .preset-1 .p1-view {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      padding-block: var(--space-xs) var(--space-sm);
+      border-bottom: var(--border-width) var(--border-style) var(--panel-border);
+    }
+
+    /* Keeps a focused control clear of the pinned array. */
+    .preset-1 .p1-panel :is(input, button),
+    .preset-1 .p1-bar :is(input, button),
+    .preset-1 .p1-log button {
+      scroll-margin-top: 17rem;
+    }
+  }
+}
+
+/* The page card's padding costs a phone too much of its width. */
+@media (max-width: 700px) {
+  .main-content:has(.preset-1) {
+    padding: var(--space-sm);
+  }
+
+  .ds-container:has(.preset-1) {
+    padding: var(--space-sm);
+  }
 }

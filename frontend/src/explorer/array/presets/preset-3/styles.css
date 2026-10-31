@@ -1,6 +1,398 @@
-/* Layout 3. Keep every rule under .preset-3 so presets cannot affect each other. */
+/* Layout 3, The Sentences. One left-aligned column; the type does the work and themes supply the look. */
+.preset-3 {
+  --p3-sentence-size: calc(var(--fs-base) * 1.35);
+  --p3-gap: var(--space-sm);
+  text-align: left;
+}
+
 .preset-3 .preset-note {
-  margin: 0 0 0.5rem;
+  margin: 0 0 var(--space-xs);
   font-size: var(--fs-small);
-  opacity: 0.7;
+  color: var(--p-muted);
+}
+
+.preset-3 h2 {
+  margin: 0 0 var(--space-sm);
+  text-align: left;
+}
+
+.preset-3 .p3-intro p {
+  max-width: 72ch;
+  margin: 0 0 var(--space-sm);
+}
+
+.preset-3 .p3-intro .array-complexity {
+  color: var(--p-muted);
+  font-size: var(--fs-small);
+}
+
+/* Every line starts at the same left edge, whatever a theme does with page paragraphs */
+.ds-container .explorer .preset-3 p {
+  margin-inline: 0;
+  text-align: left;
+}
+
+.ds-container .explorer .preset-3 .array-stats {
+  justify-content: flex-start;
+}
+
+.App .main-content .preset-3 .explorer-note {
+  width: auto;
+  max-width: none;
+  margin-inline: 0;
+  text-align: left;
+}
+
+/* Only the verbs and the Run buttons carry the theme's main button look */
+.preset-3 :is(.p3-story, .p3-share-rows, .p3-row-undo) {
+  --btn-bg: var(--input-bg);
+  --btn-ink: var(--p-ink);
+  --btn-shadow: var(--panel-shadow);
+}
+
+.preset-3 .array-scroll .array-cells {
+  margin-inline: 0;
+}
+
+/* The array, its note and the stepper stay together */
+.preset-3 .p3-stage {
+  padding-bottom: var(--space-sm);
+  background-color: var(--card-bg);
+}
+
+.preset-3 .p3-stage .array-stats {
+  margin-top: 0;
+}
+
+.preset-3 .p3-stage .explorer-note {
+  min-height: 2.6em;
+  margin-bottom: var(--space-sm);
+  font-size: calc(var(--fs-base) * 1.15);
+}
+
+.preset-3 .p3-note-text {
+  display: inline-block;
+  animation: p3-note-in 0.24s ease-out;
+}
+
+@keyframes p3-note-in {
+  from {
+    transform: translateX(-0.5em);
+    opacity: 0;
+  }
+}
+
+.preset-3 .explorer-steps {
+  justify-content: flex-start;
+  gap: var(--p3-gap);
+}
+
+.preset-3 .explorer-steps .explorer-buttons {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+/* Buttons and speed on one line, then a full-width timeline with the count at its end */
+.preset-3 .explorer-slider {
+  order: 2;
+  flex: 1 1 calc(100% - 9rem);
+  min-width: 8rem;
+  max-width: 100%;
+}
+
+.preset-3 .explorer-steps .explorer-count {
+  order: 2;
+}
+
+/* Sections */
+.preset-3 .p3-section {
+  margin-top: var(--space-xl);
+}
+
+.preset-3 .p3-section h3 {
+  margin: 0 0 var(--space-xs);
+  text-align: left;
+}
+
+.preset-3 .p3-lead {
+  max-width: 72ch;
+  margin: 0 0 var(--space-md);
+  color: var(--p-muted);
+}
+
+.preset-3 ul,
+.preset-3 ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* The sentences: big enough to read as prose, with the blanks and verbs in the flow of the line */
+.preset-3 .p3-rows {
+  display: grid;
+  gap: var(--space-md);
+}
+
+.preset-3 .p3-sentence {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--p3-gap);
+  min-width: 0;
+  font-size: var(--p3-sentence-size);
+}
+
+.preset-3 .p3-sentence .control-btn {
+  font-size: inherit;
+  white-space: nowrap;
+}
+
+.preset-3 .p3-blank {
+  width: 5.5em;
+  min-width: 44px;
+  min-height: 44px;
+  font-size: inherit;
+  font-family: var(--f-data);
+  text-align: center;
+}
+
+.preset-3 .p3-about {
+  max-width: 72ch;
+  margin: var(--space-xs) 0 0;
+  color: var(--p-muted);
+  font-size: var(--fs-small);
+}
+
+.preset-3 .p3-echo {
+  max-width: 72ch;
+  margin: var(--space-xs) 0 0;
+  padding-left: var(--space-sm);
+  border-left: calc(var(--border-width) + 2px) solid var(--p-ink);
+  overflow-wrap: anywhere;
+}
+
+.preset-3 .p3-row-undo {
+  margin-top: var(--space-sm);
+}
+
+.preset-3 .p3-share-rows .p3-sentence {
+  font-size: var(--fs-base);
+}
+
+/* A blocked reason and a message: text with a thick mark, so not just a colour */
+.preset-3 .p3-flag,
+.preset-3 .p3-message:not(:empty) {
+  display: block;
+  padding-left: var(--space-sm);
+  border-left: calc(var(--border-width) + 2px) dashed var(--state-danger);
+  color: var(--p-ink);
+  font-size: var(--fs-base);
+}
+
+.preset-3 .p3-message:empty {
+  display: none;
+}
+
+.preset-3 .p3-section > .p3-flag,
+.preset-3 .p3-section > .p3-message {
+  margin: var(--space-sm) 0 0;
+}
+
+/* The algorithm cards: a different kind of object from the sentences above */
+.preset-3 .p3-cards {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-md);
+}
+
+.preset-3 .p3-card {
+  min-width: 0;
+  padding: var(--space-md);
+  border: var(--border-width) var(--border-style) var(--panel-border);
+  border-radius: var(--radius-lg);
+  background-color: var(--panel-bg);
+  box-shadow: var(--panel-shadow);
+}
+
+.preset-3 .p3-card form {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.preset-3 .p3-card h4 {
+  margin: 0 0 var(--space-sm);
+  font-size: var(--fs-h3);
+  text-align: left;
+}
+
+.preset-3 .p3-card dl {
+  flex: 1;
+  margin: 0;
+}
+
+.preset-3 .p3-card dl > div {
+  margin-bottom: var(--space-sm);
+}
+
+.preset-3 .p3-card dt {
+  color: var(--p-muted);
+  font-size: var(--fs-small);
+}
+
+.preset-3 .p3-card dd {
+  margin: 0;
+}
+
+.preset-3 .p3-card-go {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--p3-gap);
+  margin-top: var(--space-sm);
+}
+
+.preset-3 .p3-card-field {
+  display: flex;
+  flex-direction: column;
+  font-size: var(--fs-small);
+}
+
+.preset-3 .p3-card-field .p3-blank {
+  font-size: var(--fs-base);
+}
+
+.preset-3 .p3-card-flags {
+  display: grid;
+  gap: var(--space-xs);
+}
+
+.preset-3 .p3-card-flags .p3-flag,
+.preset-3 .p3-card-flags .p3-message:not(:empty) {
+  margin-top: var(--space-sm);
+}
+
+/* The story so far: a numbered list because it is a real sequence */
+.preset-3 .p3-story {
+  display: grid;
+  gap: var(--space-xs);
+  max-height: 24rem;
+  overflow-y: auto;
+  padding: var(--space-xs);
+  padding-left: 2.6em;
+  list-style: decimal;
+}
+
+.preset-3 .p3-story button,
+.preset-3 .p3-story-flat {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: var(--p3-gap);
+  width: 100%;
+  min-height: 44px;
+  box-sizing: border-box;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+
+.preset-3 .p3-story-flat {
+  padding: 0.45rem 0.9rem;
+}
+
+.preset-3 .p3-story code {
+  background: none;
+  color: inherit;
+  font-family: var(--f-data);
+  font-size: var(--fs-small);
+  opacity: 0.85;
+  overflow-wrap: anywhere;
+}
+
+.preset-3 .p3-story button[aria-current='step'] {
+  border-width: calc(var(--border-width) + 1px);
+}
+
+.preset-3 .p3-now {
+  margin-left: auto;
+  text-decoration: underline;
+}
+
+/* A long line wraps inside its button, whatever the theme does with button text */
+.App .main-content .preset-3 .p3-story button {
+  white-space: normal;
+}
+
+.preset-3 .p3-story button > span,
+.preset-3 .p3-story button > code {
+  min-width: 0;
+}
+
+/* A theme's decorative button brackets would strand on their own lines when a row wraps */
+.App .main-content .preset-3 .p3-story button::before,
+.App .main-content .preset-3 .p3-story button::after {
+  content: none;
+}
+
+/* The Command box */
+.preset-3 .p3-command {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--p3-gap);
+  margin-top: var(--space-md);
+}
+
+.preset-3 .p3-command label {
+  display: flex;
+  flex: 1 1 14rem;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.preset-3 .p3-command input {
+  width: 100%;
+  min-height: 44px;
+  font-family: var(--f-data);
+}
+
+@media (min-width: 1000px) {
+  .preset-3 .p3-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* With room to spare, the array stays on screen so a Run can be watched from where it was pressed */
+@media (min-width: 1100px) and (min-height: 820px) {
+  .preset-3 .p3-stage {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    padding-top: var(--space-xs);
+    border-bottom: var(--border-width) var(--border-style) var(--panel-border);
+  }
+
+  .preset-3 .p3-stage .explorer-board {
+    margin-top: 0;
+  }
+
+  .preset-3 .p3-stage .array-scroll {
+    padding-top: var(--space-sm);
+    padding-bottom: var(--space-sm);
+  }
+
+  .preset-3 .p3-echo {
+    display: none;
+  }
+
+  /* Keyboard focus must not land underneath the stuck array */
+  .preset-3 .p3-section :is(input, button) {
+    scroll-margin-top: 24rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .preset-3 .p3-note-text {
+    animation: none;
+  }
 }
