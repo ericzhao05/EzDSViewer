@@ -17,7 +17,7 @@ DEFAULT_TITLE = "EzDSViewer"
 DESCRIPTION = "Step through a data structure animation."
 CSP = (
     "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
-    "font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'"
+    "font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'"
 )
 
 

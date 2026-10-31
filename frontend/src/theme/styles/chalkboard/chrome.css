@@ -290,3 +290,55 @@
   color: var(--p-ink);
   cursor: default;
 }
+
+/* Player pages (/v and /embed) */
+/* The active cell is ringed in yellow chalk, as on every other page */
+[data-style='chalkboard'] .main-content .array-cells .array-cell.array-cell-highlight {
+  border-color: var(--state-active);
+  outline: var(--ring-active);
+  outline-offset: 3px;
+  color: var(--state-active);
+}
+
+[data-style='chalkboard'] .array-cell-pointer {
+  margin-top: 2px;
+}
+
+[data-style='chalkboard'] .array-cell-pointer::before {
+  content: '\2191\00a0' / '';
+}
+
+/* The step's explanation reads like a page's result line */
+[data-style='chalkboard'] .explorer-note {
+  margin: var(--space-sm) 0;
+  padding: var(--space-xs) var(--space-sm);
+  border: 0;
+  border-left: 3px dashed var(--p-accent);
+  background: var(--p-surface);
+  color: var(--p-ink);
+  text-align: left;
+}
+
+[data-style='chalkboard'] .explorer-slider {
+  --slider-track-height: 3px;
+  --slider-thumb-width: 22px;
+  --slider-thumb-height: 22px;
+  --slider-thumb-bg: var(--card-bg);
+  --slider-thumb-border: 3px solid var(--p-accent);
+}
+
+[data-style='chalkboard'] .explorer-open {
+  padding-inline: var(--space-xs);
+  color: var(--p-accent);
+  text-underline-offset: 4px;
+}
+
+[data-style='chalkboard'] .explorer-open:hover {
+  background-color: var(--p-accent);
+  color: var(--p-accent-ink);
+}
+
+/* Three fields share a phone-width row here, so they give up the page's minimum width */
+[data-style='chalkboard'] .explorer .array-controls input:not([type='checkbox'], [type='radio'], [type='range']) {
+  min-width: 0;
+}

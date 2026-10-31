@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import PlayerPage from './PlayerPage';
 import App from '../App';
 
@@ -7,6 +7,11 @@ jest.mock('./Explorer', () => (props) => (
 ));
 
 const shownStyle = () => document.documentElement.dataset.style;
+
+const pick = (name) => {
+  fireEvent.click(screen.getByRole('button', { name: 'Choose style' }));
+  fireEvent.click(screen.getByRole('radio', { name: new RegExp(name) }));
+};
 
 beforeEach(() => {
   localStorage.clear();
@@ -60,4 +65,50 @@ test('App at /v and /embed renders the player instead of the sidebar', () => {
   window.history.pushState({}, '', '/embed');
   render(<App />);
   expect(screen.getByTestId('explorer')).toHaveAttribute('data-embed', 'true');
+});
+
+test.each([
+  ['/v', false],
+  ['/embed', true],
+])('%s has the top bar and the page panel, but no sidebar', (path, embed) => {
+  window.history.pushState({}, '', path);
+  const { container } = render(<PlayerPage embed={embed} />);
+  expect(screen.getByRole('heading', { name: 'EzDSViewer' })).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: 'Choose style' })).toBeInTheDocument();
+  expect(container.querySelector('.main-content .ds-container')).toContainElement(screen.getByTestId('explorer'));
+  expect(screen.queryByRole('complementary')).toBeNull();
+});
+
+test('view page saves a picked theme', () => {
+  window.history.pushState({}, '', '/v');
+  render(<PlayerPage />);
+  pick('Phosphor');
+  expect(shownStyle()).toBe('phosphor');
+  expect(localStorage.getItem('ezds-theme')).toBe('phosphor/green');
+});
+
+test('embed page applies a picked theme without saving it', () => {
+  window.history.pushState({}, '', '/embed?theme=dark');
+  render(<PlayerPage embed />);
+  expect(shownStyle()).toBe('chalkboard');
+  pick('Phosphor');
+  expect(shownStyle()).toBe('phosphor');
+  expect(localStorage.getItem('ezds-theme')).toBeNull();
+});
+
+test('embed page leaves an existing saved theme alone when picking', () => {
+  localStorage.setItem('ezds-theme', 'phosphor/green');
+  window.history.pushState({}, '', '/embed');
+  render(<PlayerPage embed />);
+  expect(shownStyle()).toBe('toy-blocks');
+  pick('Chalkboard');
+  expect(shownStyle()).toBe('chalkboard');
+  expect(localStorage.getItem('ezds-theme')).toBe('phosphor/green');
+});
+
+test('App at / still saves a picked theme', () => {
+  render(<App />);
+  pick('Toy blocks');
+  expect(shownStyle()).toBe('toy-blocks');
+  expect(localStorage.getItem('ezds-theme')).toBe('toy-blocks/bubblegum');
 });

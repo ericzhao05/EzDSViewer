@@ -4,7 +4,7 @@
 /* Text under the page's headings, at the style's minimum size */
 [data-style='chalkboard'] :is(.array-complexity, .array-legend, .array-controls label, .array-cell-index,
   .string-complexity, .string-index, .queue-slot, .queue-label, .queue-stack-title,
-  .linked-list-tags, .linked-list-index, .heap-slot) {
+  .linked-list-tags, .linked-list-index, .linked-list-dptr, .heap-slot) {
   font-size: var(--fs-small);
 }
 
@@ -30,7 +30,7 @@
 }
 
 /* Cells: pink outline, white value */
-[data-style='chalkboard'] :is(.array-cell-used, .stack-view-item, .queue-cell, .linked-list-node, .hash-table-entry, .string-cell, .heap-cell) {
+[data-style='chalkboard'] :is(.array-cell-used, .stack-view-item, .queue-cell, .linked-list-node, .linked-list-dnode, .hash-table-entry, .string-cell, .heap-cell) {
   border: var(--cell-border);
   border-radius: var(--radius-sm);
   background: none;
@@ -40,7 +40,7 @@
   font-weight: 400;
 }
 
-[data-style='chalkboard'] :is(.array-cell-used, .queue-cell:not(.queue-cell-empty), .linked-list-node, .hash-table-entry, .heap-cell) {
+[data-style='chalkboard'] :is(.array-cell-used, .queue-cell:not(.queue-cell-empty), .linked-list-node, .linked-list-dnode, .hash-table-entry, .heap-cell) {
   animation: chalk-write 0.42s ease-out backwards;
 }
 
@@ -205,6 +205,58 @@
 
 [data-style='chalkboard'] .linked-list-cycle-target .linked-list-node {
   border-style: dashed;
+}
+
+/* The toggle reads as every other pressed toggle; it keeps its focus ring */
+[data-style='chalkboard'] .main-content .linked-list-mode-active:not(:focus-visible) {
+  outline: 0;
+}
+
+/* Doubly linked nodes: the same chalk outline, with a pointer cell either side.
+   The doubled class outweighs the shared cell rule's box-shadow: none. */
+[data-style='chalkboard'] .linked-list-dnode.linked-list-dnode {
+  box-shadow: var(--dnode-inner), var(--dnode-focus);
+}
+
+[data-style='chalkboard'] .linked-list-ditem:nth-child(even) .linked-list-dnode {
+  border-radius: var(--radius-lg);
+}
+
+[data-style='chalkboard'] .linked-list-dptr {
+  padding-inline: var(--space-sm);
+}
+
+[data-style='chalkboard'] .linked-list-dptr:first-child {
+  border-right: 2px solid var(--p-cell);
+}
+
+[data-style='chalkboard'] .linked-list-dptr:last-child {
+  border-left: 2px solid var(--p-cell);
+}
+
+[data-style='chalkboard'] .linked-list-dptr-name {
+  color: var(--p-muted);
+  opacity: 1;
+}
+
+[data-style='chalkboard'] .linked-list-dlinks {
+  color: var(--p-muted);
+}
+
+[data-style='chalkboard'] .linked-list-highlight .linked-list-dnode {
+  border-color: var(--state-active);
+  outline: var(--ring-active);
+  outline-offset: 2px;
+  color: var(--state-active);
+}
+
+[data-style='chalkboard'] .linked-list-highlight .linked-list-dptr {
+  border-color: var(--state-active);
+}
+
+[data-style='chalkboard'] .linked-list-selected .linked-list-dnode {
+  outline: 3px dashed var(--p-ink);
+  outline-offset: 3px;
 }
 
 /* Stack */

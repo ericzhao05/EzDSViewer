@@ -1,29 +1,30 @@
-import React, { useLayoutEffect, useState } from 'react';
+import React from 'react';
 import Explorer from './Explorer';
-import { applyTheme, loadTheme, resolveTheme } from '../theme/themes';
+import TopBar from '../theme/TopBar';
+import useTheme from '../theme/useTheme';
+import { resolveTheme } from '../theme/themes';
 
-// /v follows the saved theme. /embed ignores it and takes the host page's choice:
-// theme=dark in the link gives the dark theme; otherwise the light one.
-function playerTheme(embed, params) {
-  if (!embed) return loadTheme();
-  return params.get('theme') === 'dark'
+// /embed starts from the link: theme=dark gives the dark theme, otherwise the light one.
+function themeFromLink() {
+  return new URLSearchParams(window.location.search).get('theme') === 'dark'
     ? resolveTheme('chalkboard', 'blackout')
     : resolveTheme('toy-blocks', 'bubblegum');
 }
 
-export default function PlayerPage({ embed = false }) {
-  const params = new URLSearchParams(window.location.search);
-  const command = params.get('c') || 'array';
-  const [theme] = useState(() => playerTheme(embed, params));
+// An embed sits on someone else's site, so it neither reads nor writes the saved theme.
+const EMBED_THEME = { getInitial: themeFromLink, persist: false };
 
-  useLayoutEffect(() => {
-    applyTheme(theme.style, theme.colors);
-  }, [theme]);
+export default function PlayerPage({ embed = false }) {
+  const command = new URLSearchParams(window.location.search).get('c') || 'array';
+  const { theme, pickTheme } = useTheme(embed ? EMBED_THEME : undefined);
 
   return (
     <div className="App">
+      <TopBar theme={theme} onPick={pickTheme} />
       <main className="main-content">
-        <Explorer initialCommand={command} embed={embed} />
+        <div className="ds-container">
+          <Explorer initialCommand={command} embed={embed} />
+        </div>
       </main>
     </div>
   );

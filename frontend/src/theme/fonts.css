@@ -1,0 +1,21 @@
+/* Fonts for the styles users can pick, bundled so no page contacts a font host.
+   /v and /embed have a CSP of default-src 'self', and embeds must not reach Google.
+
+   Hidden styles in presets.js have no fonts bundled. To restore one, add its
+   THEME_OPTIONS entry and install and import these @fontsource weights here:
+     workbench   instrument-sans 400 600
+     blueprint   barlow-condensed 500 700, barlow 400 600
+     split-flap  bebas-neue 400, barlow-condensed 500 700
+     inventory   silkscreen 400 700, pixelify-sans 400 600
+     keycaps     rubik 400 500 700
+     swiss       archivo-black 400, archivo 400 600
+     wood-type   alfa-slab-one 400, zilla-slab 400 600 */
+
+/* chalkboard */
+@import '@fontsource/caveat/latin-700.css';
+@import '@fontsource/patrick-hand/latin-400.css';
+/* toy-blocks */
+@import '@fontsource/fredoka/latin-400.css';
+@import '@fontsource/fredoka/latin-600.css';
+/* phosphor */
+@import '@fontsource/vt323/latin-400.css';

@@ -3,7 +3,7 @@
 
 /* Blocks */
 [data-style='toy-blocks'] .App .main-content :is(
-  .array-cell-used, .string-cell, .linked-list-node, .stack-view-item,
+  .array-cell-used, .string-cell, .linked-list-node, .linked-list-dnode, .stack-view-item,
   .queue-cell:not(.queue-cell-empty), .heap-cell, .hash-table-entry
 ) {
   border: none;
@@ -16,7 +16,7 @@
 
 /* New blocks bounce in. */
 [data-style='toy-blocks'] .App .main-content :is(
-  .array-cell-used, .linked-list-node, .queue-cell:not(.queue-cell-empty), .heap-cell,
+  .array-cell-used, .linked-list-node, .linked-list-dnode, .queue-cell:not(.queue-cell-empty), .heap-cell,
   .hash-table-entry, .stack-view-item.stack-view-new
 ) {
   animation: tb-bounce 0.4s cubic-bezier(0.3, 1.5, 0.5, 1) both;
@@ -24,7 +24,7 @@
 
 /* Alternate where neighbors are in a row. :where keeps this weaker than any state rule. */
 [data-style='toy-blocks'] .App .main-content :where(
-  .array-cell-wrap:nth-child(even), .string-cell:nth-child(even), .linked-list-item:nth-child(even),
+  .array-cell-wrap:nth-child(even), .string-cell:nth-child(even), .linked-list-item:nth-child(even), .linked-list-ditem:nth-child(even),
   .stack-view-item:nth-child(even), .queue-slot:nth-of-type(even), .queue-stack .queue-cell:nth-child(even),
   .heap-slot:nth-child(even), .hash-table-row:nth-child(even), .queue-row > .queue-cell:nth-child(even)
 ) {
@@ -34,7 +34,7 @@
 }
 
 /* States on blocks: active is amber with a ring, found is green with a ring */
-[data-style='toy-blocks'] .App .main-content :is(.heap-cell-hl, .linked-list-highlight .linked-list-node, .queue-cell.queue-in-window) {
+[data-style='toy-blocks'] .App .main-content :is(.heap-cell-hl, .linked-list-highlight .linked-list-node, .linked-list-highlight .linked-list-dnode, .queue-cell.queue-in-window) {
   --tb-fill: var(--state-active);
   --tb-ink: var(--p-cell-ink);
   --tb-under: var(--tb-under-active);
@@ -161,6 +161,50 @@
 
 [data-style='toy-blocks'] .linked-list-tag {
   color: var(--p-ink);
+}
+
+/* Doubly linked nodes: the same block, with a pointer cell either side.
+   The extra margin holds the selected ring, which sits clear of the underside. */
+[data-style='toy-blocks'] .App .main-content .linked-list-dnode.linked-list-dnode {
+  margin: 0.9rem 0.65rem;
+  --dnode-under: 0 5px 0 var(--tb-under);
+  box-shadow: var(--dnode-inner), var(--dnode-under), var(--dnode-focus);
+}
+
+[data-style='toy-blocks'] .App .main-content .linked-list-dptr {
+  padding-inline: var(--space-sm);
+  font-size: var(--fs-small);
+}
+
+[data-style='toy-blocks'] .App .main-content .linked-list-dptr:first-child {
+  border-right: 2px solid var(--tb-under);
+}
+
+[data-style='toy-blocks'] .App .main-content .linked-list-dptr:last-child {
+  border-left: 2px solid var(--tb-under);
+}
+
+[data-style='toy-blocks'] .linked-list-dptr-name {
+  font-weight: 400;
+  opacity: 1;
+}
+
+[data-style='toy-blocks'] .linked-list-dlinks {
+  color: var(--p-muted);
+}
+
+[data-style='toy-blocks'] .App .main-content .linked-list-selected .linked-list-dnode {
+  outline: 3px dashed var(--p-ink);
+  outline-offset: 6px;
+}
+
+[data-style='toy-blocks'] .App .main-content .linked-list-highlight.linked-list-selected .linked-list-dnode {
+  --dnode-inner: inset 0 0 0 3px var(--p-ink);
+}
+
+/* Beyond the selected ring. The gap is the floor color the chain sits on. */
+[data-style='toy-blocks'] .App .main-content :is(.linked-list-highlight, .linked-list-selected) .linked-list-dnode:focus-visible {
+  --dnode-focus: 0 0 0 11px var(--p-bg), 0 0 0 14px var(--focus-ring);
 }
 
 /* Stack */

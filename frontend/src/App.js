@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './theme/index.css';
-import ThemeMenu from './theme/ThemeMenu';
+import TopBar from './theme/TopBar';
 import useTheme from './theme/useTheme';
 import { GROUPS, STRUCTURES } from './structures/registry';
 import PlayerPage from './explorer/PlayerPage';
@@ -13,12 +13,7 @@ function Shell() {
 
   return (
     <div className="App">
-      <nav className="navbar">
-        <div className="nav-container">
-          <h1 className="nav-logo">EzDSViewer</h1>
-          <ThemeMenu theme={theme} onPick={pickTheme} />
-        </div>
-      </nav>
+      <TopBar theme={theme} onPick={pickTheme} />
 
       <div className="app-layout">
         <aside className="ds-sidebar" aria-label="Data structures">

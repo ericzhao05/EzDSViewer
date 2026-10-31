@@ -2,7 +2,7 @@
 
 Tracks the three-theme redesign so work can resume if a session is cut off.
 Worktree: `create-10-presets-style-f415f90d`, branch `array-style-presets-f415f90d`.
-Committed on this branch; see the pull request for its status.
+Earlier work merged in PR #3. The round under "Player pages, fonts, doubly list" is in its own pull request.
 
 ## Goal
 
@@ -57,7 +57,6 @@ Nothing is broken; these are cosmetic.
 - Graph: step badges can overlap arrowheads.
 - Chalkboard: segment-tree index labels sit close to node rings and edges; labels sit close to edges on the graph; empty grid cell beside Specialized in the 390px sidebar.
 - Phosphor: hovering a balanced-trees step looks the same as the current step; kd-tree query label can overlap a point label.
-- Doubly linked list (arrived from `main` during rebase): follows each theme's colors and fonts and is usable, but its nodes have no per-theme shapes: square-ish 6px boxes, including in Phosphor and Bubblegum.
 - Restored hidden styles get their colors everywhere and Array cell shapes (after uncommenting the archive import), but only the default navigation and page shapes. They would need the same per-page work to match these three.
 
 ## Not verified
@@ -69,13 +68,24 @@ Nothing is broken; these are cosmetic.
 
 ## After merging the player pages from main
 
-PR #2 added /v and /embed, built on the removed `App.css` and dark mode. PlayerPage now uses the themes: /v follows the saved theme; /embed uses Chalkboard with `theme=dark` and Bubblegum otherwise. Their security policy blocks Google Fonts, so those pages show fallback fonts.
-
+PR #2 added /v and /embed, built on the removed `App.css` and dark mode. PlayerPage now uses the themes: /v follows the saved theme; /embed uses Chalkboard with `theme=dark` and Bubblegum otherwise. 
 288 frontend and 600 backend tests pass; the build compiles. Player pages checked in Chromium through Flask.
 
 ## After rebasing onto main
 
 218 tests pass and the production build compiles. The doubly list was checked in all 3 themes at 1440px by eye, and for overflow at 1440px and 390px. The full 72-combination audit was not re-run after the rebase.
+
+## Player pages, fonts, doubly list
+
+| Item | State | Notes |
+|---|---|---|
+| Bundle theme fonts instead of Google Fonts | Done | `theme/fonts.css`, `@fontsource` packages. /v and /embed show the real fonts. Security policy now also allows own-origin fonts; its Google entries from PR #4 are unused |
+| Doubly list nodes match each theme | Done | Highlighted, selected, both, and focus |
+| Top bar, menu and panel on /v and /embed | Done | /v saves picks; /embed picks last for the visit and aren't saved |
+
+After rebasing onto main: 296 frontend and 608 backend tests pass; the build compiles. Before the rebase: audit clean on all 72 combinations at 1440px and 390px. Player pages checked through Flask in Chromium.
+
+Limits: /embed content is taller than the suggested 480px iframe, so it scrolls. Copy buttons weren't clicked in the browser. Traverse highlighting on the doubly list wasn't exercised. Fonts cover the latin subset only. Run `npm install` in `frontend/` in other checkouts after merging.
 
 ## Next step
 

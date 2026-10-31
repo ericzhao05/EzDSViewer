@@ -338,3 +338,98 @@
   box-shadow: none;
   color: var(--p-muted);
 }
+
+/* Player pages (/v and /embed) */
+/* The active cell turns amber with a ring, as on every other page */
+[data-style='toy-blocks'] .App .main-content .array-cell-highlight {
+  --tb-fill: var(--state-active);
+  --tb-ink: var(--p-cell-ink);
+  --tb-under: var(--tb-under-active);
+  outline: 3px solid var(--p-ink);
+  outline-offset: 2px;
+}
+
+/* Pointer names are small white tags under their cell */
+[data-style='toy-blocks'] .array-cell-pointer {
+  margin-top: 6px;
+  margin-bottom: 2px;
+  padding: 0.1rem 0.55rem;
+  border-radius: var(--radius-md);
+  background-color: #fff;
+  box-shadow: 0 2px 0 var(--tb-under-plain);
+}
+
+/* The step's explanation is a white block, like a page's message */
+[data-style='toy-blocks'] .App .main-content .explorer-note {
+  width: fit-content;
+  max-width: 75ch;
+  margin: var(--space-md) auto;
+  padding: 0.6rem 0.9rem;
+  border: none;
+  border-radius: var(--radius-sm);
+  background-color: #fff;
+  box-shadow: 0 4px 0 var(--tb-under-plain);
+  color: var(--p-ink);
+}
+
+[data-style='toy-blocks'] .App .main-content .explorer-note:empty {
+  box-shadow: none;
+  background: none;
+}
+
+/* Play, not Previous step, is the main action of the step row */
+[data-style='toy-blocks'] .App .main-content .explorer-steps > .explorer-buttons:first-child > .control-btn:first-child:not(:disabled) {
+  background: #fff;
+  box-shadow: 0 4px 0 var(--tb-under-plain);
+  color: var(--p-ink);
+}
+
+[data-style='toy-blocks'] .App .main-content .explorer-steps > .explorer-buttons:first-child > .control-btn:first-child:hover:not(:disabled) {
+  background: var(--p-bg);
+  color: var(--p-ink);
+}
+
+[data-style='toy-blocks'] .App .main-content .explorer-steps > .explorer-buttons:first-child > .control-btn:nth-child(2):not(:disabled) {
+  background: var(--btn-bg);
+  box-shadow: var(--btn-shadow);
+  color: var(--btn-ink);
+}
+
+[data-style='toy-blocks'] .App .main-content .explorer-steps > .explorer-buttons:first-child > .control-btn:nth-child(2):hover:not(:disabled) {
+  background: var(--btn-hover-bg);
+  color: var(--btn-hover-ink);
+}
+
+[data-style='toy-blocks'] .explorer-slider {
+  --slider-track: var(--tb-edge);
+  --slider-track-height: 6px;
+  --slider-thumb-width: 24px;
+  --slider-thumb-height: 24px;
+  --slider-thumb-shadow: 0 3px 0 var(--tb-under-accent);
+}
+
+/* The link out is a white pill with a plain underside */
+[data-style='toy-blocks'] .explorer-open {
+  margin: var(--space-xs) 0 4px;
+  padding: 0 1.15rem;
+  border-radius: var(--radius-md);
+  background-color: #fff;
+  box-shadow: 0 4px 0 var(--tb-under-plain);
+  color: var(--p-ink);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+[data-style='toy-blocks'] .explorer-open:hover {
+  background-color: var(--p-bg);
+}
+
+[data-style='toy-blocks'] .explorer-open:active {
+  box-shadow: none;
+  transform: translateY(4px);
+}
+
+/* Three fields share a phone-width row here, so they give up the page's minimum width */
+[data-style='toy-blocks'] .App .main-content .explorer .array-controls input {
+  min-width: 0;
+}
