@@ -20,17 +20,18 @@ export default function Explorer({ preset = '1', ...options }) {
     body = <DefaultLayout session={session} controls={controls} Board={board ? board.Board : undefined} />;
   } else if (!board) {
     // Nothing loaded yet or the first load failed: show the error and the Command box, whatever the layout.
-    body = (
-      <>
-        <ErrorMessage session={session} />
-        <SharePanel session={session} />
-      </>
-    );
+    body = <SharePanel session={session} />;
   } else {
     const { Component } = PRESETS.find((p) => p.id === String(preset)) || PRESETS[0];
     body = (
       <Component session={session} controls={controls} intro={board.intro} Board={board.Board} title={board.title} />
     );
   }
-  return <div className="explorer">{body}</div>;
+  // The error shows here, once, above every layout; layouts may also read session.error.
+  return (
+    <div className="explorer">
+      <ErrorMessage session={session} />
+      {body}
+    </div>
+  );
 }

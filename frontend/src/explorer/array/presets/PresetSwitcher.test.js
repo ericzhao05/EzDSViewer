@@ -68,9 +68,9 @@ test('the preset survives an edit and stays out of the copied links', async () =
   const params = new URLSearchParams(window.location.search);
   expect(params.get('preset')).toBe('4');
   expect(params.get('c')).toBe('array.append(1).append(2).append(5)');
-  fireEvent.click(screen.getByRole('button', { name: 'Copy link' }));
+  await act(async () => { fireEvent.click(screen.getByRole('button', { name: 'Copy link' })); });
   expect(navigator.clipboard.writeText.mock.calls[0][0]).not.toContain('preset');
-  fireEvent.click(screen.getByRole('button', { name: 'Copy embed code' }));
+  await act(async () => { fireEvent.click(screen.getByRole('button', { name: 'Copy embed code' })); });
   expect(navigator.clipboard.writeText.mock.calls[1][0]).not.toContain('preset');
 });
 
@@ -79,4 +79,18 @@ test('no preset in the URL leaves the address free of one until a layout is pres
   render(<App />);
   await screen.findByText(/Step 1 of 1/);
   expect(window.location.search).toBe('?c=array.append(1)');
+});
+
+test('the session exposes canPrev and canNext', async () => {
+  // canPrev / canNext are session fields; check them through a layout-free hook render.
+  const { renderHook } = require('@testing-library/react');
+  const useExplorerSession = require('../../useExplorerSession').default;
+  window.history.replaceState(null, '', '/');
+  const { result } = renderHook(() => useExplorerSession({ initialCommand: 'array.append(1).append(2)', autoplay: false }));
+  await act(async () => {});
+  expect(result.current.canPrev).toBe(false);
+  expect(result.current.canNext).toBe(true);
+  act(() => result.current.next());
+  expect(result.current.canPrev).toBe(true);
+  expect(result.current.canNext).toBe(false);
 });

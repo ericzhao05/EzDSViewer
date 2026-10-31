@@ -1,7 +1,7 @@
 import React from 'react';
 
 // The default look of the Array controls: three shared fields and a row of buttons.
-// The fields are shared for looks only: each one fills in every operation that asks for that label.
+// Blocked buttons stay enabled here so the backend's own message shows. The fields are shared for looks only: each one fills in every operation that asks for that label.
 export default function ArrayControls({ controls }) {
   const { operations, algorithms, disabled, message } = controls;
   const all = [...operations, ...algorithms];
@@ -17,9 +17,8 @@ export default function ArrayControls({ controls }) {
     <button
       key={item.id}
       className="control-btn"
-      onClick={item.run}
-      disabled={disabled || Boolean(item.blockedReason)}
-      title={item.blockedReason || undefined}
+      onClick={item.runUnchecked}
+      disabled={disabled}
     >
       {item.label}
     </button>

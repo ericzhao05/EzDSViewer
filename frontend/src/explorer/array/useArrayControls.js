@@ -21,31 +21,34 @@ function shownValues(state) {
   return state.data.slice(0, state.size);
 }
 
-function useField(id, label, placeholder) {
+// kind is 'number', 'value' or 'optional-number', so a layout can pick the right field.
+function useField(id, label, kind, placeholder) {
   const [value, setValue] = useState('');
-  return { id, label, value, setValue, placeholder };
+  return { id, label, kind, value, setValue, placeholder };
 }
 
 // Everything non-visual about the Array controls: inputs, parsing, messages and what is blocked.
 // Takes the session from useExplorerSession and returns plain data for any layout to render.
 export default function useArrayControls(session) {
-  const [message, setMessage] = useState('');
+  // The last message and which item it belongs to.
+  const [note, setNote] = useState({ id: null, text: '' });
 
-  const appendValue = useField('append-value', 'Value', 'e.g. 5');
-  const insertIndex = useField('insert-index', 'Index', 'e.g. 0');
-  const insertValue = useField('insert-value', 'Value', 'e.g. 5');
-  const popIndex = useField('pop-index', 'Index', 'optional');
-  const getIndex = useField('get-index', 'Index', 'e.g. 0');
-  const twoSumTarget = useField('two-sum-target', 'Target', 'e.g. 8');
-  const searchTarget = useField('binary-search-target', 'Target', 'e.g. 5');
+  const appendValue = useField('append-value', 'Value', 'value', 'e.g. 5');
+  const insertIndex = useField('insert-index', 'Index', 'number', 'e.g. 0');
+  const insertValue = useField('insert-value', 'Value', 'value', 'e.g. 5');
+  const popIndex = useField('pop-index', 'Index', 'optional-number', 'optional');
+  const getIndex = useField('get-index', 'Index', 'number', 'e.g. 0');
+  const twoSumTarget = useField('two-sum-target', 'Target', 'number', 'e.g. 8');
+  const searchTarget = useField('binary-search-target', 'Target', 'number', 'e.g. 5');
 
   const values = shownValues(session.state);
   const size = values ? values.length : 0;
   const hasString = values ? values.some((v) => typeof v !== 'number') : false;
+  // Only meaningful once hasString is ruled out: every check below tests hasString first.
   const ascending = values ? values.every((v, i) => i === 0 || values[i - 1] <= v) : true;
 
   const send = (method, args) => {
-    setMessage('');
+    setNote({ id: null, text: '' });
     session.runCall(buildCall(method, args));
   };
 
@@ -66,46 +69,59 @@ export default function useArrayControls(session) {
     return fn();
   };
 
+  let current = null;
+  const say = (text) => setNote({ id: current, text });
+
   const needValue = 'Enter a value first.';
   const needIndex = 'Enter a whole-number index first.';
   const needTarget = 'Enter a whole-number target first.';
 
+  // Each run function reports a problem against its own item.
   const runAppend = () => {
-    if (appendValue.value.trim() === '') return setMessage(needValue);
+    if (appendValue.value.trim() === '') return say(needValue);
     return send('append', [parseValue(appendValue.value)]);
   };
   const runInsert = () => {
     const i = parseWhole(insertIndex.value);
-    if (insertValue.value.trim() === '') return setMessage(needValue);
-    if (i === null) return setMessage(needIndex);
+    if (insertValue.value.trim() === '') return say(needValue);
+    if (i === null) return say(needIndex);
     return send('insert', [i, parseValue(insertValue.value)]);
   };
   const runPop = () => {
     if (popIndex.value.trim() === '') return send('pop', []);
     const i = parseWhole(popIndex.value);
-    if (i === null) return setMessage(needIndex);
+    if (i === null) return say(needIndex);
     return send('pop', [i]);
   };
   const runGet = () => {
     const i = parseWhole(getIndex.value);
-    if (i === null) return setMessage(needIndex);
+    if (i === null) return say(needIndex);
     return send('get', [i]);
   };
   const runTarget = (method, field) => () => {
     const t = parseWhole(field.value);
-    if (t === null) return setMessage(needTarget);
+    if (t === null) return say(needTarget);
     return send(method, [t]);
   };
 
-  const item = (id, label, summary, complexity, inputs, run, key) => ({
-    id,
-    label,
-    summary,
-    complexity,
-    inputs,
-    blockedReason: blockedFor[key],
-    run: guarded(blockedFor[key], run),
-  });
+  const item = (id, label, summary, complexity, inputs, run, key) => {
+    const go = () => {
+      current = id;
+      return run();
+    };
+    return {
+      id,
+      label,
+      summary,
+      complexity,
+      inputs,
+      blockedReason: blockedFor[key],
+      message: note.id === id ? note.text : '',
+      run: guarded(blockedFor[key], go),
+      // Sends even when blocked, for layouts that let the backend explain.
+      runUnchecked: go,
+    };
+  };
 
   const operations = [
     item('append', 'Append', 'Add a value at the end of the array.', 'O(1) amortized', [appendValue], runAppend, 'append'),
@@ -121,11 +137,13 @@ export default function useArrayControls(session) {
     item('prefix_sums', 'Prefix sums', 'Build running totals of the values.', 'O(n)', [], () => send('prefix_sums', []), 'prefixSums'),
   ];
 
+  const activeCall = session.frame && Number.isInteger(session.frame.call) ? session.frame.call : null;
   // The calls made so far, each with the first frame it produced (-1 if it made none).
   const history = session.calls.map((call, index) => ({
     index,
     call,
     firstFrame: session.frames.findIndex((f) => f.call === index),
+    active: activeCall === index,
   }));
   const goToCall = (i) => {
     const entry = history[i];
@@ -138,11 +156,12 @@ export default function useArrayControls(session) {
     undo: session.undo,
     canUndo: session.canUndo,
     startOver: () => {
-      setMessage('');
+      setNote({ id: null, text: '' });
       session.startOver();
     },
     disabled: session.loading,
-    message,
+    message: note.text,
+    activeCall,
     history,
     goToCall,
   };

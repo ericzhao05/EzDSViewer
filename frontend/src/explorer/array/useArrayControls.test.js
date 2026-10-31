@@ -15,6 +15,7 @@ function sessionWith(values, extra = {}) {
     undo: jest.fn(),
     startOver: jest.fn(),
     goTo: jest.fn(),
+    frame: extra.frame === undefined ? null : extra.frame,
   };
 }
 
@@ -140,8 +141,8 @@ describe('history', () => {
     const s = sessionWith([1], { calls: ['append(1)', 'max_subarray()'], frames });
     const { result } = renderHook(() => useArrayControls(s));
     expect(result.current.history).toEqual([
-      { index: 0, call: 'append(1)', firstFrame: 0 },
-      { index: 1, call: 'max_subarray()', firstFrame: 1 },
+      { index: 0, call: 'append(1)', firstFrame: 0, active: false },
+      { index: 1, call: 'max_subarray()', firstFrame: 1, active: false },
     ]);
   });
 
@@ -164,4 +165,48 @@ test('undo, canUndo, startOver and disabled come from the session', () => {
   expect(s.undo).toHaveBeenCalled();
   act(() => result.current.startOver());
   expect(s.startOver).toHaveBeenCalled();
+});
+
+describe('what layouts need', () => {
+  const frames = [{ call: 0 }, { call: 1 }, { call: 1 }];
+  const calls = ['append(1)', 'max_subarray()'];
+
+  test('activeCall and history[i].active follow the frame on screen', () => {
+    const s = sessionWith([1], { calls, frames, frame: frames[2] });
+    const { result } = renderHook(() => useArrayControls(s));
+    expect(result.current.activeCall).toBe(1);
+    expect(result.current.history.map((h) => h.active)).toEqual([false, true]);
+    const none = renderHook(() => useArrayControls(sessionWith([])));
+    expect(none.result.current.activeCall).toBeNull();
+  });
+
+  test('inputs say what kind of field they need', () => {
+    const { result } = renderHook(() => useArrayControls(sessionWith([1])));
+    const kinds = (id) => find(result.current, id).inputs.map((i) => i.kind);
+    expect(kinds('append')).toEqual(['value']);
+    expect(kinds('insert')).toEqual(['number', 'value']);
+    expect(kinds('pop')).toEqual(['optional-number']);
+    expect(kinds('get')).toEqual(['number']);
+    expect(kinds('two_sum_sorted')).toEqual(['number']);
+    expect(kinds('binary_search')).toEqual(['number']);
+  });
+
+  test('each item has its own message, and controls.message keeps the last one', () => {
+    const { result } = renderHook(() => useArrayControls(sessionWith([1])));
+    expect(find(result.current, 'append').message).toBe('');
+    act(() => find(result.current, 'append').run());
+    expect(find(result.current, 'append').message).toBe('Enter a value first.');
+    expect(find(result.current, 'get').message).toBe('');
+    expect(result.current.message).toBe('Enter a value first.');
+    act(() => find(result.current, 'get').run());
+    expect(find(result.current, 'append').message).toBe('');
+    expect(find(result.current, 'get').message).toBe('Enter a whole-number index first.');
+  });
+
+  test('runUnchecked sends even when the item is blocked', () => {
+    const s = sessionWith([]);
+    const { result } = renderHook(() => useArrayControls(s));
+    act(() => find(result.current, 'pop').runUnchecked());
+    expect(s.runCall).toHaveBeenCalledWith('pop()');
+  });
 });

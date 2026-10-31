@@ -179,6 +179,8 @@ export default function useExplorerSession({
     // Playback. Every one of these stops autoplay first.
     playing,
     togglePlay,
+    canPrev: hasFrames && step > 0,
+    canNext: hasFrames && step < last,
     prev: stopping(x.prev),
     next: stopping(x.next),
     restart: stopping(() => x.goTo(0)),

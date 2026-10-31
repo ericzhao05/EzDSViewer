@@ -551,3 +551,29 @@ describe('main app behaviour', () => {
     expect(screen.getByRole('button', { name: 'Play' })).toBeInTheDocument();
   });
 });
+
+test('the default layout leaves blocked buttons enabled so the backend answers', async () => {
+  global.fetch = jest.fn(() => reply(success([], [])));
+  render(<Explorer initialCommand="array" />);
+  await screen.findByText('No steps yet');
+  const pop = screen.getByRole('button', { name: 'Pop' });
+  expect(pop).toBeEnabled();
+  fireEvent.click(pop);
+  await waitFor(() => expect(global.fetch).toHaveBeenCalledTimes(2));
+  expect(requested()).toBe('array.pop()');
+});
+
+test('a runtime error shows once, above the layout, with the Available list', async () => {
+  await renderLoaded();
+  global.fetch = jest.fn(() => reply({
+    success: false, error: 'bad call', code: 'unknown_method', position: null, available: ['append', 'pop'],
+    structure: 'array', command: 'array.append(1).append(2).x()', calls: ['append(1)', 'append(2)', 'x()'],
+    frames: [], state: arrayState([1, 2]), result: null,
+  }, false));
+  fireEvent.change(screen.getByLabelText('Index'), { target: { value: '1' } });
+  fireEvent.click(screen.getByRole('button', { name: 'Get' }));
+  const alerts = await screen.findAllByRole('alert');
+  expect(alerts).toHaveLength(1);
+  expect(alerts[0]).toHaveTextContent('bad call');
+  expect(alerts[0]).toHaveTextContent('Available: append, pop');
+});
