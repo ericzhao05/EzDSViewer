@@ -1,0 +1,416 @@
+/* Shared components, driven only by tokens. :where() keeps specificity at zero
+   for element rules, so each view's own classes and style files always win. */
+html,
+body {
+  background-color: var(--p-bg);
+}
+
+body {
+  margin: 0;
+  color: var(--p-ink);
+  font-family: var(--f-body);
+  font-size: var(--fs-base);
+  line-height: var(--lh-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+.App {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  text-align: center;
+  background-color: var(--p-bg);
+  color: var(--p-ink);
+}
+
+/* Top navigation */
+.navbar {
+  position: relative;
+  z-index: 20;
+  padding: var(--space-sm) var(--space-md);
+  background-color: var(--nav-bg);
+  color: var(--nav-ink);
+}
+
+.nav-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-logo {
+  margin: 0;
+  font-family: var(--f-display);
+  font-size: var(--fs-h1);
+  font-weight: var(--fw-heading);
+}
+
+/* Theme menu */
+.theme-menu {
+  position: relative;
+}
+
+.theme-menu-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: var(--border-width) var(--border-style) var(--nav-ink);
+  border-radius: var(--radius-md);
+  background: none;
+  color: var(--nav-ink);
+  cursor: pointer;
+}
+
+.theme-menu-bars,
+.theme-menu-bars::before,
+.theme-menu-bars::after {
+  display: block;
+  width: 22px;
+  height: 3px;
+  border-radius: var(--radius-sm);
+  background-color: currentColor;
+}
+
+.theme-menu-bars {
+  position: relative;
+}
+
+.theme-menu-bars::before,
+.theme-menu-bars::after {
+  content: '';
+  position: absolute;
+  left: 0;
+}
+
+.theme-menu-bars::before {
+  top: -7px;
+}
+
+.theme-menu-bars::after {
+  top: 7px;
+}
+
+.theme-menu-panel {
+  position: absolute;
+  top: calc(100% + var(--space-sm));
+  right: 0;
+  z-index: 30;
+  box-sizing: border-box;
+  width: min(280px, calc(100vw - 2rem));
+  margin: 0;
+  padding: var(--space-md);
+  border: var(--border-width) var(--border-style) var(--panel-border);
+  border-radius: var(--radius-lg);
+  background-color: var(--panel-bg);
+  box-shadow: var(--panel-shadow);
+  color: var(--p-ink);
+  text-align: left;
+}
+
+.theme-menu-heading {
+  float: left;
+  width: 100%;
+  padding: 0 0 var(--space-sm);
+  font-family: var(--f-display);
+  font-size: var(--fs-h3);
+  font-weight: var(--fw-heading);
+}
+
+.theme-menu-option {
+  clear: both;
+  display: block;
+  position: relative;
+  cursor: pointer;
+}
+
+.theme-menu-option input {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.theme-menu-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-top: var(--space-xs);
+  padding: var(--space-sm);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+}
+
+.theme-menu-option:hover .theme-menu-row {
+  background-color: var(--side-hover-bg);
+}
+
+.theme-menu-option input:checked + .theme-menu-row {
+  border-color: var(--p-ink);
+}
+
+.theme-menu-option input:focus-visible + .theme-menu-row {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.theme-menu-swatch {
+  flex: none;
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  box-sizing: border-box;
+  width: 44px;
+  height: 36px;
+  padding: 5px;
+  border-radius: var(--radius-sm);
+  box-shadow: inset 0 0 0 1px var(--p-line);
+}
+
+.theme-menu-swatch span {
+  flex: 1;
+  height: 100%;
+}
+
+.theme-menu-swatch span:nth-child(2) {
+  height: 66%;
+}
+
+.theme-menu-swatch span:nth-child(3) {
+  height: 33%;
+}
+
+.theme-menu-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.theme-menu-name {
+  font-size: 1.1rem;
+  line-height: 1.2;
+}
+
+.theme-menu-palette {
+  color: var(--p-muted);
+  font-size: var(--fs-small);
+}
+
+/* Sidebar */
+.app-layout {
+  display: flex;
+  flex: 1;
+  align-items: stretch;
+}
+
+.ds-sidebar {
+  flex: 0 0 216px;
+  box-sizing: border-box;
+  padding: var(--space-sm) var(--space-sm) var(--space-lg);
+  text-align: left;
+  background-color: var(--side-bg);
+  color: var(--side-ink);
+}
+
+.ds-sidebar-group {
+  margin: var(--space-md) 0 var(--space-xs);
+  padding: 0 var(--space-sm);
+  color: var(--side-group-ink);
+  font-size: var(--fs-small);
+  font-weight: var(--fw-heading);
+}
+
+.ds-sidebar-item {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0.35rem var(--space-sm);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.ds-sidebar-item:hover {
+  background-color: var(--side-hover-bg);
+}
+
+.ds-sidebar-item.active {
+  background-color: var(--side-active-bg);
+  color: var(--side-active-ink);
+}
+
+/* Page */
+.main-content {
+  flex: 1;
+  min-width: 0;
+  padding: var(--space-lg);
+  background-color: var(--p-bg);
+}
+
+.ds-container {
+  box-sizing: border-box;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: var(--space-lg);
+  border: var(--border-width) var(--border-style) var(--panel-border);
+  border-radius: var(--radius-lg);
+  background-color: var(--card-bg);
+  box-shadow: var(--panel-shadow);
+}
+
+:where(.main-content) :where(h2, h3, h4) {
+  font-family: var(--f-display);
+  font-weight: var(--fw-heading);
+  letter-spacing: var(--tracking-heading);
+}
+
+:where(.main-content) :where(h2) {
+  margin: 0 0 var(--space-sm);
+  font-size: var(--fs-h2);
+  line-height: 1.1;
+}
+
+:where(.main-content) :where(h3) {
+  font-size: var(--fs-h3);
+}
+
+/* Controls */
+:where(.main-content) :where(button) {
+  padding: 0.45rem 0.9rem;
+  border: var(--border-width) var(--border-style) var(--btn-border);
+  border-radius: var(--radius-md);
+  background-color: var(--btn-bg);
+  box-shadow: var(--btn-shadow);
+  color: var(--btn-ink);
+  font-family: var(--f-body);
+  font-size: var(--fs-base);
+  font-weight: var(--fw-control);
+  cursor: pointer;
+}
+
+:where(.main-content) :where(button:hover:not(:disabled)) {
+  background-color: var(--btn-hover-bg);
+  color: var(--btn-hover-ink);
+}
+
+:where(.main-content) :where(button:active:not(:disabled)) {
+  transform: var(--btn-active-transform);
+}
+
+:where(.main-content) :where(button:disabled) {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+:where(.main-content) :where(input:not([type='checkbox'], [type='radio'], [type='range']), select, textarea) {
+  box-sizing: border-box;
+  max-width: 100%;
+  padding: 0.45rem 0.6rem;
+  border: var(--border-width) var(--border-style) var(--input-border-color);
+  border-radius: var(--radius-md);
+  background-color: var(--input-bg);
+  color: var(--input-ink);
+  font-family: var(--f-body);
+  font-size: var(--fs-base);
+}
+
+:where(.main-content) :where(input, textarea)::placeholder {
+  color: var(--p-muted);
+  opacity: 1;
+}
+
+:where(.main-content) :where(input[type='checkbox'], input[type='radio'], input[type='range']) {
+  accent-color: var(--p-accent);
+}
+
+.App :focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.ds-controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+}
+
+.ds-controls input {
+  flex: 1;
+  min-width: 0;
+  max-width: 300px;
+}
+
+/* Tables */
+:where(.main-content) :where(table) {
+  border-collapse: collapse;
+  max-width: 100%;
+}
+
+:where(.main-content) :where(th, td) {
+  padding: var(--space-xs) var(--space-sm);
+  border: var(--border-width) var(--border-style) var(--panel-border);
+}
+
+:where(.main-content) :where(code) {
+  padding: 0.05rem 0.3rem;
+  border-radius: var(--radius-sm);
+  background-color: var(--p-surface);
+  color: var(--p-ink);
+  font-family: var(--f-data);
+}
+
+/* Messages */
+.error-message {
+  margin-bottom: var(--space-md);
+  padding: 0.75rem;
+  border-radius: var(--radius-sm);
+  background-color: var(--error-bg);
+  color: var(--error-text);
+}
+
+.empty-message {
+  color: var(--empty-message);
+  font-style: italic;
+}
+
+/* Diagrams: anything a view has not classed itself still follows the style */
+:where(.main-content) :where(svg text) {
+  font-family: var(--f-data);
+}
+
+@media (max-width: 700px) {
+  .app-layout {
+    flex-direction: column;
+  }
+
+  .ds-sidebar {
+    flex-basis: auto;
+  }
+
+  .main-content {
+    padding: var(--space-sm);
+  }
+
+  .ds-container {
+    padding: var(--space-md);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .App *,
+  .App *::before,
+  .App *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

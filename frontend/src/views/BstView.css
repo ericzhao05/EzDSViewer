@@ -42,6 +42,6 @@
 }
 
 .bst-node-path circle {
-  stroke: #e67e22;
+  stroke: var(--state-active);
   stroke-width: 4;
 }

@@ -1,0 +1,379 @@
+/* toy-blocks: core pages. Blocks read --tb-fill/--tb-ink/--tb-under from tokens.css;
+   alternates and states only reassign those. */
+
+/* Blocks */
+[data-style='toy-blocks'] .App .main-content :is(
+  .array-cell-used, .string-cell, .linked-list-node, .stack-view-item,
+  .queue-cell:not(.queue-cell-empty), .heap-cell, .hash-table-entry
+) {
+  border: none;
+  border-radius: var(--radius-sm);
+  background-color: var(--tb-fill);
+  box-shadow: 0 5px 0 var(--tb-under);
+  color: var(--tb-ink);
+  font-weight: 600;
+}
+
+/* New blocks bounce in. */
+[data-style='toy-blocks'] .App .main-content :is(
+  .array-cell-used, .linked-list-node, .queue-cell:not(.queue-cell-empty), .heap-cell,
+  .hash-table-entry, .stack-view-item.stack-view-new
+) {
+  animation: tb-bounce 0.4s cubic-bezier(0.3, 1.5, 0.5, 1) both;
+}
+
+/* Alternate where neighbors are in a row. :where keeps this weaker than any state rule. */
+[data-style='toy-blocks'] .App .main-content :where(
+  .array-cell-wrap:nth-child(even), .string-cell:nth-child(even), .linked-list-item:nth-child(even),
+  .stack-view-item:nth-child(even), .queue-slot:nth-of-type(even), .queue-stack .queue-cell:nth-child(even),
+  .heap-slot:nth-child(even), .hash-table-row:nth-child(even), .queue-row > .queue-cell:nth-child(even)
+) {
+  --tb-fill: var(--p-accent);
+  --tb-ink: var(--p-accent-ink);
+  --tb-under: var(--tb-under-accent);
+}
+
+/* States on blocks: active is amber with a ring, found is green with a ring */
+[data-style='toy-blocks'] .App .main-content :is(.heap-cell-hl, .linked-list-highlight .linked-list-node, .queue-cell.queue-in-window) {
+  --tb-fill: var(--state-active);
+  --tb-ink: var(--p-cell-ink);
+  --tb-under: var(--tb-under-active);
+  outline: 3px solid var(--p-ink);
+  outline-offset: 2px;
+}
+
+[data-style='toy-blocks'] .App .main-content .string-cell-hit {
+  --tb-fill: var(--state-found);
+  --tb-ink: #fff;
+  --tb-under: var(--tb-under-found);
+  outline: 3px solid var(--p-ink);
+  outline-offset: 2px;
+}
+
+/* Array */
+[data-style='toy-blocks'] .App .main-content .array-cells {
+  gap: 10px;
+  padding-bottom: 5px;
+}
+
+[data-style='toy-blocks'] .App .main-content .array-cell {
+  min-width: 60px;
+  height: 60px;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+[data-style='toy-blocks'] .App .main-content .array-cell-free {
+  border: 3px dashed var(--tb-edge);
+  border-radius: var(--radius-sm);
+}
+
+[data-style='toy-blocks'] .array-cell-index {
+  margin-top: 12px;
+  font-size: var(--fs-small);
+}
+
+/* String */
+[data-style='toy-blocks'] .string-view .string-about {
+  max-width: 640px;
+}
+
+[data-style='toy-blocks'] .App .main-content .string-cells {
+  gap: 10px;
+  padding: var(--space-md);
+  border-radius: var(--radius-lg);
+  background-color: var(--main-bg);
+}
+
+[data-style='toy-blocks'] .App .main-content .string-cell {
+  min-width: 3rem;
+  margin-bottom: 5px;
+  overflow: hidden;
+}
+
+[data-style='toy-blocks'] .string-char {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+[data-style='toy-blocks'] .App .main-content .string-index {
+  border-top: none;
+  background-color: #fff;
+  color: var(--p-ink);
+  font-size: 0.8rem;
+  font-weight: 400;
+}
+
+/* Hash table */
+[data-style='toy-blocks'] .App .main-content .hash-table-scroll {
+  max-height: 460px;
+}
+
+[data-style='toy-blocks'] .App .main-content .hash-table-row {
+  gap: 10px;
+  padding: 0 0 12px;
+}
+
+[data-style='toy-blocks'] .App .main-content .hash-table-index {
+  border: none;
+  background-color: #fff;
+  box-shadow: 0 4px 0 var(--tb-under-plain);
+  color: var(--p-ink);
+}
+
+[data-style='toy-blocks'] .App .main-content .hash-table-entry-key {
+  background-color: var(--tb-fill);
+  color: var(--tb-ink);
+  font-weight: 600;
+}
+
+[data-style='toy-blocks'] .App .main-content .hash-table-entry-value {
+  background-color: #fff;
+  color: var(--p-ink);
+}
+
+[data-style='toy-blocks'] .hash-table-null {
+  font-style: normal;
+}
+
+/* Linked list */
+[data-style='toy-blocks'] .App .main-content .linked-list-ptr {
+  border-left: 2px solid var(--tb-under);
+}
+
+[data-style='toy-blocks'] .App .main-content .linked-list-node.linked-list-node {
+  margin-bottom: 5px;
+}
+
+[data-style='toy-blocks'] .linked-list-cycle-target .linked-list-node {
+  outline: 3px dashed var(--p-ink);
+  outline-offset: 2px;
+}
+
+[data-style='toy-blocks'] .linked-list-index {
+  margin-top: 4px;
+  opacity: 1;
+}
+
+[data-style='toy-blocks'] .linked-list-arrow {
+  color: var(--p-muted);
+}
+
+[data-style='toy-blocks'] .linked-list-tag {
+  color: var(--p-ink);
+}
+
+/* Stack */
+[data-style='toy-blocks'] .App .main-content .stack-view-item {
+  margin: 0 0 10px;
+}
+
+[data-style='toy-blocks'] .stack-view-algo {
+  gap: 10px;
+  margin: 10px 0;
+}
+
+/* Queue */
+[data-style='toy-blocks'] .App .main-content .queue-row {
+  gap: 10px;
+}
+
+[data-style='toy-blocks'] .App .main-content .queue-slot {
+  gap: 6px;
+}
+
+[data-style='toy-blocks'] .App .main-content .queue-cell {
+  box-sizing: border-box;
+  min-width: 3.25rem;
+  height: 3rem;
+  padding: 0 0.5rem;
+  font-size: 1.1rem;
+  line-height: 3rem;
+}
+
+[data-style='toy-blocks'] .App .main-content .queue-tag {
+  min-height: 1.5rem;
+}
+
+[data-style='toy-blocks'] .App .main-content .queue-cell-empty {
+  border: 3px dashed var(--tb-edge);
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--p-muted);
+  line-height: 2.6rem;
+}
+
+[data-style='toy-blocks'] .App .main-content .queue-label {
+  color: var(--p-ink);
+}
+
+[data-style='toy-blocks'] .App .main-content .queue-slot .queue-cell {
+  margin-bottom: 5px;
+}
+
+[data-style='toy-blocks'] .App .main-content .queue-stack {
+  gap: 12px;
+  padding: 10px 10px 15px;
+  border: 3px dashed var(--tb-edge);
+  border-radius: var(--radius-sm);
+}
+
+/* Matrix: clickable cells are buttons, islands get their token colors */
+[data-style='toy-blocks'] .App .main-content .matrix-view-grid {
+  gap: 10px;
+  padding-bottom: 5px;
+}
+
+[data-style='toy-blocks'] .App .main-content .matrix-view-cell {
+  --tb-i: #fff;
+  --tb-i-under: var(--tb-under-plain);
+  border: none;
+  border-radius: var(--radius-sm);
+  background-color: var(--tb-i);
+  box-shadow: 0 4px 0 var(--tb-i-under);
+  color: var(--p-ink);
+  font-weight: 600;
+}
+
+[data-style='toy-blocks'] .App .main-content .matrix-view-cell:disabled {
+  opacity: 1;
+}
+
+[data-style='toy-blocks'] .App .main-content .matrix-view-cell:hover:not(:disabled) {
+  background-color: var(--tb-i);
+  color: var(--p-ink);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 var(--tb-i-under);
+}
+
+[data-style='toy-blocks'] .App .main-content .matrix-view-cell:active:not(:disabled) {
+  box-shadow: none;
+  transform: translateY(4px);
+}
+
+[data-style='toy-blocks'] .App .main-content .matrix-view-island {
+  --tb-i: var(--p-cell);
+  --tb-i-under: color-mix(in srgb, var(--tb-i) 68%, #000);
+  color: var(--island-ink);
+}
+
+[data-style='toy-blocks'] .App .main-content .matrix-view-island-1 { --tb-i: var(--island-1); }
+[data-style='toy-blocks'] .App .main-content .matrix-view-island-2 { --tb-i: var(--island-2); }
+[data-style='toy-blocks'] .App .main-content .matrix-view-island-3 { --tb-i: var(--island-3); }
+[data-style='toy-blocks'] .App .main-content .matrix-view-island-4 { --tb-i: var(--island-4); }
+[data-style='toy-blocks'] .App .main-content .matrix-view-island-5 { --tb-i: var(--island-5); }
+
+[data-style='toy-blocks'] .App .main-content .matrix-view-selected {
+  outline: 3px solid var(--p-ink);
+  outline-offset: 2px;
+}
+
+/* Heap array form */
+[data-style='toy-blocks'] .App .main-content .heap-row {
+  gap: 10px;
+}
+
+[data-style='toy-blocks'] .App .main-content .heap-slot {
+  gap: 10px;
+}
+
+[data-style='toy-blocks'] .App .main-content .heap-cell {
+  min-width: 3.25rem;
+  padding: 0.65rem 0.5rem;
+  font-size: 1.1rem;
+}
+
+/* Nodes and edges on the tree and graph pages */
+[data-style='toy-blocks'] .App .main-content :is(.binary-tree-edge, .bst-edge, .heap-edge, .graph-edge line) {
+  stroke: var(--tb-edge);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+[data-style='toy-blocks'] .App .main-content .graph-edge-hot line {
+  stroke: var(--tb-edge-hot);
+  stroke-width: 4;
+}
+
+[data-style='toy-blocks'] .graph-arrow-head {
+  fill: var(--tb-edge);
+}
+
+[data-style='toy-blocks'] .App .main-content :is(.binary-tree-node circle, .bst-node circle, .heap-node, .graph-node circle) {
+  fill: var(--tb-fill);
+  stroke: var(--tb-stroke);
+  stroke-width: var(--tb-stroke-w);
+  filter: drop-shadow(0 4px 0 var(--tb-under));
+}
+
+[data-style='toy-blocks'] .App .main-content :is(.binary-tree-node text, .bst-node text, .graph-node text) {
+  fill: var(--tb-ink);
+  font-weight: 600;
+}
+
+[data-style='toy-blocks'] .App .main-content :is(.binary-tree-node, .bst-node, .graph-node) {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: tb-bounce 0.4s cubic-bezier(0.3, 1.5, 0.5, 1) both;
+}
+
+/* Node states. Visited is violet, active amber with a thick ring, found green with a thick ring. */
+[data-style='toy-blocks'] .App .main-content .binary-tree-node.binary-tree-visited {
+  --tb-fill: var(--state-visited);
+  --tb-ink: #fff;
+  --tb-under: var(--tb-under-accent);
+}
+
+[data-style='toy-blocks'] .App .main-content :is(.binary-tree-node.binary-tree-current, .bst-node-path, .heap-node-hl, .graph-node-hot) {
+  --tb-fill: var(--state-active);
+  --tb-ink: var(--p-cell-ink);
+  --tb-under: var(--tb-under-active);
+  --tb-stroke: var(--p-ink);
+  --tb-stroke-w: 3;
+}
+
+[data-style='toy-blocks'] .App .main-content .binary-tree-node.binary-tree-lca {
+  --tb-fill: var(--state-found);
+  --tb-ink: #fff;
+  --tb-under: var(--tb-under-found);
+  --tb-stroke: var(--p-ink);
+  --tb-stroke-w: 4;
+}
+
+/* Labels beside a node keep plum ink whatever the node's state */
+[data-style='toy-blocks'] .App .main-content :is(.binary-tree-node text.binary-tree-badge, .graph-node .graph-step, .graph-weight) {
+  fill: var(--p-ink);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* Input rows stay a sensible length on wide screens */
+[data-style='toy-blocks'] .stack-view-algo {
+  max-width: 720px;
+  margin-inline: auto;
+}
+
+/* The page fills wide windows, so strips, stats and input rows center in it instead of sitting left.
+   "safe" and auto margins both fall back to the left edge when content overflows and has to scroll. */
+[data-style='toy-blocks'] .App :is(.array-stats, .hash-table-stats, .linked-list-stats, .graph-stats, .lru-cache-stats, .skip-list-stats,
+  .string-cells, .queue-stacks, .intervals-list, .bloom-filter-items, .suffix-array-chars, .fibonacci-heap-controls,
+  .queue-row, .heap-row, .linked-list-chain) {
+  justify-content: safe center;
+}
+
+[data-style='toy-blocks'] :is(.array-cells, .lru-cache-list, .range-query-fenwick) {
+  margin-inline: auto;
+}
+
+/* Rows stay aligned with each other, so the whole list centers rather than each row */
+[data-style='toy-blocks'] .App :has(> :is(.hash-table-row, .lru-cache-map-row)) {
+  display: block;
+  width: fit-content;
+  min-width: 0;
+  margin-inline: auto;
+}
+
+[data-style='toy-blocks'] .array-controls {
+  max-width: 900px;
+  margin-inline: auto;
+}

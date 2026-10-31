@@ -1,0 +1,370 @@
+/* phosphor: chrome. Status line, directory listing, theme menu, and the page-agnostic
+   text, control and message rules every view shares. */
+
+[data-style='phosphor'] .App {
+  text-align: left;
+  text-shadow: var(--ph-glow);
+  font-synthesis: none; /* VT323 has one face; no fake bold or italic anywhere */
+  scrollbar-color: var(--p-line) var(--p-bg);
+}
+
+/* Scanlines: a fixed wash over the page that never takes a click */
+[data-style='phosphor'] .App::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  background-image: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.12) 0 1px, transparent 1px 3px);
+}
+
+/* Status line */
+[data-style='phosphor'] .navbar {
+  padding: var(--space-xs) var(--space-md);
+  border-bottom: 1px dashed var(--p-line);
+}
+
+[data-style='phosphor'] .nav-logo::before {
+  content: '$ ' / '';
+  color: var(--p-muted);
+}
+
+/* Theme menu */
+[data-style='phosphor'] .theme-menu-button:hover,
+[data-style='phosphor'] .theme-menu-button:focus-visible,
+[data-style='phosphor'] .theme-menu-button[aria-expanded='true'] {
+  background-color: var(--p-ink);
+  color: var(--p-bg);
+}
+
+[data-style='phosphor'] .theme-menu-bars,
+[data-style='phosphor'] .theme-menu-bars::before,
+[data-style='phosphor'] .theme-menu-bars::after {
+  height: 2px;
+}
+
+[data-style='phosphor'] .theme-menu-panel {
+  padding: var(--space-sm) var(--space-md) var(--space-md);
+  border-color: var(--p-ink);
+}
+
+[data-style='phosphor'] .theme-menu-heading {
+  color: var(--p-muted);
+}
+
+[data-style='phosphor'] .theme-menu-heading::before {
+  content: '# ' / '';
+}
+
+[data-style='phosphor'] .theme-menu-row {
+  padding: var(--space-xs) var(--space-sm);
+  border: 1px dashed transparent;
+}
+
+[data-style='phosphor'] .theme-menu-row::before {
+  content: '( )' / '';
+  flex: none;
+}
+
+[data-style='phosphor'] .theme-menu-option:hover .theme-menu-row {
+  background-color: var(--p-surface);
+  border-color: var(--p-ink);
+}
+
+[data-style='phosphor'] .theme-menu-option input:checked + .theme-menu-row,
+[data-style='phosphor'] .theme-menu-option:hover input:checked + .theme-menu-row {
+  border-color: var(--p-ink);
+  background-color: var(--p-ink);
+  color: var(--p-bg);
+  text-shadow: none;
+}
+
+[data-style='phosphor'] .theme-menu-option input:checked + .theme-menu-row::before {
+  content: '(*)' / '';
+}
+
+[data-style='phosphor'] .theme-menu-option input:checked + .theme-menu-row .theme-menu-palette {
+  color: var(--p-bg);
+}
+
+[data-style='phosphor'] .theme-menu-swatch {
+  box-shadow: inset 0 0 0 1px var(--p-muted);
+}
+
+/* Directory listing */
+[data-style='phosphor'] .ds-sidebar {
+  border-right: 1px dashed var(--p-line);
+}
+
+[data-style='phosphor'] .ds-sidebar-group {
+  margin: var(--space-md) 0 var(--space-xs);
+  font-size: var(--fs-small);
+  text-transform: lowercase;
+}
+
+[data-style='phosphor'] .ds-sidebar-group::before {
+  content: '# ' / '';
+}
+
+[data-style='phosphor'] .ds-sidebar-item {
+  padding: 0.1rem var(--space-sm);
+  border: 1px dashed transparent;
+}
+
+[data-style='phosphor'] .ds-sidebar-item::before {
+  content: './' / '';
+  color: var(--p-muted);
+}
+
+[data-style='phosphor'] .ds-sidebar-item:hover {
+  border-color: var(--p-ink);
+}
+
+[data-style='phosphor'] .ds-sidebar-item.active {
+  text-shadow: none;
+}
+
+[data-style='phosphor'] .ds-sidebar-item.active::before {
+  color: inherit;
+}
+
+@media (max-width: 700px) {
+  [data-style='phosphor'] .ds-sidebar {
+    border-right: 0;
+    border-bottom: 1px dashed var(--p-line);
+  }
+
+  /* `ls` columns, so the listing doesn't push the page off the first screen */
+  [data-style='phosphor'] .ds-sidebar section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  [data-style='phosphor'] .ds-sidebar-group {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Page frame */
+[data-style='phosphor'] .ds-container {
+  margin: 0 auto;
+  max-width: 900px;
+}
+
+/* Headings */
+[data-style='phosphor'] .main-content h2::before {
+  content: '$ ' / '';
+  color: var(--p-muted);
+}
+
+[data-style='phosphor'] .main-content h3::before {
+  content: '# ' / '';
+  color: var(--p-muted);
+}
+
+[data-style='phosphor'] .main-content h3 {
+  margin: var(--space-md) 0 var(--space-xs);
+  line-height: 1.1;
+}
+
+[data-style='phosphor'] .main-content strong,
+[data-style='phosphor'] .main-content b {
+  color: var(--ph-bright);
+}
+
+[data-style='phosphor'] .main-content p {
+  margin: var(--space-sm) 0;
+}
+
+[data-style='phosphor'] .main-content [class$='-intro'],
+[data-style='phosphor'] .main-content [class$='-about'] {
+  max-width: 62ch;
+  margin: var(--space-sm) 0;
+}
+
+[data-style='phosphor'] .main-content [class$='-complexity'],
+[data-style='phosphor'] .main-content [class$='-legend'],
+[data-style='phosphor'] .main-content [class$='-note'] {
+  margin: var(--space-sm) 0;
+  color: var(--p-muted);
+  font-size: var(--fs-small);
+}
+
+[data-style='phosphor'] .main-content [class$='-stats'] {
+  justify-content: flex-start;
+  gap: var(--space-xs) var(--space-lg);
+  margin: var(--space-sm) 0;
+}
+
+/* Boards: a dashed frame and no fill */
+[data-style='phosphor'] .main-content :is(.array-scroll, .stack-view-board, .matrix-view-board, .fibonacci-heap-scroll) {
+  padding: var(--space-md);
+  border: 1px dashed var(--p-line);
+  background: none;
+}
+
+/* Diagrams hug the left margin like everything else */
+[data-style='phosphor'] .main-content svg {
+  margin-left: 0;
+}
+
+/* Controls: bracketed text that inverts to a block */
+[data-style='phosphor'] .ds-controls {
+  justify-content: flex-start;
+  align-items: center;
+  gap: var(--space-xs) var(--space-sm);
+}
+
+[data-style='phosphor'] .main-content .control-btn {
+  min-height: 2rem;
+  padding: 0 var(--space-xs);
+  border: 0;
+  background: none;
+  color: var(--p-ink);
+  font-family: var(--f-data);
+  font-size: var(--fs-base);
+  text-shadow: inherit;
+  white-space: nowrap;
+}
+
+[data-style='phosphor'] .main-content .control-btn::before {
+  content: '[ ' / '';
+  white-space: pre;
+}
+
+[data-style='phosphor'] .main-content .control-btn::after {
+  content: ' ]' / '';
+  white-space: pre;
+}
+
+[data-style='phosphor'] .main-content .control-btn:hover:not(:disabled),
+[data-style='phosphor'] .main-content .control-btn:focus-visible,
+[data-style='phosphor'] .main-content .control-btn:active:not(:disabled) {
+  background-color: var(--p-ink);
+  color: var(--p-bg);
+  text-shadow: none;
+}
+
+/* A pressed toggle is the current mode, even where the page also disables it */
+[data-style='phosphor'] .main-content .control-btn[aria-pressed='true'],
+[data-style='phosphor'] .main-content .control-btn[aria-pressed='true']:disabled {
+  opacity: 1;
+  background-color: var(--p-ink);
+  color: var(--p-bg);
+  text-shadow: none;
+}
+
+[data-style='phosphor'] .main-content .control-btn:disabled:not([aria-pressed='true']) {
+  opacity: 1;
+  color: var(--p-muted);
+  text-shadow: none;
+}
+
+/* In a narrow table column, a button wraps rather than clipping its label */
+[data-style='phosphor'] .main-content td .control-btn {
+  white-space: normal;
+}
+
+/* Inputs: an underline */
+[data-style='phosphor'] .main-content :is(input:not([type='checkbox'], [type='radio'], [type='range']), select, textarea) {
+  padding: 0.1rem var(--space-xs);
+  border-width: 0 0 1px;
+  border-style: dashed;
+  border-color: var(--p-muted);
+  border-radius: 0;
+  background: none;
+  color: var(--p-ink);
+  caret-color: var(--p-ink);
+  font-family: var(--f-data);
+  font-size: var(--fs-base);
+  text-shadow: inherit;
+}
+
+[data-style='phosphor'] .main-content :is(input:not([type='checkbox'], [type='radio'], [type='range']), select, textarea):hover {
+  border-color: var(--p-ink);
+}
+
+[data-style='phosphor'] .main-content :is(input:not([type='checkbox'], [type='radio'], [type='range']), select, textarea):focus {
+  border-bottom-style: solid;
+  border-color: var(--ph-max);
+}
+
+/* Page buttons don't shrink, so inputs need a floor or they collapse to a few letters */
+[data-style='phosphor'] .ds-controls > input {
+  flex: 1 1 10ch;
+  min-width: 8ch;
+}
+
+[data-style='phosphor'] .main-content select option {
+  background-color: var(--p-bg);
+  color: var(--p-ink);
+}
+
+[data-style='phosphor'] .main-content :is(input[type='checkbox'], input[type='radio'], input[type='range']) {
+  accent-color: var(--p-ink);
+}
+
+[data-style='phosphor'] .main-content label {
+  font-size: var(--fs-small);
+}
+
+/* Tables: dashed grid, no fills */
+[data-style='phosphor'] .main-content table:not(.skip-list-grid) {
+  margin: var(--space-sm) 0;
+  border-collapse: collapse;
+  color: var(--p-ink);
+}
+
+[data-style='phosphor'] .main-content caption {
+  margin-bottom: var(--space-xs);
+  color: var(--p-muted);
+  text-align: left;
+}
+
+[data-style='phosphor'] .main-content table:not(.skip-list-grid) :is(th, td) {
+  padding: 0.1rem var(--space-sm);
+  border: 1px dashed var(--p-line);
+  text-align: left;
+  vertical-align: top;
+}
+
+[data-style='phosphor'] .main-content table:not(.skip-list-grid) th {
+  color: var(--ph-bright);
+}
+
+[data-style='phosphor'] .main-content code {
+  padding: 0;
+  background: none;
+}
+
+/* Messages: command output. Every view's result line carries role="status". */
+[data-style='phosphor'] .main-content :is([role='status'], .array-result, .array-note) {
+  margin: var(--space-sm) 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ph-bright);
+}
+
+[data-style='phosphor'] .main-content :is([role='status'], .array-result)::before {
+  content: '> ' / '';
+  color: var(--p-muted);
+}
+
+[data-style='phosphor'] .main-content .array-note::before {
+  content: '! ' / '';
+}
+
+[data-style='phosphor'] .main-content .error-message {
+  margin: var(--space-sm) 0;
+  padding: var(--space-xs) var(--space-sm);
+  border: 2px dashed var(--ph-max);
+}
+
+[data-style='phosphor'] .main-content .error-message::before {
+  content: '! ' / '';
+}
+
+[data-style='phosphor'] .main-content .empty-message::before {
+  content: '-- ' / '';
+}

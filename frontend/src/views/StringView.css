@@ -17,12 +17,12 @@
   flex: 0 0 auto;
   min-width: 2.2rem;
   border: 1px solid var(--input-border);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   background-color: var(--stack-item-bg);
   color: var(--stack-item-text);
 }
-.string-cell-hit { outline: 3px solid #4caf50; }
-.string-char { font-family: monospace; font-size: 1.3rem; padding: 0.4rem 0.3rem; }
+.string-cell-hit { outline: 3px solid var(--state-found); }
+.string-char { font-family: var(--f-data); font-size: 1.3rem; padding: 0.4rem 0.3rem; }
 .string-index { font-size: 0.7rem; color: var(--text-color); background-color: var(--card-bg); width: 100%; text-align: center; border-top: 1px solid var(--input-border); }
 .string-controls { flex-wrap: wrap; }
 .string-result { margin-top: 1rem; font-weight: bold; }

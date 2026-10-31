@@ -1,0 +1,251 @@
+/* Chalkboard: trie, union-find, balanced-trees, b-tree, intervals, lru-cache. */
+
+[data-style='chalkboard'] :is(.lru-cache-sentinel, .lru-cache-tag, .lru-cache-pointer, .b-tree-meta, .b-tree-chain) {
+  font-size: var(--fs-small);
+}
+
+[data-style='chalkboard'] :is(.trie-scroll, .union-find-scroll, .balanced-trees-scroll, .b-tree-scroll, .intervals-scroll, .lru-cache-scroll) {
+  padding: var(--space-sm);
+}
+
+[data-style='chalkboard'] :is(.trie-result, .union-find-result, .balanced-trees-result, .b-tree-result, .intervals-result, .lru-cache-result) {
+  margin: var(--space-sm) 0;
+  padding: var(--space-xs) var(--space-sm);
+  border-left: 3px dashed var(--p-accent);
+  background: var(--p-surface);
+  color: var(--p-ink);
+  font-weight: 400;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+
+[data-style='chalkboard'] :is(.trie-edge, .union-find-edge, .balanced-trees-edge, .b-tree-edge) {
+  stroke: var(--edge-color);
+  stroke-width: var(--edge-width);
+  stroke-linecap: round;
+}
+
+[data-style='chalkboard'] :is(.union-find-node circle, .balanced-trees-disc, .b-tree-cell, .intervals-bar) {
+  fill: var(--stack-item-bg);
+  stroke: var(--p-cell);
+  stroke-width: var(--node-stroke);
+}
+
+[data-style='chalkboard'] :is(.trie-node text, .union-find-node text, .balanced-trees-node text, .b-tree-text, .intervals-bar-text) {
+  fill: var(--stack-item-text);
+}
+
+/* Trie: the page's text says word ends are filled, so here pink chalk is laid flat */
+[data-style='chalkboard'] .trie-node circle {
+  fill: var(--stack-item-bg);
+  stroke: var(--p-muted);
+  stroke-width: 2;
+}
+
+[data-style='chalkboard'] .trie-word circle {
+  fill: var(--p-cell);
+  stroke: var(--p-cell);
+  stroke-width: var(--node-stroke);
+}
+
+[data-style='chalkboard'] .trie-word text {
+  fill: var(--p-cell-ink);
+}
+
+[data-style='chalkboard'] .trie-node.trie-hot circle {
+  stroke: var(--state-active);
+  stroke-width: var(--stroke-active);
+}
+
+[data-style='chalkboard'] .trie-node.trie-hot:not(.trie-word) text {
+  fill: var(--state-active);
+}
+
+[data-style='chalkboard'] .trie-edge.trie-hot {
+  stroke: var(--state-active);
+  stroke-width: var(--stroke-active);
+}
+
+/* Union-find: a root is a heavier outline */
+[data-style='chalkboard'] .union-find-root circle {
+  stroke-width: var(--stroke-found);
+}
+
+/* Balanced trees: red is a dashed red outline, black is a solid chalk outline */
+[data-style='chalkboard'] .balanced-trees-node .balanced-trees-balance {
+  fill: var(--p-muted);
+}
+
+[data-style='chalkboard'] .balanced-trees-node-mark .balanced-trees-ring {
+  stroke: var(--state-active);
+  stroke-width: var(--stroke-active);
+}
+
+[data-style='chalkboard'] :is(.balanced-trees-node-red, .balanced-trees-node-unbalanced) .balanced-trees-disc {
+  fill: var(--stack-item-bg);
+  stroke: var(--state-danger);
+  stroke-width: var(--stroke-danger);
+  stroke-dasharray: var(--dash-danger);
+}
+
+[data-style='chalkboard'] :is(.balanced-trees-node-red, .balanced-trees-node-unbalanced) text:not(.balanced-trees-balance) {
+  fill: var(--state-danger);
+}
+
+[data-style='chalkboard'] .balanced-trees-node-black .balanced-trees-disc {
+  fill: var(--stack-item-bg);
+  stroke: var(--p-ink);
+  stroke-width: var(--node-stroke);
+}
+
+[data-style='chalkboard'] .balanced-trees-node-black text:not(.balanced-trees-balance) {
+  fill: var(--p-ink);
+}
+
+[data-style='chalkboard'] .balanced-trees-swatch-red {
+  background: none;
+  border: 2px dashed var(--state-danger);
+}
+
+[data-style='chalkboard'] .balanced-trees-swatch-black {
+  background: none;
+  border: 2px solid var(--p-ink);
+}
+
+/* A toggle that is on is circled in pink, like the sidebar */
+[data-style='chalkboard'] .main-content .control-btn.balanced-trees-on {
+  border: 3px solid var(--p-cell);
+  outline: 0;
+}
+
+[data-style='chalkboard'] .balanced-trees-step-list {
+  text-align: left;
+}
+
+[data-style='chalkboard'] .balanced-trees-step {
+  min-height: 36px;
+  padding: 0.15rem var(--space-sm);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  font-size: var(--fs-base);
+  font-weight: 400;
+}
+
+[data-style='chalkboard'] .balanced-trees-step:hover:not(:disabled) {
+  background: var(--btn-hover-bg);
+  color: var(--btn-hover-ink);
+}
+
+[data-style='chalkboard'] .balanced-trees-step[aria-current='step'] {
+  border: 3px solid var(--p-cell);
+  font-weight: 400;
+}
+
+[data-style='chalkboard'] .balanced-trees-arrow {
+  color: var(--p-muted);
+  font-weight: 400;
+}
+
+/* B-tree */
+[data-style='chalkboard'] :is(.b-tree-cell-router, .b-tree-cell-value) {
+  stroke: var(--p-muted);
+  stroke-width: 2;
+}
+
+[data-style='chalkboard'] :is(.b-tree-text-router, .b-tree-value) {
+  fill: var(--p-ink);
+}
+
+[data-style='chalkboard'] .b-tree-node-hl .b-tree-cell {
+  stroke: var(--state-active);
+  stroke-width: var(--stroke-active);
+}
+
+[data-style='chalkboard'] .b-tree-cell.b-tree-cell-hit {
+  fill: var(--stack-item-bg);
+  stroke: var(--state-found);
+  stroke-width: var(--stroke-found);
+}
+
+[data-style='chalkboard'] .b-tree-cell-hit + .b-tree-text {
+  fill: var(--state-found);
+}
+
+[data-style='chalkboard'] .b-tree-link {
+  stroke: var(--edge-color);
+  stroke-width: var(--edge-width);
+}
+
+[data-style='chalkboard'] .b-tree-link.b-tree-link-hl {
+  stroke: var(--state-active);
+  stroke-width: var(--stroke-active);
+}
+
+[data-style='chalkboard'] .b-tree-arrowhead {
+  fill: var(--edge-color);
+}
+
+[data-style='chalkboard'] .b-tree-events {
+  text-align: left;
+}
+
+/* Intervals */
+[data-style='chalkboard'] .intervals-tick {
+  stroke: var(--p-line);
+}
+
+[data-style='chalkboard'] .intervals-tick-text {
+  fill: var(--p-muted);
+}
+
+[data-style='chalkboard'] .intervals-bar.intervals-bar-out {
+  stroke: var(--state-visited);
+  stroke-width: var(--stroke-visited);
+  stroke-dasharray: var(--dash-visited);
+}
+
+[data-style='chalkboard'] .intervals-bar.intervals-bar-new {
+  stroke: var(--state-active);
+  stroke-width: var(--stroke-active);
+}
+
+/* LRU cache: the same two-part cell as the hash table */
+[data-style='chalkboard'] .lru-cache-node {
+  border: var(--cell-border);
+  border-radius: var(--radius-sm);
+  animation: chalk-write 0.42s ease-out backwards;
+}
+
+[data-style='chalkboard'] .lru-cache-sentinel {
+  border: var(--spare-border);
+  border-radius: var(--radius-sm);
+  color: var(--p-muted);
+}
+
+[data-style='chalkboard'] .lru-cache-tag {
+  color: var(--p-cell);
+}
+
+[data-style='chalkboard'] :is(.lru-cache-node-key, .lru-cache-node-value) {
+  background: none;
+  color: var(--stack-item-text);
+  font-size: var(--fs-cell);
+  font-weight: 400;
+}
+
+[data-style='chalkboard'] .lru-cache-node .lru-cache-node-value {
+  border-top: 2px solid var(--p-cell);
+}
+
+[data-style='chalkboard'] .lru-cache-map-row .lru-cache-node-key {
+  border: var(--cell-border);
+}
+
+[data-style='chalkboard'] :is(.lru-cache-arrow, .lru-cache-pointer) {
+  color: var(--p-muted);
+}
+
+[data-style='chalkboard'] .main-content .control-btn.balanced-trees-on:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 2px;
+}

@@ -1,0 +1,105 @@
+/* Chalkboard: a tutor at a board. Values come from the palette (--p-*); the state
+   hues are the spec's. Style-private tokens are the shared drawing conventions:
+   every page's cell, node, edge and state reads from them. */
+[data-style='chalkboard'] {
+  /* Type. Patrick Hand and Caveat are single-weight: no synthetic bold anywhere. */
+  --f-data: 'Patrick Hand', 'Comic Sans MS', cursive;
+  --fs-base: 1.15rem;
+  --fs-small: 1rem;
+  --fs-h1: 2.4rem;
+  --fs-h2: 3.4rem;
+  --fs-h3: 1.9rem;
+  --fs-cell: 1.4rem;
+  --fw-heading: 700;
+  --fw-control: 400;
+  --lh-body: 1.45;
+
+  /* Room left on the board */
+  --space-xs: 0.35rem;
+  --space-sm: 0.65rem;
+  --space-md: 1.25rem;
+  --space-lg: 2rem;
+  --space-xl: 3rem;
+
+  /* Chalk strokes */
+  --border-width: 2px;
+  --radius-sm: 255px 15px 225px 15px / 15px 225px 15px 255px;
+  --radius-md: 225px 15px 255px 15px / 15px 255px 15px 225px;
+  --radius-lg: 15px 225px 15px 255px / 255px 15px 225px 15px;
+
+  /* Controls: chalk outline, blue fill on hover, underlined inputs */
+  --btn-bg: transparent;
+  --btn-ink: var(--p-ink);
+  --btn-border: var(--p-accent);
+  --btn-hover-bg: var(--p-accent);
+  --btn-hover-ink: var(--p-accent-ink);
+  --btn-active-transform: translateY(1px);
+  --input-bg: transparent;
+  --input-border-color: var(--p-muted);
+  --focus-ring: var(--p-ink);
+
+  /* Panels and navigation */
+  --panel-border: var(--p-line);
+  --nav-bg: var(--p-bg);
+  --side-bg: var(--p-bg);
+  --side-group-ink: var(--p-ink);
+  --side-hover-bg: var(--p-surface);
+  --side-active-bg: transparent;
+  --side-active-ink: var(--p-ink);
+
+  /* States. Never used as a fill under text; always a stroke with its own weight or dash. */
+  --state-active: #FFE27A;
+  --state-visited: #8FD3FF;
+  --state-found: #A8E6A1;
+  --state-danger: #FF8A80;
+  --state-info: #C7B8FF;
+
+  /* Islands are hatched chalk, so the value above them stays white */
+  --island-1: #FFE27A;
+  --island-2: #A8E6A1;
+  --island-3: #C7B8FF;
+  --island-4: #FF9FB2;
+  --island-5: #8FD3FF;
+  --island-ink: var(--p-ink);
+
+  /* Names the views read. A cell is the board showing through a pink outline. */
+  --card-bg: var(--p-bg);
+  --main-bg: var(--p-bg);
+  --card-shadow: transparent;
+  --input-border: var(--p-muted);
+  --stack-item-bg: var(--p-bg);
+  --stack-item-text: var(--p-ink);
+  --error-bg: transparent;
+  --error-border: var(--state-danger);
+  --error-text: var(--state-danger);
+
+  /* Conventions, HTML */
+  --cell-border: 3px solid var(--p-cell);
+  --spare-border: 3px dashed var(--p-muted);
+  --ring-active: 4px solid var(--state-active);
+  --ring-visited: 3px dashed var(--state-visited);
+  --ring-found: 6px double var(--state-found);
+  --ring-danger: 3px dashed var(--state-danger);
+
+  /* Conventions, SVG */
+  --edge-width: 2;
+  --edge-color: var(--p-muted);
+  --node-stroke: 3;
+  --stroke-active: 4;
+  --stroke-visited: 3;
+  --stroke-found: 5;
+  --stroke-danger: 3;
+  --dash-spare: 5 4;
+  --dash-visited: 7 5;
+  --dash-danger: 4 4;
+  --dash-info: 2 5;
+
+  /* A hand-drawn line, used as a mask over the stroke color */
+  --chalk-line: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='6' preserveAspectRatio='none'%3E%3Cpath d='M0 3 C60 1 110 5 180 3 S300 1 360 3.5 S490 5 600 3' fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E");
+
+  font-synthesis: none;
+}
+
+[data-style='chalkboard'][data-palette='blackout'] {
+  color-scheme: dark;
+}

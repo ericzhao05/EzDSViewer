@@ -1,0 +1,292 @@
+/* Chalkboard: navigation, the theme menu, and the components every page shares. */
+
+/* The board */
+[data-style='chalkboard'] .main-content {
+  background-image:
+    radial-gradient(60% 40% at 20% 15%, color-mix(in srgb, var(--p-ink) 5%, transparent), transparent),
+    radial-gradient(50% 45% at 85% 70%, color-mix(in srgb, var(--p-ink) 4%, transparent), transparent);
+}
+
+/* Top bar: the board's ledge, handwritten logo over a chalk line */
+[data-style='chalkboard'] .navbar {
+  padding: var(--space-sm) var(--space-lg) calc(var(--space-sm) + 6px);
+}
+
+[data-style='chalkboard'] .navbar::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 6px;
+  background-color: var(--nav-ink);
+  -webkit-mask: var(--chalk-line) repeat-x left center / 600px 6px;
+  mask: var(--chalk-line) repeat-x left center / 600px 6px;
+}
+
+[data-style='chalkboard'] .nav-logo {
+  line-height: 1.1;
+  transform: rotate(-1deg);
+}
+
+/* Sidebar: a handwritten list */
+[data-style='chalkboard'] .ds-sidebar {
+  flex-basis: 232px;
+  padding: var(--space-sm) var(--space-md) var(--space-lg);
+  border-right: 2px dashed var(--p-line);
+}
+
+[data-style='chalkboard'] .ds-sidebar-group {
+  margin: var(--space-lg) 0 var(--space-sm);
+  padding: 0 var(--space-sm);
+  font-family: var(--f-display);
+  font-size: 1.6rem;
+  line-height: 1.1;
+}
+
+[data-style='chalkboard'] .ds-sidebar-group::after {
+  content: '';
+  display: block;
+  height: 6px;
+  margin-top: 2px;
+  background-color: var(--p-muted);
+  -webkit-mask: var(--chalk-line) no-repeat left center / 100% 6px;
+  mask: var(--chalk-line) no-repeat left center / 100% 6px;
+}
+
+[data-style='chalkboard'] .ds-sidebar-item {
+  position: relative;
+  margin: 2px 0;
+  padding: 0.3rem var(--space-sm);
+  border-radius: var(--radius-md);
+}
+
+/* The active item is circled in pink chalk, twice round, as a hand would */
+[data-style='chalkboard'] .ds-sidebar-item.active {
+  border: 3px solid var(--p-cell);
+}
+
+[data-style='chalkboard'] .ds-sidebar-item.active::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border: 2px solid color-mix(in srgb, var(--p-cell) 55%, transparent);
+  border-radius: var(--radius-lg);
+  transform: rotate(0.7deg);
+  pointer-events: none;
+}
+
+/* Theme menu */
+[data-style='chalkboard'] .theme-menu-button {
+  border-color: var(--p-accent);
+}
+
+[data-style='chalkboard'] .theme-menu-button:hover {
+  background-color: var(--p-accent);
+  color: var(--p-accent-ink);
+}
+
+[data-style='chalkboard'] .theme-menu-button[aria-expanded='true'] {
+  border: 3px solid var(--p-cell);
+  color: var(--p-cell);
+}
+
+[data-style='chalkboard'] .theme-menu-button[aria-expanded='true']:hover {
+  background-color: var(--p-cell);
+  color: var(--p-cell-ink);
+}
+
+[data-style='chalkboard'] .theme-menu-panel {
+  border-width: 3px;
+  border-color: var(--p-muted);
+}
+
+[data-style='chalkboard'] .theme-menu-heading {
+  font-size: var(--fs-h3);
+  line-height: 1.1;
+}
+
+[data-style='chalkboard'] .theme-menu-row {
+  border-radius: var(--radius-md);
+}
+
+[data-style='chalkboard'] .theme-menu-option:hover .theme-menu-row {
+  border-color: var(--p-accent);
+  background-color: transparent;
+}
+
+[data-style='chalkboard'] .theme-menu-option input:checked + .theme-menu-row {
+  border: 3px solid var(--p-cell);
+}
+
+[data-style='chalkboard'] .theme-menu-swatch {
+  border-radius: var(--radius-sm);
+}
+
+[data-style='chalkboard'] .theme-menu-name {
+  font-size: 1.3rem;
+}
+
+/* Page */
+[data-style='chalkboard'] .main-content h2 {
+  transform: rotate(-1deg);
+}
+
+[data-style='chalkboard'] .main-content h3 {
+  line-height: 1.15;
+}
+
+[data-style='chalkboard'] .main-content strong {
+  color: var(--p-cell);
+}
+
+[data-style='chalkboard'] .main-content code {
+  background: none;
+  color: var(--p-cell);
+}
+
+/* Controls */
+[data-style='chalkboard'] .main-content .control-btn {
+  min-height: 44px;
+  padding: 0.35rem 1.1rem;
+  border: var(--border-width) solid var(--btn-border);
+  background: var(--btn-bg);
+  color: var(--btn-ink);
+  font-size: var(--fs-base);
+}
+
+[data-style='chalkboard'] .main-content .control-btn:hover:not(:disabled) {
+  background: var(--btn-hover-bg);
+  color: var(--btn-hover-ink);
+}
+
+[data-style='chalkboard'] .main-content .control-btn:disabled {
+  border-style: dashed;
+}
+
+[data-style='chalkboard'] .main-content :is(input:not([type='checkbox'], [type='radio'], [type='range']), select, textarea) {
+  min-height: 44px;
+  padding: 0.25rem 0.15rem;
+  border: 0;
+  border-bottom: 2px solid var(--input-border-color);
+  border-radius: 0;
+  background: transparent;
+  color: var(--input-ink);
+  font-size: var(--fs-base);
+}
+
+[data-style='chalkboard'] .main-content :is(input, select, textarea):hover:not(:disabled, [type='checkbox'], [type='radio'], [type='range']) {
+  border-bottom-color: var(--p-accent);
+}
+
+[data-style='chalkboard'] .main-content ::placeholder {
+  color: var(--p-muted);
+  opacity: 1;
+}
+
+[data-style='chalkboard'] .main-content option {
+  background-color: var(--p-surface);
+  color: var(--p-ink);
+}
+
+/* Tables */
+[data-style='chalkboard'] .main-content :is(th, td):not(.skip-list-cell, .skip-list-level-label) {
+  padding: var(--space-xs) var(--space-sm);
+  border: 2px solid var(--p-line);
+}
+
+[data-style='chalkboard'] .main-content th:not(.skip-list-level-label) {
+  border-bottom-color: var(--p-muted);
+  font-weight: 400;
+  color: var(--p-muted);
+}
+
+[data-style='chalkboard'] .main-content caption {
+  padding-bottom: var(--space-xs);
+  font-weight: 400;
+  color: var(--p-muted);
+}
+
+/* Messages */
+[data-style='chalkboard'] .error-message {
+  border: 3px dashed var(--error-border);
+  border-radius: var(--radius-md);
+  font-weight: 400;
+}
+
+[data-style='chalkboard'] .empty-message {
+  font-style: normal;
+}
+
+/* Writing a value on the board, left to right */
+@keyframes chalk-write {
+  from { clip-path: inset(-10px 100% -10px -10px); }
+  to { clip-path: inset(-10px -10px -10px -10px); }
+}
+
+/* Anything written into an SVG sits on the board, whatever it crosses */
+[data-style='chalkboard'] .main-content svg text {
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+/* A label that sits across a line keeps a margin of clean board around it */
+[data-style='chalkboard'] :is(.graph-weight, .binary-tree-badge, .balanced-trees-balance, .kdtree-label, .range-query-node-index, .graph-step) {
+  paint-order: stroke;
+  stroke: var(--p-bg);
+  stroke-width: 4px;
+  stroke-linejoin: round;
+}
+
+/* Marks at the edge of a diagram are not clipped by its viewport */
+[data-style='chalkboard'] .main-content svg {
+  overflow: visible;
+}
+
+/* Diagrams sit in the middle of the board, unless they need the whole width */
+[data-style='chalkboard'] :is(.trie-svg, .intervals-svg, .range-query-svg, .array-cells, .range-query-fenwick, .lru-cache-list, .union-find-table, .suffix-array-table, .bloom-filter-row) {
+  margin-inline: auto;
+}
+
+[data-style='chalkboard'] :is(.queue-row, .heap-row, .linked-list-chain, .string-cells, .suffix-array-chars, .bloom-filter-row) {
+  justify-content: safe center;
+}
+
+/* Inputs keep enough width to show what they hold when a row of controls wraps */
+[data-style='chalkboard'] .ds-controls input:not([type='checkbox'], [type='radio'], [type='range']) {
+  min-width: 5.5rem;
+}
+
+@media (max-width: 700px) {
+  [data-style='chalkboard'] .ds-controls > input:not([type='checkbox'], [type='radio'], [type='range']) {
+    flex: 1 1 7rem;
+  }
+
+  /* On a phone the list sits over the page, in two columns so the page is not far below */
+  [data-style='chalkboard'] .ds-sidebar {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: var(--space-sm);
+    padding: 0 var(--space-sm) var(--space-sm);
+    border-right: 0;
+    border-bottom: 2px dashed var(--p-line);
+  }
+
+  [data-style='chalkboard'] .ds-sidebar-group {
+    margin-top: var(--space-md);
+  }
+
+  [data-style='chalkboard'] .navbar {
+    padding-inline: var(--space-md);
+  }
+}
+
+/* The current mode of a toggle reads as chosen, not unavailable, even where the page disables it */
+[data-style='chalkboard'] .main-content .control-btn[aria-pressed='true'],
+[data-style='chalkboard'] .main-content .control-btn[aria-pressed='true']:disabled {
+  opacity: 1;
+  border: 3px solid var(--p-cell);
+  background: transparent;
+  color: var(--p-ink);
+  cursor: default;
+}

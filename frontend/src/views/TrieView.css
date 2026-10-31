@@ -45,12 +45,12 @@
 }
 
 .trie-node.trie-hot circle {
-  stroke: #e67e22;
+  stroke: var(--state-active);
   stroke-width: 4;
 }
 
 .trie-edge.trie-hot {
-  stroke: #e67e22;
+  stroke: var(--state-active);
   stroke-width: 4;
 }
 

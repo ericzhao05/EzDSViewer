@@ -1,0 +1,8 @@
+/* Load order matters: contract, shared components, then one directory per style. */
+@import './tokens.css';
+@import './base.css';
+/* Cell shapes for the hidden Array styles. Uncomment when restoring one (see themes.js). */
+/* @import './archive/array-presets.css'; */
+@import './styles/chalkboard/index.css';
+@import './styles/toy-blocks/index.css';
+@import './styles/phosphor/index.css';

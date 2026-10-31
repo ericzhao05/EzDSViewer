@@ -1,35 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import './App.css';
+import React, { useState } from 'react';
+import './theme/index.css';
+import ThemeMenu from './theme/ThemeMenu';
+import useTheme from './theme/useTheme';
 import { GROUPS, STRUCTURES } from './structures/registry';
 
 function App() {
   const [activeDS, setActiveDS] = useState(STRUCTURES[0].id);
-  const [darkMode, setDarkMode] = useState(() => localStorage.getItem('darkMode') === 'true');
-
-  // Apply dark mode class to body when darkMode changes
-  useEffect(() => {
-    if (darkMode) {
-      document.body.classList.add('dark-mode');
-    } else {
-      document.body.classList.remove('dark-mode');
-    }
-    localStorage.setItem('darkMode', darkMode);
-  }, [darkMode]);
+  const { theme, pickTheme } = useTheme();
 
   const ActiveView = STRUCTURES.find((s) => s.id === activeDS).Component;
 
   return (
-    <div className={`App ${darkMode ? 'dark-mode' : 'light-mode'}`}>
+    <div className="App">
       <nav className="navbar">
         <div className="nav-container">
           <h1 className="nav-logo">EzDSViewer</h1>
-          <ul className="nav-menu">
-            <li className="nav-item theme-toggle">
-              <button className="theme-btn" onClick={() => setDarkMode(!darkMode)}>
-                {darkMode ? '☀️ Light' : '🌙 Dark'}
-              </button>
-            </li>
-          </ul>
+          <ThemeMenu theme={theme} onPick={pickTheme} />
         </div>
       </nav>
 

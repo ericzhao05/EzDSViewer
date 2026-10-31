@@ -49,7 +49,7 @@
 .skip-list-head,
 .skip-list-nil {
   border: 2px solid var(--input-border);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   background-color: var(--stack-item-bg);
   background-image: none;
   color: var(--stack-item-text);
@@ -60,14 +60,14 @@
 }
 
 .skip-list-visited {
-  outline: 3px solid #f5a623;
+  outline: 3px solid var(--state-active);
 }
 
 .skip-list-result {
   margin: 0.75rem 0;
   padding: 0.5rem 0.75rem;
   border: 1px solid var(--input-border);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   background: var(--card-bg);
   color: var(--text-color);
 }

@@ -6,7 +6,7 @@
 .suffix-array-result {
   margin: 10px 0;
   padding: 8px 12px;
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   background: var(--card-bg);
   color: var(--text-color);
   border: 1px solid var(--input-border);
@@ -37,8 +37,8 @@
   min-width: 32px;
   padding: 6px 4px;
   text-align: center;
-  font-family: monospace;
-  border-radius: 4px;
+  font-family: var(--f-data);
+  border-radius: var(--radius-sm);
   background: var(--stack-item-bg);
   color: var(--stack-item-text);
 }
@@ -61,7 +61,7 @@
 }
 
 .suffix-array-suffix {
-  font-family: monospace;
+  font-family: var(--f-data);
   white-space: pre;
 }
 

@@ -1,0 +1,501 @@
+/* phosphor: core. The first part is the shared vocabulary for every page's cells and
+   nodes, so a state looks the same in all 24 views. It lives here because core loads
+   first; second-tier and specialized only add what their pages need beyond it.
+
+     base     cell: bracketed text, no fill.  node: 1.5 solid outline, opaque, no fill.
+     spare    dim text, a dot between the brackets
+     active   inverted: solid ink fill, dark text
+     visited  dim text, thin dotted outline
+     found    brightest ink, 3 thick outline, glow
+     danger   brightest ink, thick dashed outline, no fill
+     marker   thick solid outline (union-find root) or a dim fill (trie word end, whose
+              page copy says "filled"): structure, not state
+
+   Solid and dashed mean something inside a diagram, so nodes never use the dashed
+   line the page frames use. */
+
+@keyframes phosphor-on {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes phosphor-off {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+/* ---- Cells ---- */
+[data-style='phosphor'] .main-content :is(
+  .array-cell, .string-char, .queue-cell, .heap-cell, .stack-view-item,
+  :where(.lru-cache-map-row) .lru-cache-node-key, .bloom-filter-bit, :where(.bloom-filter-items) li,
+  .range-query-cell, .suffix-array-char, .skip-list-node, .skip-list-head, .skip-list-nil,
+  .lru-cache-sentinel
+) {
+  box-sizing: border-box;
+  min-width: 0;
+  max-width: none;
+  height: auto;
+  padding: 0 0.1rem;
+  border: 0;
+  outline: 0;
+  box-shadow: none;
+  background: none;
+  color: var(--p-ink);
+  font-family: var(--f-data);
+  font-size: 1.5rem;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+  text-align: center;
+  white-space: nowrap;
+  animation: phosphor-on 0.2s steps(2) both;
+}
+
+[data-style='phosphor'] .main-content :is(
+  .array-cell, .string-char, .queue-cell, .heap-cell, .stack-view-item,
+  :where(.lru-cache-map-row) .lru-cache-node-key, .bloom-filter-bit, :where(.bloom-filter-items) li,
+  .range-query-cell, .suffix-array-char, .skip-list-node, .skip-list-head, .skip-list-nil,
+  .lru-cache-sentinel, .matrix-view-cell
+)::before {
+  content: var(--ph-open);
+  margin-right: 0.15em;
+}
+
+[data-style='phosphor'] .main-content :is(
+  .array-cell, .string-char, .queue-cell, .heap-cell, .stack-view-item,
+  :where(.lru-cache-map-row) .lru-cache-node-key, .bloom-filter-bit, :where(.bloom-filter-items) li,
+  .range-query-cell, .suffix-array-char, .skip-list-node, .skip-list-head, .skip-list-nil,
+  .lru-cache-sentinel, .matrix-view-cell
+)::after {
+  content: var(--ph-close);
+  margin-left: 0.15em;
+}
+
+/* Spare */
+[data-style='phosphor'] .main-content :is(.array-cell-free, .queue-cell-empty, .skip-list-head, .skip-list-nil, .lru-cache-sentinel) {
+  color: var(--p-muted);
+}
+
+/* Active */
+[data-style='phosphor'] .main-content :is(.heap-cell-hl, .queue-in-window, .skip-list-visited, .range-query-hit) {
+  background: var(--p-ink);
+  color: var(--p-bg);
+  text-shadow: none;
+}
+
+/* Found */
+[data-style='phosphor'] .main-content .string-cell-hit .string-char {
+  background: none;
+  color: var(--ph-max);
+  text-shadow: var(--ph-glow-found);
+}
+
+/* Danger */
+[data-style='phosphor'] .main-content .range-query-minus {
+  outline: 2px dashed var(--ph-max);
+  outline-offset: -2px;
+  background: none;
+  color: var(--ph-max);
+}
+
+/* ---- SVG nodes ---- */
+[data-style='phosphor'] .main-content :is(
+  :where(.binary-tree-node, .bst-node, .graph-node, .trie-node, .union-find-node) circle,
+  .heap-node, .balanced-trees-disc, .b-tree-cell, .intervals-bar, .range-query-node,
+  .kdtree-node
+) {
+  fill: var(--p-bg);
+  stroke: var(--p-ink);
+  stroke-width: 1.5;
+  stroke-dasharray: none;
+  rx: 0;
+}
+
+[data-style='phosphor'] .main-content :is(
+  :where(.binary-tree-node, .bst-node, .graph-node, .trie-node, .union-find-node, .balanced-trees-node) text,
+  .heap-node-text, .b-tree-text, .b-tree-value,
+  .intervals-bar-text, .range-query-node-text, .kdtree-node-text
+) {
+  fill: var(--p-ink);
+  font-size: 20px;
+}
+
+/* Labels sitting beside a node or on a line: a halo keeps them off whatever is behind */
+[data-style='phosphor'] .main-content :is(
+  .binary-tree-badge, .graph-step, .graph-weight, .balanced-trees-balance, .range-query-node-index, .intervals-tick-text,
+  .kdtree-label
+) {
+  fill: var(--p-ink);
+  font-size: 18px;
+  paint-order: stroke;
+  stroke: var(--p-bg);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+}
+
+/* ---- SVG edges ---- */
+[data-style='phosphor'] .main-content :is(
+  .binary-tree-edge, .bst-edge, .heap-edge, :where(.graph-edge) line, .trie-edge, .union-find-edge,
+  .balanced-trees-edge, .b-tree-edge, .range-query-edge, .kdtree-edge,
+  .fibonacci-heap-edge, .fibonacci-heap-root-link, .fibonacci-heap-root-wrap
+) {
+  stroke: var(--p-line);
+  stroke-width: var(--edge-width);
+}
+
+[data-style='phosphor'] .main-content :is(.graph-edge-hot line, .trie-edge.trie-hot, .b-tree-link-hl) {
+  stroke: var(--ph-bright);
+  stroke-width: 3;
+}
+
+[data-style='phosphor'] .main-content :is(.graph-arrow-head, .b-tree-arrowhead, .fibonacci-heap-arrow) {
+  fill: var(--p-ink);
+}
+
+/* ---- SVG node states ---- */
+/* Visited */
+[data-style='phosphor'] .main-content :is(.binary-tree-node.binary-tree-visited circle, .kdtree-node-visited) {
+  stroke: var(--p-muted);
+  stroke-dasharray: var(--ph-dash-visited);
+  stroke-linecap: round;
+}
+
+[data-style='phosphor'] .main-content :is(.binary-tree-node.binary-tree-visited text:not(.binary-tree-badge), .kdtree-node-visited ~ text) {
+  fill: var(--p-muted);
+}
+
+/* Active */
+[data-style='phosphor'] .main-content :is(
+  .binary-tree-node.binary-tree-current circle, .bst-node-path circle, .heap-node-hl,
+  .graph-node-hot circle, .trie-node.trie-hot circle, .b-tree-node-hl .b-tree-cell,
+  .intervals-bar-new, .range-query-node-hit
+) {
+  fill: var(--p-ink);
+  stroke: var(--p-ink);
+  stroke-dasharray: none;
+}
+
+[data-style='phosphor'] .main-content :is(
+  .binary-tree-node.binary-tree-current text:not(.binary-tree-badge), .bst-node-path text,
+  .heap-node-hl + .heap-node-text, .graph-node-hot text:not(.graph-step), .trie-node.trie-hot text,
+  .b-tree-node-hl :is(.b-tree-text, .b-tree-value), .intervals-bar-new + .intervals-bar-text,
+  .range-query-node-hit + .range-query-node-text
+) {
+  fill: var(--p-bg);
+}
+
+/* Found */
+[data-style='phosphor'] .main-content :is(.binary-tree-node.binary-tree-lca circle, .kdtree-node-best) {
+  fill: var(--p-bg);
+  stroke: var(--ph-max);
+  stroke-width: 3;
+  stroke-dasharray: none;
+  filter: var(--ph-svg-glow);
+}
+
+[data-style='phosphor'] .main-content :is(.binary-tree-node.binary-tree-lca text:not(.binary-tree-badge), .kdtree-node-best ~ text) {
+  fill: var(--ph-max);
+}
+
+/* ---- Array ---- */
+[data-style='phosphor'] .ds-container.array-view {
+  max-width: 900px;
+  overflow: visible;
+}
+
+[data-style='phosphor'] .main-content .array-cells {
+  gap: var(--space-sm);
+}
+
+[data-style='phosphor'] .main-content .array-cell {
+  height: 2.2rem;
+}
+
+/* Fixed width and a dot, so a spare slot reads as a slot and not as a gap */
+[data-style='phosphor'] .main-content .array-cell-free::before {
+  content: '[ .' / '';
+}
+
+[data-style='phosphor'] .main-content .array-cell-index {
+  margin-top: 0;
+  color: var(--p-muted);
+  font-size: var(--fs-small);
+}
+
+[data-style='phosphor'] .main-content .array-controls label {
+  font-size: var(--fs-small);
+}
+
+/* ---- String ---- */
+[data-style='phosphor'] .main-content .string-cells {
+  gap: var(--space-xs);
+  padding: var(--space-sm) 0;
+}
+
+[data-style='phosphor'] .main-content .string-cell {
+  min-width: 0;
+  border: 1px solid transparent;
+  background: none;
+}
+
+[data-style='phosphor'] .main-content .string-cell-hit {
+  outline: 0;
+  border: 2px solid var(--ph-max);
+  box-shadow: var(--ph-box-glow);
+}
+
+[data-style='phosphor'] .main-content .string-index {
+  border: 0;
+  background: none;
+  color: var(--p-muted);
+  font-size: var(--fs-small);
+}
+
+/* ---- Hash table ---- */
+[data-style='phosphor'] .main-content .hash-table-row {
+  gap: var(--space-sm);
+  padding: 0;
+}
+
+[data-style='phosphor'] .main-content .hash-table-index {
+  min-width: 2ch;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--p-muted);
+  text-align: right;
+}
+
+[data-style='phosphor'] .main-content .hash-table-null,
+[data-style='phosphor'] .main-content .hash-table-arrow {
+  margin: 0;
+  color: var(--p-muted);
+}
+
+[data-style='phosphor'] .main-content .hash-table-entry {
+  border: 0;
+  overflow: visible;
+}
+
+[data-style='phosphor'] .main-content .hash-table-entry::before {
+  content: var(--ph-open);
+}
+
+[data-style='phosphor'] .main-content .hash-table-entry::after {
+  content: var(--ph-close);
+}
+
+[data-style='phosphor'] .main-content :is(.hash-table-entry-key, .hash-table-entry-value) {
+  padding: 0 0.2em;
+  background: none;
+  color: var(--p-ink);
+}
+
+[data-style='phosphor'] .main-content .hash-table-entry-key::after {
+  content: ':' / '';
+  color: var(--p-muted);
+}
+
+/* ---- Linked list: outlined nodes ---- */
+[data-style='phosphor'] .main-content .linked-list-node {
+  border: 1.5px solid var(--p-ink);
+  background: none;
+}
+
+[data-style='phosphor'] .main-content .linked-list-val {
+  padding: 0.1rem 0.4rem;
+}
+
+[data-style='phosphor'] .main-content .linked-list-ptr {
+  border-left: 1px solid var(--p-ink);
+}
+
+[data-style='phosphor'] .main-content .linked-list-tags,
+[data-style='phosphor'] .main-content .linked-list-index {
+  opacity: 1;
+  color: var(--p-muted);
+  font-size: var(--fs-small);
+}
+
+[data-style='phosphor'] .main-content .linked-list-arrow {
+  top: 1.3rem;
+  color: var(--p-ink);
+}
+
+[data-style='phosphor'] .main-content .linked-list-end {
+  top: 1.4rem;
+  color: var(--p-muted);
+}
+
+[data-style='phosphor'] .main-content .linked-list-highlight .linked-list-node {
+  outline: 0;
+  background: var(--p-ink);
+  color: var(--p-bg);
+  text-shadow: none;
+}
+
+[data-style='phosphor'] .main-content .linked-list-highlight .linked-list-ptr {
+  border-left-color: var(--p-bg);
+}
+
+[data-style='phosphor'] .main-content .linked-list-cycle-target .linked-list-node {
+  border: 2px dashed var(--ph-max);
+}
+
+/* ---- Stack ---- */
+[data-style='phosphor'] .main-content .stack-view-board {
+  align-items: flex-start;
+  min-height: 200px;
+}
+
+[data-style='phosphor'] .main-content .stack-view-item {
+  margin: 0;
+  overflow-wrap: anywhere;
+  text-align: left;
+  white-space: normal;
+}
+
+/* The page writes "<- top" with ::after, so the closing bracket joins that string */
+[data-style='phosphor'] .main-content .stack-view-item.stack-view-top::after {
+  content: ']  \2190 top' / '\2190 top';
+  position: static;
+  font-size: inherit;
+  white-space: pre;
+}
+
+[data-style='phosphor'] .main-content .stack-view-item.stack-view-new {
+  animation: phosphor-on 0.3s steps(3) both;
+}
+
+[data-style='phosphor'] .main-content .stack-view-item.stack-view-removing {
+  animation: phosphor-off 0.4s steps(2) forwards;
+}
+
+[data-style='phosphor'] .main-content .stack-view-algos {
+  margin-top: var(--space-lg);
+}
+
+/* ---- Queue and deque ---- */
+[data-style='phosphor'] .main-content .queue-row {
+  gap: var(--space-sm);
+}
+
+[data-style='phosphor'] .main-content .queue-slot {
+  color: var(--p-muted);
+  font-size: var(--fs-small);
+}
+
+[data-style='phosphor'] .main-content .queue-tag {
+  min-height: 1.3rem;
+  color: var(--ph-bright);
+}
+
+[data-style='phosphor'] .main-content .queue-label,
+[data-style='phosphor'] .main-content .queue-stack-title {
+  color: var(--p-muted);
+  font-size: var(--fs-small);
+}
+
+[data-style='phosphor'] .main-content .queue-stack {
+  align-items: flex-start;
+  border: 1px dashed var(--p-line);
+}
+
+/* ---- Matrix: six islands told apart by pattern, since hue is not available ---- */
+[data-style='phosphor'] .main-content .matrix-view-board {
+  overflow: auto;
+}
+
+[data-style='phosphor'] .main-content .matrix-view-grid {
+  margin: 0;
+}
+
+[data-style='phosphor'] .main-content .matrix-view-cell {
+  border: 0;
+  outline-offset: 1px;
+  background: none;
+  color: var(--p-ink);
+  font-family: var(--f-data);
+  font-size: 1.4rem;
+  text-shadow: inherit;
+}
+
+[data-style='phosphor'] .main-content .matrix-view-cell:disabled {
+  opacity: 1;
+}
+
+[data-style='phosphor'] .main-content .matrix-view-cell:hover:not(:disabled),
+[data-style='phosphor'] .main-content .matrix-view-cell:focus-visible {
+  background: var(--p-ink);
+  color: var(--p-bg);
+  text-shadow: none;
+}
+
+[data-style='phosphor'] .main-content .matrix-view-cell.matrix-view-selected {
+  outline: 3px solid var(--ph-max);
+  box-shadow: var(--ph-box-glow);
+}
+
+/* 1: solid block */
+[data-style='phosphor'] .main-content .matrix-view-island-1 {
+  background: var(--p-ink);
+  color: var(--p-bg);
+  text-shadow: none;
+}
+
+/* 2: dim block */
+[data-style='phosphor'] .main-content .matrix-view-island-2 {
+  background: var(--p-line);
+  color: var(--ph-max);
+  text-shadow: none;
+}
+
+/* 3: diagonal hatch, with a clear patch for the bracketed digit */
+[data-style='phosphor'] .main-content .matrix-view-island-3 {
+  background:
+    linear-gradient(var(--p-bg), var(--p-bg)) center / 30px 24px no-repeat,
+    repeating-linear-gradient(45deg, var(--p-ink) 0 2px, transparent 2px 6px);
+  color: var(--p-ink);
+}
+
+/* 4: horizontal bars */
+[data-style='phosphor'] .main-content .matrix-view-island-4 {
+  background:
+    linear-gradient(var(--p-bg), var(--p-bg)) center / 30px 24px no-repeat,
+    repeating-linear-gradient(0deg, var(--p-ink) 0 2px, transparent 2px 6px);
+  color: var(--p-ink);
+}
+
+/* 5: thick bright box with glow */
+[data-style='phosphor'] .main-content .matrix-view-island-5 {
+  background: none;
+  color: var(--ph-max);
+  box-shadow: inset 0 0 0 3px var(--ph-max), var(--ph-box-glow);
+}
+
+/* 0 (every sixth island): dot screen */
+[data-style='phosphor'] .main-content .matrix-view-island-0 {
+  background:
+    linear-gradient(var(--p-bg), var(--p-bg)) center / 30px 24px no-repeat,
+    radial-gradient(var(--p-ink) 1.5px, transparent 2px) 0 0 / 7px 7px;
+  color: var(--p-ink);
+}
+
+/* ---- Binary tree ---- */
+[data-style='phosphor'] .main-content .binary-tree-order p {
+  color: var(--ph-bright);
+}
+
+/* ---- Heap ---- */
+[data-style='phosphor'] .main-content .heap-row {
+  gap: var(--space-sm);
+}
+
+[data-style='phosphor'] .main-content .heap-slot {
+  color: var(--p-muted);
+  font-size: var(--fs-small);
+}
+
+/* ---- Graph ---- */
+[data-style='phosphor'] .main-content .graph-node-hot .graph-step {
+  fill: var(--ph-max);
+}

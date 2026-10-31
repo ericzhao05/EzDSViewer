@@ -112,7 +112,7 @@ export default function ArrayView() {
                 const used = i < state.size;
                 return (
                   <div className="array-cell-wrap" key={i} role="listitem">
-                    <div className={`array-cell ${used ? 'array-cell-used' : 'array-cell-free'}`}>
+                    <div key={used ? `v:${item}` : 'free'} className={`array-cell ${used ? 'array-cell-used' : 'array-cell-free'}`}>
                       {used ? String(item) : ''}
                     </div>
                     <div className="array-cell-index">{i}</div>
@@ -121,7 +121,7 @@ export default function ArrayView() {
               })}
             </div>
           </div>
-          <p className="array-legend">Filled cells are in use (size); dashed cells are spare capacity.</p>
+          <p className="array-legend">Filled slots are in use (size); empty slots are spare capacity.</p>
           {empty && <p className="empty-message">The array is empty. Append a value to begin.</p>}
           {note && <p className="array-note">{note}</p>}
         </>

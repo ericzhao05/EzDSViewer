@@ -40,7 +40,7 @@
   text-align: center;
   padding: 0.3rem 0.5rem;
   border: 1px solid var(--input-border);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   background: var(--card-bg);
   color: var(--text-color);
   font-weight: bold;
@@ -58,7 +58,7 @@
 
 .hash-table-entry {
   display: inline-flex;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   overflow: hidden;
   border: 1px solid var(--input-border);
 }
@@ -83,7 +83,7 @@
   margin: 0.5rem 0;
   padding: 0.5rem 0.75rem;
   border: 1px solid var(--input-border);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   background: var(--card-bg);
   color: var(--text-color);
   overflow-wrap: anywhere;

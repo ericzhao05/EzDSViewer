@@ -1,0 +1,382 @@
+/* Chalkboard: array, string, hash-table, linked-list, stack, queue, matrix,
+   binary-tree, bst, heap, graph. Conventions are tokens; see tokens.css. */
+
+/* Text under the page's headings, at the style's minimum size */
+[data-style='chalkboard'] :is(.array-complexity, .array-legend, .array-controls label, .array-cell-index,
+  .string-complexity, .string-index, .queue-slot, .queue-label, .queue-stack-title,
+  .linked-list-tags, .linked-list-index, .heap-slot) {
+  font-size: var(--fs-small);
+}
+
+[data-style='chalkboard'] .stack-view-item.stack-view-top::after {
+  font-size: var(--fs-small);
+}
+
+/* Tag rows keep their height when empty, so slots stay in line */
+[data-style='chalkboard'] :is(.queue-tag, .linked-list-tags) {
+  min-height: calc(var(--fs-small) * var(--lh-body));
+}
+
+[data-style='chalkboard'] .array-view {
+  max-width: 900px;
+}
+
+/* Diagram containers: the board itself, with room for rings */
+[data-style='chalkboard'] :is(.array-scroll, .stack-view-board, .matrix-view-board, .queue-scroll, .linked-list-scroll,
+  .hash-table-scroll, .string-cells, .heap-scroll, .binary-tree-scroll, .bst-scroll, .graph-scroll) {
+  padding: var(--space-sm);
+  border: 0;
+  background: none;
+}
+
+/* Cells: pink outline, white value */
+[data-style='chalkboard'] :is(.array-cell-used, .stack-view-item, .queue-cell, .linked-list-node, .hash-table-entry, .string-cell, .heap-cell) {
+  border: var(--cell-border);
+  border-radius: var(--radius-sm);
+  background: none;
+  box-shadow: none;
+  color: var(--stack-item-text);
+  font-size: var(--fs-cell);
+  font-weight: 400;
+}
+
+[data-style='chalkboard'] :is(.array-cell-used, .queue-cell:not(.queue-cell-empty), .linked-list-node, .hash-table-entry, .heap-cell) {
+  animation: chalk-write 0.42s ease-out backwards;
+}
+
+[data-style='chalkboard'] .stack-view-item.stack-view-new {
+  animation: chalk-write 0.42s ease-out backwards;
+}
+
+/* Adjacent cells do not share a hand */
+[data-style='chalkboard'] :is(.array-cell-wrap, .queue-slot, .heap-slot, .string-cell, .bloom-filter-slot, .suffix-array-slot, .range-query-col):nth-child(even) :is(.array-cell, .queue-cell, .heap-cell, .bloom-filter-bit, .suffix-array-char, .range-query-cell),
+[data-style='chalkboard'] .string-cell:nth-child(even) {
+  border-radius: var(--radius-lg);
+}
+
+/* Spare cells: dashed */
+[data-style='chalkboard'] :is(.array-cell-free, .queue-cell-empty) {
+  border: var(--spare-border);
+  background: none;
+  color: var(--p-muted);
+}
+
+/* Trees and graphs: pink outlines on the board, faded chalk edges */
+[data-style='chalkboard'] :is(.binary-tree-edge, .bst-edge, .heap-edge, .graph-edge line) {
+  stroke: var(--edge-color);
+  stroke-width: var(--edge-width);
+  stroke-linecap: round;
+}
+
+[data-style='chalkboard'] :is(.binary-tree-node circle, .bst-node circle, .heap-node, .graph-node circle) {
+  fill: var(--stack-item-bg);
+  stroke: var(--p-cell);
+  stroke-width: var(--node-stroke);
+}
+
+[data-style='chalkboard'] :is(.binary-tree-node text, .bst-node text, .heap-node-text, .graph-node text) {
+  fill: var(--stack-item-text);
+}
+
+/* Array */
+[data-style='chalkboard'] .array-cells {
+  gap: 10px;
+}
+
+[data-style='chalkboard'] .array-cell {
+  min-width: 60px;
+  height: 60px;
+}
+
+[data-style='chalkboard'] .array-stats {
+  gap: var(--space-lg);
+}
+
+[data-style='chalkboard'] .array-note {
+  border-left: 3px dashed var(--p-accent);
+  background: none;
+}
+
+/* Results share one look on every page */
+[data-style='chalkboard'] :is(.array-result, .stack-view-result, .queue-result, .hash-table-result, .linked-list-result,
+  .string-result, .matrix-view-result, .binary-tree-result, .bst-result, .heap-result, .graph-result) {
+  margin: var(--space-sm) 0;
+  padding: var(--space-xs) var(--space-sm);
+  border: 0;
+  border-left: 3px dashed var(--p-accent);
+  border-radius: 0;
+  background: var(--p-surface);
+  color: var(--p-ink);
+  font-weight: 400;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+
+[data-style='chalkboard'] .array-result code {
+  background: none;
+}
+
+/* String */
+[data-style='chalkboard'] .string-char {
+  padding: 0.3rem 0.5rem;
+  font-size: var(--fs-cell);
+}
+
+[data-style='chalkboard'] .string-index {
+  border-top: 2px solid var(--p-cell);
+  background: none;
+  color: var(--p-muted);
+}
+
+[data-style='chalkboard'] .string-cells {
+  gap: 8px;
+}
+
+[data-style='chalkboard'] .string-cell.string-cell-hit {
+  border-color: var(--state-found);
+  outline: 2px solid var(--state-found); /* a match can span adjacent cells: the ring must fit the gap */
+  outline-offset: 1px;
+  color: var(--state-found);
+}
+
+/* Hash table */
+[data-style='chalkboard'] .hash-table-index {
+  border: var(--spare-border);
+  border-style: solid;
+  background: none;
+  color: var(--p-muted);
+  font-weight: 400;
+}
+
+[data-style='chalkboard'] .hash-table-row {
+  gap: var(--space-sm);
+}
+
+[data-style='chalkboard'] .hash-table-null {
+  font-style: normal;
+}
+
+[data-style='chalkboard'] .hash-table-arrow {
+  color: var(--p-muted);
+}
+
+[data-style='chalkboard'] .hash-table-entry-key,
+[data-style='chalkboard'] .hash-table-entry-value {
+  background: none;
+  color: var(--stack-item-text);
+  font-weight: 400;
+}
+
+[data-style='chalkboard'] .hash-table-entry-value {
+  border-left: 2px solid var(--p-cell);
+}
+
+/* Linked list */
+[data-style='chalkboard'] .linked-list-val {
+  font-weight: 400;
+}
+
+[data-style='chalkboard'] .linked-list-ptr {
+  border-left: 2px solid var(--p-cell);
+  color: var(--p-muted);
+}
+
+[data-style='chalkboard'] .linked-list-tags {
+  color: var(--p-cell);
+  font-weight: 400;
+}
+
+[data-style='chalkboard'] .linked-list-index {
+  color: var(--p-muted);
+  opacity: 1;
+}
+
+[data-style='chalkboard'] :is(.linked-list-arrow, .linked-list-end) {
+  color: var(--p-muted);
+  font-style: normal;
+}
+
+[data-style='chalkboard'] .linked-list-highlight .linked-list-node {
+  border-color: var(--state-active);
+  outline: var(--ring-active);
+  outline-offset: 2px;
+  color: var(--state-active);
+}
+
+[data-style='chalkboard'] .linked-list-cycle-target .linked-list-node {
+  border-style: dashed;
+}
+
+/* Stack */
+[data-style='chalkboard'] .stack-view-item {
+  margin: var(--space-xs) 0;
+}
+
+[data-style='chalkboard'] .stack-view-item.stack-view-top::after {
+  color: var(--p-muted);
+}
+
+/* Queue and deque */
+[data-style='chalkboard'] .queue-row {
+  gap: var(--space-sm);
+}
+
+[data-style='chalkboard'] .queue-stack {
+  border: var(--spare-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-sm);
+}
+
+[data-style='chalkboard'] .queue-tag {
+  color: var(--p-cell);
+  font-weight: 400;
+}
+
+[data-style='chalkboard'] .queue-cell.queue-in-window,
+[data-style='chalkboard'] .queue-in-window {
+  border-color: var(--state-active);
+  outline: var(--ring-active);
+  outline-offset: 2px;
+  color: var(--state-active);
+}
+
+/* Matrix: every clickable cell is a button; islands are hatched in their own direction */
+[data-style='chalkboard'] .matrix-view-grid {
+  gap: 6px;
+}
+
+[data-style='chalkboard'] .matrix-view-cell {
+  border: 2px solid var(--p-line);
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--p-muted);
+  font-size: var(--fs-base);
+  font-weight: 400;
+}
+
+[data-style='chalkboard'] .matrix-view-island {
+  --hatch: var(--p-cell);
+  --hatch-angle: 90deg;
+  border: 3px solid var(--hatch);
+  background: repeating-linear-gradient(var(--hatch-angle), color-mix(in srgb, var(--hatch) 30%, transparent) 0 2px, transparent 2px 7px);
+  color: var(--island-ink);
+}
+
+[data-style='chalkboard'] .matrix-view-island-1 { --hatch: var(--island-1); --hatch-angle: 45deg; }
+[data-style='chalkboard'] .matrix-view-island-2 { --hatch: var(--island-2); --hatch-angle: 135deg; }
+[data-style='chalkboard'] .matrix-view-island-3 { --hatch: var(--island-3); --hatch-angle: 0deg; }
+[data-style='chalkboard'] .matrix-view-island-4 { --hatch: var(--island-4); --hatch-angle: 90deg; }
+[data-style='chalkboard'] .matrix-view-island-5 { --hatch: var(--island-5); --hatch-angle: 20deg; }
+
+[data-style='chalkboard'] .matrix-view-cell:hover:not(:disabled) {
+  border-color: var(--btn-hover-bg);
+  background: var(--btn-hover-bg);
+  color: var(--btn-hover-ink);
+}
+
+[data-style='chalkboard'] .matrix-view-cell.matrix-view-selected {
+  outline: var(--ring-active);
+  outline-offset: 1px;
+}
+
+/* Binary tree */
+[data-style='chalkboard'] .binary-tree-node.binary-tree-visited circle {
+  stroke: var(--state-visited);
+  stroke-width: var(--stroke-visited);
+  stroke-dasharray: var(--dash-visited);
+}
+
+[data-style='chalkboard'] .binary-tree-node.binary-tree-visited text {
+  fill: var(--state-visited);
+}
+
+[data-style='chalkboard'] .binary-tree-node.binary-tree-current circle {
+  stroke: var(--state-active);
+  stroke-width: var(--stroke-active);
+  stroke-dasharray: none;
+}
+
+[data-style='chalkboard'] .binary-tree-node.binary-tree-current text {
+  fill: var(--state-active);
+}
+
+[data-style='chalkboard'] .binary-tree-node.binary-tree-lca circle {
+  stroke: var(--state-found);
+  stroke-width: var(--stroke-found);
+  stroke-dasharray: none;
+}
+
+[data-style='chalkboard'] .binary-tree-node.binary-tree-lca text {
+  fill: var(--state-found);
+}
+
+[data-style='chalkboard'] .binary-tree-node text.binary-tree-badge {
+  fill: var(--p-muted);
+}
+
+/* BST */
+[data-style='chalkboard'] .bst-node-path circle {
+  stroke: var(--state-active);
+  stroke-width: var(--stroke-active);
+}
+
+[data-style='chalkboard'] .bst-node-path text {
+  fill: var(--state-active);
+}
+
+/* Heap */
+[data-style='chalkboard'] .heap-row {
+  gap: var(--space-sm);
+}
+
+[data-style='chalkboard'] .heap-node.heap-node-hl {
+  stroke: var(--state-active);
+  stroke-width: var(--stroke-active);
+}
+
+[data-style='chalkboard'] .heap-cell.heap-cell-hl {
+  border-color: var(--state-active);
+  outline: var(--ring-active);
+  outline-offset: 2px;
+  color: var(--state-active);
+}
+
+/* Graph */
+[data-style='chalkboard'] .graph-edge.graph-edge-hot line {
+  stroke: var(--state-active);
+  stroke-width: var(--stroke-active);
+}
+
+[data-style='chalkboard'] .graph-arrow-head {
+  fill: var(--edge-color);
+}
+
+[data-style='chalkboard'] .graph-weight {
+  fill: var(--p-cell);
+  paint-order: stroke;
+  stroke: var(--p-bg);
+  stroke-width: 4px;
+}
+
+[data-style='chalkboard'] .graph-node-hot circle {
+  stroke: var(--state-active);
+  stroke-width: var(--stroke-active);
+}
+
+[data-style='chalkboard'] .graph-node-hot text {
+  fill: var(--state-active);
+}
+
+[data-style='chalkboard'] .graph-node-hot .graph-step {
+  fill: var(--p-muted);
+}
+
+/* The larger handwriting needs more room to show the default 8 buckets */
+[data-style='chalkboard'] .hash-table-scroll {
+  max-height: 480px;
+}
+
+/* Same page width as every other Chalkboard page; the diagram scrolls inside */
+[data-style='chalkboard'] .ds-container.fibonacci-heap {
+  max-width: 900px;
+}
