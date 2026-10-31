@@ -503,4 +503,51 @@ describe('main app behaviour', () => {
     fireEvent.keyDown(document.body, { key: 'ArrowRight' });
     expect(screen.getByText('Step 1 of 2')).toBeInTheDocument();
   });
+
+  // Holds the next algorithm reply until the test releases it.
+  async function delayedAlgorithm() {
+    jest.useFakeTimers();
+    render(<Explorer initialCommand="array.append(1).append(2)" autoplay={false} startAtEnd />);
+    await act(async () => {});
+    expect(screen.getByText('Step 2 of 2')).toBeInTheDocument();
+    let release;
+    global.fetch = jest.fn(() => new Promise((r) => { release = r; }));
+    fireEvent.click(screen.getByRole('button', { name: 'Max subarray' }));
+    return () => act(async () => {
+      release({ ok: true, status: 200, json: () => Promise.resolve(algorithm('array.append(1).append(2).max_subarray()')) });
+    });
+  }
+
+  test.each([['Previous step'], ['Next step'], ['Pause'], ['Fast']])(
+    'pressing %s while an algorithm request is in flight stops it from playing or moving the step',
+    async (name) => {
+      const reply = await delayedAlgorithm();
+      if (name === 'Pause') {
+        // Pause only exists while playing, so use Play-then-Pause on the old frames.
+        fireEvent.click(screen.getByRole('button', { name: 'Play' }));
+        fireEvent.click(screen.getByRole('button', { name: 'Pause' }));
+      } else {
+        fireEvent.click(screen.getByRole('button', { name }));
+      }
+      const before = screen.getByText(/Step \d of/).textContent;
+      await reply();
+      expect(screen.getByRole('button', { name: 'Play' })).toBeInTheDocument();
+      act(() => { jest.advanceTimersByTime(5000); });
+      expect(screen.getByText(/Step \d of 5/).textContent.split(' of')[0]).toBe(before.split(' of')[0]);
+    }
+  );
+
+  test('a reply that arrives while the explorer is hidden does not start playing', async () => {
+    jest.useFakeTimers();
+    const { rerender } = render(<Explorer initialCommand="array.append(1)" autoplay={false} />);
+    await act(async () => {});
+    let release;
+    global.fetch = jest.fn(() => new Promise((r) => { release = r; }));
+    fireEvent.click(screen.getByRole('button', { name: 'Max subarray' }));
+    rerender(<Explorer initialCommand="array.append(1)" autoplay={false} active={false} />);
+    await act(async () => {
+      release({ ok: true, status: 200, json: () => Promise.resolve(algorithm('array.append(1).max_subarray()')) });
+    });
+    expect(screen.getByRole('button', { name: 'Play' })).toBeInTheDocument();
+  });
 });

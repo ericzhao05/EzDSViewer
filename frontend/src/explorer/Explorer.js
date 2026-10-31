@@ -52,6 +52,8 @@ export default function Explorer({
   const [copyNote, setCopyNote] = useState('');
   const [shareOpen, setShareOpen] = useState(false);
   const settled = useRef(false);
+  // Bumped whenever the person presses a control or the explorer is hidden; a late reply checks it.
+  const interrupt = useRef(0);
 
   const last = frames.length - 1;
   const board = structure && BOARDS[structure];
@@ -68,7 +70,10 @@ export default function Explorer({
 
   // A hidden explorer neither plays nor answers the keyboard.
   useEffect(() => {
-    if (!active) setPlaying(false);
+    if (!active) {
+      interrupt.current += 1;
+      setPlaying(false);
+    }
   }, [active]);
 
   useEffect(() => {
@@ -84,6 +89,7 @@ export default function Explorer({
   // Wraps a control's action so that using it stops playback.
   const stopping = useCallback(
     (fn) => (...args) => {
+      interrupt.current += 1;
       setPlaying(false);
       return fn(...args);
     },
@@ -94,13 +100,16 @@ export default function Explorer({
   const edited = useCallback(
     async (callText) => {
       setPlaying(false);
-      const made = await x.applyCall(callText);
-      if (made !== null && made > 1 && !reducedMotion()) setPlaying(true);
+      const mark = ++interrupt.current;
+      const moved = () => interrupt.current !== mark;
+      const made = await x.applyCall(callText, moved);
+      if (made !== null && made > 1 && !moved() && !reducedMotion()) setPlaying(true);
     },
     [x.applyCall] // eslint-disable-line react-hooks/exhaustive-deps
   );
 
   const togglePlay = () => {
+    interrupt.current += 1;
     if (playing) return setPlaying(false);
     if (step >= last) x.goTo(0);
     return setPlaying(true);
@@ -112,10 +121,10 @@ export default function Explorer({
       if (!active || e.altKey || e.ctrlKey || e.metaKey || frames.length === 0) return;
       if (['INPUT', 'TEXTAREA', 'BUTTON'].includes(e.target.tagName)) return;
       const actions = {
-        ArrowLeft: () => { setPlaying(false); prev(); },
-        ArrowRight: () => { setPlaying(false); next(); },
-        Home: () => { setPlaying(false); goTo(0); },
-        End: () => { setPlaying(false); goTo(last); },
+        ArrowLeft: () => { interrupt.current += 1; setPlaying(false); prev(); },
+        ArrowRight: () => { interrupt.current += 1; setPlaying(false); next(); },
+        Home: () => { interrupt.current += 1; setPlaying(false); goTo(0); },
+        End: () => { interrupt.current += 1; setPlaying(false); goTo(last); },
         ' ': () => togglePlay(),
       };
       if (!actions[e.key]) return;

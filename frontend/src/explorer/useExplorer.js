@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { runCommand } from '../api/client';
+import { BOARDS } from './boards';
 
 const EMPTY = { structure: null, calls: [], frames: [], state: null, result: null };
 
@@ -70,8 +71,9 @@ export default function useExplorer(initialCommand, onEdit, { startAtEnd = false
   );
 
   // Resolves to how many frames the new call made, or null if it was superseded or failed.
+  // If keepStep() is true once the reply arrives, the person has navigated meanwhile and the step stays put.
   const applyCall = useCallback(
-    async (callText) => {
+    async (callText, keepStep) => {
       if (!response.structure) return null;
       const data = await request(join(response.structure, [...response.calls, callText]));
       if (!data) return null;
@@ -83,7 +85,7 @@ export default function useExplorer(initialCommand, onEdit, { startAtEnd = false
       const first = data.frames.findIndex((f) => f.call === newest);
       setResponse(data);
       setCommand(data.command);
-      setStep(first >= 0 ? first : lastFrame(data));
+      if (!(keepStep && keepStep())) setStep(first >= 0 ? first : lastFrame(data));
       setError(null);
       if (editHook.current) editHook.current(data.command);
       return data.frames.filter((f) => f.call === newest).length;
@@ -107,9 +109,11 @@ export default function useExplorer(initialCommand, onEdit, { startAtEnd = false
   }, [request, response]);
 
   // Loads just the structure name, which clears the history.
+  // After a bad first load there is no structure, so use the command's own if it has a board, else array.
   const startOver = useCallback(async () => {
-    if (!response.structure) return;
-    const data = await request(response.structure);
+    const named = command.split('.')[0].trim();
+    const structure = response.structure || (BOARDS[named] ? named : 'array');
+    const data = await request(structure);
     if (!data) return;
     if (!data.success) {
       setError(toError(data));
@@ -120,7 +124,7 @@ export default function useExplorer(initialCommand, onEdit, { startAtEnd = false
     setStep(lastFrame(data));
     setError(null);
     if (editHook.current) editHook.current(data.command);
-  }, [request, response]);
+  }, [request, response, command]);
 
   const goTo = useCallback(
     (i) => setStep(Math.min(Math.max(i, 0), Math.max(0, response.frames.length - 1))),
