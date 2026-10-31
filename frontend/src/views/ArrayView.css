@@ -93,13 +93,15 @@
 }
 
 .array-cell-highlight {
-  outline: 3px solid var(--error-border);
+  outline: 3px solid var(--state-active);
   outline-offset: 2px;
 }
 
 .array-cell-pointer {
-  font-size: 0.75rem;
-  font-weight: bold;
+  margin-top: var(--space-xs);
   color: var(--text-color);
-  margin-top: 2px;
+  font-size: var(--fs-small);
+  font-weight: var(--fw-control);
+  line-height: 1.2;
+  white-space: nowrap;
 }

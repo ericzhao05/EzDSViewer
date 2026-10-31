@@ -127,6 +127,15 @@
   flex: 0 0 auto;
 }
 
+/* With the node's margin, this keeps every ring inside the scroll container's clip */
+.linked-list-ditem:first-child {
+  padding-left: 0.25rem;
+}
+
+.linked-list-ditem:last-child {
+  padding-right: 0.25rem;
+}
+
 .linked-list-dcell {
   display: flex;
   flex-direction: column;
@@ -139,11 +148,18 @@
   padding: 0;
   font: inherit;
   cursor: pointer;
+  /* Room for the state and focus rings, so they never touch the tags, index or arrows */
+  margin: 0.7rem 0.5rem;
   border: 2px solid var(--input-border);
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   overflow: hidden;
   background: var(--stack-item-bg);
   color: var(--stack-item-text);
+  /* Outline belongs to the state, so these layers let a node show state and focus together */
+  --dnode-inner: 0 0 #0000;
+  --dnode-under: 0 0 #0000;
+  --dnode-focus: 0 0 #0000;
+  box-shadow: var(--dnode-inner), var(--dnode-under), var(--dnode-focus);
 }
 
 .linked-list-dnode:disabled {
@@ -172,6 +188,13 @@
   opacity: 0.8;
 }
 
+/* Pointer cells are two lines tall, so the value centers in the height they set */
+.linked-list-dnode .linked-list-val {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .linked-list-dlinks {
   display: flex;
   flex-direction: column;
@@ -190,6 +213,17 @@
 .linked-list-selected .linked-list-dnode {
   outline: 3px dashed var(--text-color);
   outline-offset: 2px;
+}
+
+/* Both: the dashed outline stays selected, and highlight moves to a ring inside the node */
+.linked-list-highlight.linked-list-selected .linked-list-dnode {
+  --dnode-inner: inset 0 0 0 3px var(--state-active);
+}
+
+/* A node with a state outline keeps it and takes focus as a separate ring beyond it */
+.linked-list-highlight .linked-list-dnode:focus-visible,
+.linked-list-selected .linked-list-dnode:focus-visible {
+  --dnode-focus: 0 0 0 8px var(--card-bg), 0 0 0 11px var(--focus-ring);
 }
 
 .linked-list-dcontrols {

@@ -368,3 +368,68 @@
 [data-style='phosphor'] .main-content .empty-message::before {
   content: '-- ' / '';
 }
+
+/* Player pages (/v and /embed) */
+/* The active cell is inverted, as on every other page */
+[data-style='phosphor'] .main-content .array-cells .array-cell.array-cell-highlight {
+  outline: 0;
+  background: var(--p-ink);
+  color: var(--p-bg);
+  text-shadow: none;
+}
+
+[data-style='phosphor'] .array-cell-pointer {
+  margin-top: 0;
+  color: var(--ph-bright);
+}
+
+[data-style='phosphor'] .array-cell-pointer::before {
+  content: '^ ' / '';
+  color: var(--p-muted);
+}
+
+[data-style='phosphor'] :is(.explorer-steps, .explorer-buttons) {
+  justify-content: flex-start;
+}
+
+/* The player's own controls keep the 44px target its CSS asks for */
+[data-style='phosphor'] .main-content .explorer .control-btn {
+  min-height: 44px;
+}
+
+/* The step's explanation is the main output, so it is not shrunk like other notes */
+[data-style='phosphor'] .main-content .explorer-note {
+  font-size: var(--fs-base);
+}
+
+/* A dashed line with a block on it */
+[data-style='phosphor'] .explorer-slider {
+  --slider-track: repeating-linear-gradient(90deg, var(--p-muted) 0 6px, transparent 6px 10px);
+  --slider-track-height: 2px;
+  --slider-thumb-width: 12px;
+  --slider-thumb-height: 26px;
+  --slider-thumb-bg: var(--p-ink);
+  --slider-thumb-radius: 0;
+}
+
+[data-style='phosphor'] .explorer-open {
+  padding-inline: var(--space-xs);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+[data-style='phosphor'] .explorer-open::before {
+  content: '[ ' / '';
+  white-space: pre;
+}
+
+[data-style='phosphor'] .explorer-open::after {
+  content: ' ]' / '';
+  white-space: pre;
+}
+
+[data-style='phosphor'] .explorer-open:hover {
+  background-color: var(--p-ink);
+  color: var(--p-bg);
+  text-shadow: none;
+}

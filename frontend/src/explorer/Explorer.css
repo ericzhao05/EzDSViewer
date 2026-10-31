@@ -3,7 +3,6 @@
   min-width: 0;
   max-width: 100%;
   box-sizing: border-box;
-  padding: 0 12px;
   color: var(--text-color);
 }
 
@@ -35,7 +34,7 @@
   flex-direction: column;
   flex: 1 1 12rem;
   min-width: 0;
-  font-size: 0.85rem;
+  font-size: var(--fs-small);
 }
 
 .explorer-command input {
@@ -58,6 +57,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem 1rem;
   margin: 0.5rem 0;
   min-width: 0;
@@ -66,13 +66,68 @@
 .explorer-buttons {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
   gap: 0.5rem;
 }
 
+/* The native track ignores the theme, so the slider is drawn from tokens. A style
+   restyles it by setting the --slider-* values in its chrome.css. */
 .explorer-slider {
+  --slider-track: var(--p-muted);
+  --slider-track-height: 4px;
+  --slider-thumb-width: 20px;
+  --slider-thumb-height: 20px;
+  --slider-thumb-bg: var(--p-accent);
+  --slider-thumb-border: 0 solid transparent;
+  --slider-thumb-radius: 50%;
+  --slider-thumb-shadow: none;
   flex: 1 1 8rem;
   min-width: 0;
   min-height: 44px;
+  margin: 0;
+  background: none;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.explorer-slider:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.explorer-slider::-webkit-slider-runnable-track {
+  height: var(--slider-track-height);
+  background: var(--slider-track);
+}
+
+.explorer-slider::-moz-range-track {
+  height: var(--slider-track-height);
+  background: var(--slider-track);
+}
+
+.explorer-slider::-webkit-slider-thumb {
+  box-sizing: border-box;
+  width: var(--slider-thumb-width);
+  height: var(--slider-thumb-height);
+  margin-top: calc((var(--slider-track-height) - var(--slider-thumb-height)) / 2);
+  border: var(--slider-thumb-border);
+  border-radius: var(--slider-thumb-radius);
+  background: var(--slider-thumb-bg);
+  box-shadow: var(--slider-thumb-shadow);
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.explorer-slider::-moz-range-thumb {
+  box-sizing: border-box;
+  width: var(--slider-thumb-width);
+  height: var(--slider-thumb-height);
+  border: var(--slider-thumb-border);
+  border-radius: var(--slider-thumb-radius);
+  background: var(--slider-thumb-bg);
+  box-shadow: var(--slider-thumb-shadow);
 }
 
 .explorer-count {

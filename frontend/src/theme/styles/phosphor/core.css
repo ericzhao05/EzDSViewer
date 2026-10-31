@@ -341,6 +341,67 @@
   border: 2px dashed var(--ph-max);
 }
 
+/* The toggle reads as every other pressed toggle; it keeps its focus ring */
+[data-style='phosphor'] .main-content .linked-list-mode-active:not(:focus-visible) {
+  outline: 0;
+}
+
+/* Doubly linked nodes: the same outline, with a pointer cell either side */
+[data-style='phosphor'] .main-content .linked-list-dnode {
+  border: 1.5px solid var(--p-ink);
+  border-radius: 0;
+  background: none;
+}
+
+[data-style='phosphor'] .main-content .linked-list-dptr {
+  padding: 0.1rem 0.4rem;
+  font-size: var(--fs-small);
+}
+
+[data-style='phosphor'] .main-content .linked-list-dptr:first-child {
+  border-right: 1px solid var(--p-ink);
+}
+
+[data-style='phosphor'] .main-content .linked-list-dptr:last-child {
+  border-left: 1px solid var(--p-ink);
+}
+
+[data-style='phosphor'] .main-content .linked-list-dptr-name {
+  opacity: 1;
+  color: var(--p-muted);
+}
+
+[data-style='phosphor'] .main-content .linked-list-dlinks {
+  color: var(--p-ink);
+}
+
+/* Highlighted inverts, as in the singly list. Selected is a dashed ring, off the node's
+   own line, so it reads apart from a dashed danger border. Both together simply combine. */
+[data-style='phosphor'] .main-content .linked-list-highlight .linked-list-dnode {
+  outline: 0;
+  background: var(--p-ink);
+  color: var(--p-bg);
+  text-shadow: none;
+}
+
+[data-style='phosphor'] .main-content .linked-list-highlight .linked-list-dptr {
+  border-color: var(--p-bg);
+}
+
+[data-style='phosphor'] .main-content .linked-list-highlight .linked-list-dptr-name {
+  color: var(--p-bg);
+}
+
+[data-style='phosphor'] .main-content .linked-list-selected .linked-list-dnode {
+  outline: 2px dashed var(--ph-max);
+  outline-offset: 3px;
+}
+
+/* Inversion already marks the highlight here, so no inner ring */
+[data-style='phosphor'] .main-content .linked-list-highlight.linked-list-selected .linked-list-dnode {
+  --dnode-inner: 0 0 #0000;
+}
+
 /* ---- Stack ---- */
 [data-style='phosphor'] .main-content .stack-view-board {
   align-items: flex-start;
