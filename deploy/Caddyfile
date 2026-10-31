@@ -1,3 +1,8 @@
+# Let's Encrypt only: this Caddy version's fallback provider rejects it without an account email.
+{
+	acme_ca https://acme-v02.api.letsencrypt.org/directory
+}
+
 # Public entry point. The app itself only listens on 127.0.0.1.
 ezdsviewer.com {
 	encode gzip
