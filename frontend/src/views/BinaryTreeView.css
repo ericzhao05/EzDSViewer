@@ -1,0 +1,61 @@
+.binary-tree-intro,
+.binary-tree-complexity,
+.binary-tree-stats {
+  margin: 0.25rem 0;
+  max-width: 100%;
+}
+
+.binary-tree-result {
+  margin: 0.5rem 0;
+  font-weight: bold;
+}
+
+.binary-tree-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 0.5rem 0;
+}
+
+.binary-tree-edge {
+  stroke: var(--input-border);
+  stroke-width: 2;
+}
+
+.binary-tree-node circle {
+  fill: var(--stack-item-bg);
+  stroke: var(--input-border);
+  stroke-width: 2;
+}
+
+.binary-tree-node text {
+  fill: var(--stack-item-text);
+  font-weight: bold;
+  font-size: 13px;
+}
+
+.binary-tree-node.binary-tree-visited circle {
+  stroke: var(--error-border);
+}
+
+.binary-tree-node.binary-tree-current circle {
+  stroke: var(--text-color);
+  stroke-width: 4;
+}
+
+.binary-tree-node.binary-tree-lca circle {
+  stroke: var(--error-border);
+  stroke-width: 5;
+}
+
+.binary-tree-node text.binary-tree-badge {
+  fill: var(--text-color);
+  font-size: 11px;
+}
+
+.binary-tree-order h3 {
+  margin: 0.5rem 0;
+}
+
+.binary-tree-order p {
+  overflow-wrap: anywhere;
+}

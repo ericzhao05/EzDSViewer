@@ -1,0 +1,95 @@
+.array-view {
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.array-complexity,
+.array-legend {
+  font-size: 0.9rem;
+  color: var(--debug-text);
+}
+
+.array-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin: 1rem 0 0.5rem;
+}
+
+.array-scroll {
+  overflow-x: auto;
+  padding: 1rem 0.5rem;
+  border: 1px solid var(--input-border);
+  border-radius: 8px;
+  background-color: var(--main-bg);
+}
+
+.array-cells {
+  display: flex;
+  gap: 4px;
+  width: max-content;
+}
+
+.array-cell-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.array-cell {
+  min-width: 48px;
+  height: 48px;
+  padding: 0 6px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  font-weight: bold;
+  overflow: hidden;
+  max-width: 120px;
+}
+
+.array-cell-used {
+  background-color: var(--stack-item-bg);
+  color: var(--stack-item-text);
+  border: 2px solid var(--stack-item-bg);
+}
+
+.array-cell-free {
+  border: 2px dashed var(--input-border);
+  color: var(--text-color);
+}
+
+.array-cell-index {
+  font-size: 0.75rem;
+  color: var(--debug-text);
+  margin-top: 4px;
+}
+
+.array-note {
+  border-left: 4px solid var(--stack-item-bg);
+  padding: 0.5rem 0.75rem;
+  background-color: var(--debug-bg);
+}
+
+.array-result code {
+  background-color: var(--debug-bg);
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+}
+
+.array-controls label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.85rem;
+  flex: 1;
+}
+
+.array-controls input {
+  max-width: none;
+}
+
+.array-buttons {
+  flex-wrap: wrap;
+}

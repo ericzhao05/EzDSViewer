@@ -1,0 +1,49 @@
+.union-find-intro,
+.union-find-complexity {
+  margin: 0.25rem 0;
+  max-width: 100%;
+}
+
+.union-find-result {
+  margin: 0.5rem 0;
+  font-weight: bold;
+}
+
+.union-find-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 0.25rem 0;
+}
+
+.union-find-edge {
+  stroke: var(--input-border);
+  stroke-width: 2;
+}
+
+.union-find-node circle {
+  fill: var(--stack-item-bg);
+  stroke: var(--input-border);
+  stroke-width: 2;
+}
+
+.union-find-root circle {
+  stroke-width: 4;
+}
+
+.union-find-node text {
+  fill: var(--stack-item-text);
+  font-weight: bold;
+}
+
+.union-find-table {
+  border-collapse: collapse;
+  margin: 0.5rem 0;
+}
+
+.union-find-table th,
+.union-find-table td {
+  min-width: 2rem;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--input-border);
+  text-align: center;
+}

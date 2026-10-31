@@ -1,0 +1,108 @@
+.queue-intro,
+.queue-complexity {
+  margin: 0.25rem 0;
+  max-width: 100%;
+}
+
+.queue-section {
+  margin: 1rem 0;
+}
+
+.queue-section h3 {
+  margin: 0.5rem 0;
+}
+
+.queue-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 0.25rem 0;
+}
+
+.queue-row {
+  display: inline-flex;
+  align-items: stretch;
+  gap: 0.35rem;
+  white-space: nowrap;
+  min-width: 100%;
+}
+
+.queue-cell {
+  min-width: 2.75rem;
+  text-align: center;
+  padding: 0.4rem 0.5rem;
+  border: 1px solid var(--input-border);
+  border-radius: 4px;
+  background: var(--stack-item-bg);
+  color: var(--stack-item-text);
+  font-weight: bold;
+}
+
+.queue-cell-empty {
+  background: var(--card-bg);
+  color: var(--empty-message);
+  font-weight: normal;
+}
+
+.queue-slot {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  color: var(--text-color);
+  font-size: 0.8rem;
+}
+
+.queue-tag {
+  min-height: 1rem;
+  font-weight: bold;
+}
+
+.queue-label {
+  align-self: center;
+  color: var(--text-color);
+  font-size: 0.85rem;
+}
+
+.queue-stacks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.queue-stack {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 0.25rem;
+  min-width: 5rem;
+  min-height: 2rem;
+  padding: 0.35rem;
+  border: 1px dashed var(--input-border);
+  border-radius: 4px;
+}
+
+.queue-stack-title {
+  color: var(--text-color);
+  font-size: 0.85rem;
+  margin-bottom: 0.25rem;
+}
+
+.queue-result {
+  margin: 0.5rem 0;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--input-border);
+  border-radius: 4px;
+  background: var(--card-bg);
+  color: var(--text-color);
+  overflow-wrap: anywhere;
+}
+
+.queue-in-window {
+  outline: 2px solid var(--text-color);
+}
+
+@media (max-width: 700px) {
+  .queue-cell {
+    min-width: 2.25rem;
+    padding: 0.3rem 0.35rem;
+  }
+}

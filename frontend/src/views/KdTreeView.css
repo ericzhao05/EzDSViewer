@@ -1,0 +1,99 @@
+.kdtree-intro,
+.kdtree-complexity {
+  margin: 0.25rem 0;
+  max-width: 100%;
+}
+
+.kdtree-section {
+  margin: 1rem 0;
+}
+
+.kdtree-section h3 {
+  margin: 0.5rem 0;
+}
+
+.kdtree-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 0.25rem 0;
+}
+
+.kdtree-svg {
+  display: block;
+  margin: 0 auto;
+}
+
+.kdtree-frame {
+  fill: none;
+  stroke: var(--input-border);
+  stroke-width: 1;
+}
+
+.kdtree-split-x {
+  stroke: #e74c3c;
+  stroke-width: 2;
+}
+
+.kdtree-split-y {
+  stroke: #3498db;
+  stroke-width: 2;
+}
+
+.kdtree-edge {
+  stroke: var(--input-border);
+  stroke-width: 2;
+}
+
+.kdtree-node,
+.kdtree-dot {
+  fill: var(--stack-item-bg);
+  stroke: var(--input-border);
+  stroke-width: 2;
+}
+
+.kdtree-node-visited {
+  stroke: #e67e22;
+  stroke-width: 3;
+}
+
+.kdtree-node-best {
+  stroke: #27ae60;
+  stroke-width: 4;
+}
+
+.kdtree-dot.kdtree-node-visited,
+.kdtree-dot.kdtree-node-best {
+  fill: var(--stack-item-bg);
+}
+
+.kdtree-query {
+  fill: #9b59b6;
+}
+
+.kdtree-node-text,
+.kdtree-axis-text,
+.kdtree-label {
+  fill: var(--text-color);
+  text-anchor: middle;
+}
+
+.kdtree-node-text {
+  fill: var(--stack-item-text);
+  font-weight: bold;
+  font-size: 11px;
+}
+
+.kdtree-axis-text {
+  fill: var(--stack-item-text);
+  font-size: 10px;
+}
+
+.kdtree-label {
+  font-size: 10px;
+  text-anchor: start;
+}
+
+.kdtree-result {
+  margin: 0.5rem 0;
+  font-weight: bold;
+}

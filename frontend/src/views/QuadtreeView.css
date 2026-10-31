@@ -1,0 +1,64 @@
+.quadtree-intro,
+.quadtree-complexity,
+.quadtree-stats {
+  margin: 0.4rem 0;
+  line-height: 1.4;
+}
+
+.quadtree-num {
+  width: 5.5rem;
+}
+
+.quadtree-result {
+  margin: 0.5rem 0;
+  font-weight: 600;
+}
+
+.quadtree-scroll {
+  max-width: 100%;
+  overflow: auto;
+}
+
+.quadtree-svg {
+  display: block;
+  margin: 0 auto;
+  max-width: none;
+  background: var(--card-bg);
+  border: 1px solid var(--input-border);
+  cursor: crosshair;
+}
+
+.quadtree-cell {
+  fill: none;
+  stroke: var(--input-border);
+  stroke-width: 1;
+}
+
+.quadtree-internal {
+  stroke-dasharray: 3 2;
+}
+
+.quadtree-visited {
+  fill: var(--stack-item-bg);
+  fill-opacity: 0.35;
+  stroke: var(--text-color);
+}
+
+.quadtree-query {
+  fill: none;
+  stroke: var(--text-color);
+  stroke-width: 2;
+  stroke-dasharray: 6 3;
+}
+
+.quadtree-point {
+  fill: var(--stack-item-bg);
+  stroke: var(--stack-item-text);
+  stroke-width: 1;
+}
+
+.quadtree-found {
+  fill: var(--text-color);
+  stroke: var(--card-bg);
+  stroke-width: 2;
+}

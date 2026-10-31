@@ -1,0 +1,47 @@
+.bst-intro,
+.bst-complexity,
+.bst-note,
+.bst-stats {
+  margin: 0.25rem 0;
+  max-width: 100%;
+}
+
+.bst-section {
+  margin: 1rem 0;
+}
+
+.bst-section h3 {
+  margin: 0.5rem 0;
+}
+
+.bst-result {
+  margin: 0.5rem 0;
+  font-weight: bold;
+}
+
+.bst-scroll {
+  max-width: 100%;
+  overflow: auto;
+  padding: 0.5rem 0;
+}
+
+.bst-edge {
+  stroke: var(--input-border);
+  stroke-width: 2;
+}
+
+.bst-node circle {
+  fill: var(--stack-item-bg);
+  stroke: var(--input-border);
+  stroke-width: 2;
+}
+
+.bst-node text {
+  fill: var(--stack-item-text);
+  font-weight: bold;
+}
+
+.bst-node-path circle {
+  stroke: #e67e22;
+  stroke-width: 4;
+}

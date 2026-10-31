@@ -1,0 +1,73 @@
+.skip-list-intro,
+.skip-list-complexity {
+  margin: 0.4rem 0;
+}
+
+.skip-list-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin: 0.5rem 0;
+}
+
+.skip-list-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  margin: 0.75rem 0;
+}
+
+.skip-list-grid {
+  border-collapse: separate;
+  border-spacing: 0 6px;
+  margin: 0 auto;
+}
+
+.skip-list-level-label {
+  padding-right: 0.5rem;
+  text-align: right;
+  color: var(--text-color);
+  font-weight: bold;
+}
+
+.skip-list-cell {
+  min-width: 44px;
+  height: 34px;
+  padding: 0 4px;
+  text-align: center;
+  color: var(--text-color);
+  background-image: linear-gradient(var(--input-border), var(--input-border));
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-size: 100% 2px;
+}
+
+.skip-list-node {
+  font-weight: bold;
+}
+
+.skip-list-node,
+.skip-list-head,
+.skip-list-nil {
+  border: 2px solid var(--input-border);
+  border-radius: 4px;
+  background-color: var(--stack-item-bg);
+  background-image: none;
+  color: var(--stack-item-text);
+}
+
+.skip-list-nil {
+  opacity: 0.6;
+}
+
+.skip-list-visited {
+  outline: 3px solid #f5a623;
+}
+
+.skip-list-result {
+  margin: 0.75rem 0;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--input-border);
+  border-radius: 4px;
+  background: var(--card-bg);
+  color: var(--text-color);
+}

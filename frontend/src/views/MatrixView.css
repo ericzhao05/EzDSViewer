@@ -1,0 +1,75 @@
+.matrix-view-intro {
+  max-width: 600px;
+  margin: 0.5rem auto;
+  text-align: left;
+}
+
+.matrix-view-stats {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin: 1rem 0 0;
+}
+
+.matrix-view-board {
+  margin: 1rem 0;
+  padding: 1rem;
+  overflow: auto;
+  max-width: 100%;
+  border: 1px solid var(--input-border);
+  border-radius: 8px;
+  background-color: var(--main-bg);
+}
+
+.matrix-view-grid {
+  display: grid;
+  gap: 4px;
+  width: max-content;
+  margin: 0 auto;
+}
+
+.matrix-view-cell {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  font: inherit;
+  font-weight: bold;
+  cursor: pointer;
+  color: var(--text-color);
+  background-color: var(--card-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 4px;
+}
+
+.matrix-view-cell:disabled {
+  cursor: default;
+}
+
+.matrix-view-island {
+  color: var(--stack-item-text);
+  background-color: var(--stack-item-bg);
+}
+
+.matrix-view-island-1 { background-color: #ffb74d; }
+.matrix-view-island-2 { background-color: #81c784; }
+.matrix-view-island-3 { background-color: #ba68c8; }
+.matrix-view-island-4 { background-color: #f48fb1; }
+.matrix-view-island-5 { background-color: #fff176; }
+
+.matrix-view-selected {
+  outline: 3px solid var(--text-color);
+  outline-offset: 1px;
+}
+
+.matrix-view-result {
+  margin: 0.5rem 0;
+  font-weight: bold;
+}
+
+.matrix-view-selection {
+  align-self: center;
+}
+
+.ds-container .ds-controls input[type='number'] {
+  width: 5rem;
+}

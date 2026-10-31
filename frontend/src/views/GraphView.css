@@ -1,0 +1,76 @@
+.graph-intro,
+.graph-complexity {
+  margin: 0.25rem 0;
+  max-width: 100%;
+}
+
+.graph-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  margin: 0.75rem 0;
+}
+
+.graph-svg {
+  display: block;
+  margin: 0 auto;
+  max-width: none;
+}
+
+.graph-edge line {
+  stroke: var(--input-border);
+  stroke-width: 2;
+}
+
+.graph-edge-hot line {
+  stroke: var(--stack-item-bg);
+  stroke-width: 4;
+}
+
+.graph-arrow-head {
+  fill: var(--text-color);
+}
+
+.graph-weight {
+  fill: var(--text-color);
+  font-size: 11px;
+}
+
+.graph-node circle {
+  fill: var(--card-bg);
+  stroke: var(--input-border);
+  stroke-width: 2;
+}
+
+.graph-node text {
+  fill: var(--text-color);
+  font-weight: 600;
+}
+
+.graph-node-hot circle {
+  fill: var(--stack-item-bg);
+  stroke: var(--stack-item-bg);
+}
+
+.graph-node-hot text {
+  fill: var(--stack-item-text);
+}
+
+.graph-node-hot .graph-step {
+  fill: var(--text-color);
+  font-size: 11px;
+}
+
+.graph-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin: 0.5rem 0;
+}
+
+.graph-result {
+  margin: 0.5rem 0;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--input-border);
+  border-radius: 6px;
+  overflow-wrap: anywhere;
+}

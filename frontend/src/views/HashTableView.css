@@ -1,0 +1,97 @@
+.hash-table-intro,
+.hash-table-complexity {
+  margin: 0.25rem 0;
+  max-width: 100%;
+}
+
+.hash-table-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin: 0.75rem 0;
+  color: var(--text-color);
+}
+
+.hash-table-scroll {
+  max-width: 100%;
+  max-height: 360px;
+  overflow: auto;
+  margin: 0.5rem 0;
+}
+
+.hash-table-buckets {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: inline-block;
+  min-width: 100%;
+}
+
+.hash-table-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0;
+  white-space: nowrap;
+}
+
+.hash-table-index {
+  min-width: 2rem;
+  text-align: center;
+  padding: 0.3rem 0.5rem;
+  border: 1px solid var(--input-border);
+  border-radius: 4px;
+  background: var(--card-bg);
+  color: var(--text-color);
+  font-weight: bold;
+}
+
+.hash-table-null {
+  color: var(--empty-message);
+  font-style: italic;
+  margin-left: 0.4rem;
+}
+
+.hash-table-arrow {
+  color: var(--text-color);
+}
+
+.hash-table-entry {
+  display: inline-flex;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid var(--input-border);
+}
+
+.hash-table-entry-key,
+.hash-table-entry-value {
+  padding: 0.3rem 0.6rem;
+}
+
+.hash-table-entry-key {
+  background: var(--stack-item-bg);
+  color: var(--stack-item-text);
+  font-weight: bold;
+}
+
+.hash-table-entry-value {
+  background: var(--card-bg);
+  color: var(--text-color);
+}
+
+.hash-table-result {
+  margin: 0.5rem 0;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--input-border);
+  border-radius: 4px;
+  background: var(--card-bg);
+  color: var(--text-color);
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 700px) {
+  .hash-table-entry-key,
+  .hash-table-entry-value {
+    padding: 0.25rem 0.4rem;
+  }
+}
