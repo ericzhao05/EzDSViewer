@@ -53,3 +53,8 @@
   stroke: #e67e22;
   stroke-width: 4;
 }
+
+.trie-controls {
+  flex-wrap: wrap;
+  justify-content: center;
+}

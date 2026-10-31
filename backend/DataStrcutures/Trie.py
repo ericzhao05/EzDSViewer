@@ -29,6 +29,30 @@ class Trie:
     def starts_with(self, prefix):
         return self._find(prefix) is not None
 
+    def delete(self, word):
+        """Remove word and prune nodes that no longer serve any word.
+
+        Returns True if word was stored. An absent word or a mere prefix changes
+        nothing and returns False. O(L), and iterative, so depth is not a limit.
+        """
+        path = []
+        node = self.root
+        for char in word:
+            child = node.children.get(char)
+            if child is None:
+                return False
+            path.append((node, char))
+            node = child
+        if not node.is_word:
+            return False
+        node.is_word = False
+        for parent, char in reversed(path):
+            if node.is_word or node.children:
+                break
+            del parent.children[char]
+            node = parent
+        return True
+
     # --- helpers for the API and the view ---------------------------------
 
     def matched_length(self, text):

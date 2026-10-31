@@ -38,6 +38,15 @@ function describe(op, r) {
       return r.added
         ? `Inserted "${r.word}": ${r.matched} of ${r.word.length} letters already existed.`
         : `"${r.word}" is already stored.`;
+    case 'delete':
+      if (!r.deleted) {
+        return r.matched === r.word.length
+          ? `"${r.word}" is only a prefix, so nothing was deleted.`
+          : `"${r.word}" is not stored, so nothing was deleted.`;
+      }
+      return r.pruned > 0
+        ? `Deleted "${r.word}": pruned ${r.pruned} ${r.pruned === 1 ? 'node' : 'nodes'} that no longer served any word.`
+        : `Deleted "${r.word}": cleared is_word, and no nodes pruned because longer words still use them.`;
     case 'search':
       return r.found
         ? `"${r.word}" is a stored word.`
@@ -71,12 +80,14 @@ export default function TrieView() {
       return;
     }
     setLocalError('');
+    // A delete can remove the highlighted nodes, so drop the highlight whatever happens.
+    if (op === 'delete') setHighlight('');
     const payload = key === 'prefix-optional' ? { prefix: value } : { [key]: value };
     const data = await run(op, payload);
     if (data) {
       setMessage(describe(op, data.result));
       const r = data.result;
-      setHighlight((r.word || r.prefix || '').slice(0, r.matched));
+      if (!r.deleted) setHighlight((r.word || r.prefix || '').slice(0, r.matched));
     } else {
       setMessage('');
     }
@@ -97,14 +108,14 @@ export default function TrieView() {
         Use it for autocomplete, prefix counts, and searching many words at once.
       </p>
       <p className="trie-complexity">
-        Search, insert and prefix lookup are O(L), where L is the word's length. Space is O(total
+        Search, insert, delete and prefix lookup are O(L), where L is the word's length. Space is O(total
         characters). Filled nodes mark the end of a stored word (is_word).
       </p>
 
       {shownError && <div className="error-message" role="alert">{shownError}</div>}
       {!state && !shownError && <p className="empty-message">Loading...</p>}
 
-      <div className="ds-controls">
+      <div className="ds-controls trie-controls">
         <input
           type="text"
           aria-label="Word or prefix"
@@ -115,6 +126,7 @@ export default function TrieView() {
           disabled={loading}
         />
         {btn('Insert', () => exec('insert', 'word'))}
+        {btn('Delete', () => exec('delete', 'word'))}
         {btn('Search', () => exec('search', 'word'))}
         {btn('Starts with', () => exec('starts-with', 'prefix'))}
         {btn('Autocomplete', () => exec('autocomplete', 'prefix-optional'))}

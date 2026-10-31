@@ -80,6 +80,19 @@ def insert():
     return ok(_state(), {"word": w, "added": True, "matched": matched})
 
 
+@bp.route("/delete", methods=["POST"])
+def delete():
+    w = _text("word")
+    if w is None:
+        return _bad(_msg("word"))
+    deleted = trie.delete(w)
+    if deleted:
+        words.remove(w)
+    matched = trie.matched_length(w)  # after pruning: how much of the path survives
+    pruned = len(w) - matched if deleted else 0
+    return ok(_state(), {"word": w, "deleted": deleted, "pruned": pruned, "matched": matched})
+
+
 @bp.route("/search", methods=["POST"])
 def search():
     w = _text("word")
