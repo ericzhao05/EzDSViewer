@@ -7,7 +7,10 @@ from flask import jsonify, request
 
 def body():
     """The JSON object sent by the client; anything else counts as an empty body."""
-    data = request.get_json(silent=True)
+    try:
+        data = request.get_json(silent=True)
+    except RecursionError:  # absurdly nested JSON
+        return {}
     return data if isinstance(data, dict) else {}
 
 

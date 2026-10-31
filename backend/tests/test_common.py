@@ -18,7 +18,7 @@ class BodyTest(unittest.TestCase):
             self.assertEqual(self.parsed(json=value), {})
 
     def test_nan_and_malformed_and_missing_bodies_count_as_empty(self):
-        for raw in (b"NaN", b"{not json", b""):
+        for raw in (b"NaN", b"{not json", b"", b"[" * 200000):
             self.assertEqual(self.parsed(data=raw, content_type="application/json"), {})
         self.assertEqual(self.parsed(), {})
 
