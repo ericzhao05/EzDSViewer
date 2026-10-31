@@ -2,6 +2,7 @@ import { render, screen, fireEvent, within, waitFor, act } from '@testing-librar
 import App from '../../../../App';
 
 const REPEAT = 'Already ran on this array. Change the array first.';
+const REPEAT_TARGET = 'Already ran with this target. Change the target or the array first.';
 const ALL = ['two sum', 'binary search', 'max subarray', 'prefix sums', 'bubble sort', 'selection sort', 'insertion sort', 'merge sort', 'quick sort', 'heap sort'];
 
 function reply(body) {
@@ -63,14 +64,14 @@ test('a note shows what it does, needs and costs, and only asks for a target whe
   expect(within(screen.getByRole('form', { name: 'Bubble sort' })).queryByRole('textbox')).toBeNull();
 });
 
-test('a second two sum on the same array is blocked in words and sends nothing, until the array changes', async () => {
+test('the same two sum again is blocked in words and sends nothing, until the target or the array changes', async () => {
   await open('array.append(1).append(2)');
   fireEvent.change(screen.getByRole('textbox', { name: 'Two sum target' }), { target: { value: '3' } });
   fireEvent.click(screen.getByRole('button', { name: 'Run two sum' }));
   await waitFor(() => expect(sentCommands()).toContain('array.append(1).append(2).two_sum_sorted(3)'));
 
   const two = screen.getByRole('form', { name: 'Two sum' });
-  expect(await within(two).findByText(REPEAT)).toBeVisible();
+  expect(await within(two).findByText(REPEAT_TARGET)).toBeVisible();
   const run = within(two).getByRole('button', { name: 'Run two sum' });
   expect(run).toBeDisabled();
   const before = global.fetch.mock.calls.length;
@@ -79,10 +80,21 @@ test('a second two sum on the same array is blocked in words and sends nothing, 
   // Only that algorithm is blocked.
   expect(screen.getByRole('button', { name: 'Run binary search' })).toBeEnabled();
 
+  // A different target isn't a repeat, and neither is the same number written differently a repeat-dodge.
+  fireEvent.change(screen.getByRole('textbox', { name: 'Two sum target' }), { target: { value: '4' } });
+  expect(run).toBeEnabled();
+  fireEvent.change(screen.getByRole('textbox', { name: 'Two sum target' }), { target: { value: ' 03 ' } });
+  expect(run).toBeDisabled();
+  fireEvent.change(screen.getByRole('textbox', { name: 'Two sum target' }), { target: { value: '4' } });
+  fireEvent.click(run);
+  await waitFor(() => expect(sentCommands()).toContain('array.append(1).append(2).two_sum_sorted(3).two_sum_sorted(4)'));
+  await within(screen.getByRole('form', { name: 'Two sum' })).findByText(REPEAT_TARGET);
+
+  fireEvent.change(screen.getByRole('textbox', { name: 'Two sum target' }), { target: { value: '3' } });
   fireEvent.change(screen.getByRole('textbox', { name: 'Append value' }), { target: { value: '7' } });
   fireEvent.click(screen.getByRole('button', { name: 'Append' }));
   await waitFor(() => expect(screen.getByRole('button', { name: 'Run two sum' })).toBeEnabled());
-  expect(within(screen.getByRole('form', { name: 'Two sum' })).queryByText(REPEAT)).toBeNull();
+  expect(within(screen.getByRole('form', { name: 'Two sum' })).queryByText(REPEAT_TARGET)).toBeNull();
 });
 
 test('a missing target shows on the note and moves focus to its blank', async () => {
@@ -228,4 +240,12 @@ describe('turning a note over', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Show Two sum notes' }));
     expect(screen.getByRole('textbox', { name: 'Two sum target' })).toHaveValue('3');
   });
+});
+
+test('an algorithm with nothing to fill in still blocks a plain repeat', async () => {
+  await open('array.append(1).append(2)');
+  fireEvent.click(screen.getByRole('button', { name: 'Run max subarray' }));
+  const form = screen.getByRole('form', { name: 'Max subarray' });
+  expect(await within(form).findByText(REPEAT)).toBeVisible();
+  expect(within(form).getByRole('button', { name: 'Run max subarray' })).toBeDisabled();
 });

@@ -66,6 +66,7 @@ export const NOTES = {
 };
 
 const REPEAT = 'Already ran on this array. Change the array first.';
+const REPEAT_TARGET = 'Already ran with this target. Change the target or the array first.';
 
 const methodOf = (call) => {
   if (typeof call !== 'string') return '';
@@ -74,12 +75,34 @@ const methodOf = (call) => {
 };
 
 // Blocks an algorithm when the previous algorithm was the same one and the array has not changed since.
-export function repeatReason(calls, id) {
+// What's between a call's brackets.
+const argsOf = (call) => {
+  const text = String(call);
+  return text.slice(text.indexOf('(') + 1, text.lastIndexOf(')'));
+};
+
+// An algorithm's typed inputs, written the way its call would have them; none if it takes no inputs.
+const typedArgs = (item) => {
+  const inputs = item.inputs || [];
+  if (inputs.length === 0) return undefined;
+  return inputs
+    .map(({ value }) => {
+      const text = String(value).trim();
+      return /^-?\d+$/.test(text) ? String(Number(text)) : text;
+    })
+    .join(', ');
+};
+
+export function repeatReason(calls, id, args) {
   const list = Array.isArray(calls) ? calls : [];
   for (let i = list.length - 1; i >= 0; i -= 1) {
     const method = methodOf(list[i]);
     if (method === 'get') continue;
-    if (Object.prototype.hasOwnProperty.call(NOTES, method)) return method === id ? REPEAT : null;
+    if (Object.prototype.hasOwnProperty.call(NOTES, method)) {
+      if (method !== id) return null;
+      if (args === undefined) return REPEAT;
+      return argsOf(list[i]) === args ? REPEAT_TARGET : null;
+    }
     return null; // append, insert, pop, reset or anything unknown changes the array
   }
   return null;
@@ -88,7 +111,7 @@ export function repeatReason(calls, id) {
 export function withNotes(items, calls) {
   return items.map((item) => {
     const merged = { ...item, ...NOTES[item.id] };
-    const reason = repeatReason(calls, item.id);
+    const reason = repeatReason(calls, item.id, typedArgs(item));
     if (reason && !item.blockedReason) {
       merged.blockedReason = reason;
       merged.run = () => undefined;

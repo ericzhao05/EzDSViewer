@@ -43,6 +43,16 @@ describe('NOTES', () => {
 });
 
 describe('repeatReason', () => {
+  const SAME_TARGET = 'Already ran with this target. Change the target or the array first.';
+
+  test.each([
+    ['the same target', '10', SAME_TARGET],
+    ['a different target', '8', null],
+    ['no target yet', '', null],
+  ])('two sum after two sum with %s', (_, args, expected) => {
+    expect(repeatReason(['append(1)', 'two_sum_sorted(10)'], 'two_sum_sorted', args)).toBe(expected);
+  });
+
   test.each([
     [['append(1)', 'two_sum_sorted(1)'], 'two_sum_sorted', MSG],
     [['append(1)', 'two_sum_sorted(1)', 'get(0)'], 'two_sum_sorted', MSG],
