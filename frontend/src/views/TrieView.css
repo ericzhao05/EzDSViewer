@@ -1,0 +1,55 @@
+.trie-intro,
+.trie-complexity,
+.trie-words {
+  margin: 0.25rem 0;
+  max-width: 100%;
+}
+
+.trie-result {
+  margin: 0.5rem 0;
+}
+
+.trie-scroll {
+  max-width: 100%;
+  overflow: auto;
+  padding: 0.25rem 0;
+}
+
+.trie-svg {
+  display: block;
+}
+
+.trie-edge {
+  stroke: var(--input-border);
+  stroke-width: 2;
+}
+
+.trie-node circle {
+  fill: var(--card-bg);
+  stroke: var(--input-border);
+  stroke-width: 2;
+}
+
+.trie-node text {
+  fill: var(--text-color);
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.trie-word circle {
+  fill: var(--stack-item-bg);
+}
+
+.trie-word text {
+  fill: var(--stack-item-text);
+}
+
+.trie-node.trie-hot circle {
+  stroke: #e67e22;
+  stroke-width: 4;
+}
+
+.trie-edge.trie-hot {
+  stroke: #e67e22;
+  stroke-width: 4;
+}
