@@ -168,15 +168,8 @@ def run_dijkstra():
     if any(w < 0 for w in graph.weights.values()):
         return _bad("Dijkstra needs non-negative weights; remove or change the negative edges")
     wadj = graph.weighted_adjacency()
-    dist = g.dijkstra(wadj, s)
-    tree = []
-    for node in sorted(dist):
-        if node == s:
-            continue
-        for p in sorted(dist):
-            if any(nb == node and dist[p] + w == dist[node] for nb, w in wadj.get(p, [])):
-                tree.append([p, node])
-                break
+    dist, parents = g.dijkstra_with_parents(wadj, s)
+    tree = [[parents[x], x] for x in sorted(parents)]
     return ok(
         _state(),
         {"start": s, "distances": [dist.get(i) for i in range(graph.n)], "tree_edges": tree},

@@ -84,6 +84,21 @@ class RouteTests(unittest.TestCase):
         self.assertEqual(code, 400)
         self.assertIn("non-negative", j["error"])
 
+    def test_dijkstra_zero_weight_tree_is_rooted(self):
+        r.graph = g.Graph(3)
+        r.graph.add_edge(2, 0, 1)
+        r.graph.add_edge(2, 1, 1)
+        r.graph.add_edge(0, 1, 0)
+        _, j = self.post("dijkstra", {"start": 2})
+        self.assertEqual(j["result"]["distances"], [1, 1, 0])
+        tree = j["result"]["tree_edges"]
+        self.assertEqual(len(tree), 2)
+        parent = {v: u for u, v in tree}
+        for node in (0, 1):
+            cur = node
+            while cur != 2:
+                cur = parent[cur]
+
     def test_topological_and_directed(self):
         code, _ = self.post("topological-sort")
         self.assertEqual(code, 400)

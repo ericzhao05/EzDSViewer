@@ -76,6 +76,25 @@ def dijkstra(graph, start):
     return distances
 
 
+def dijkstra_with_parents(graph, start):
+    """dijkstra that also records each node's predecessor, so the result is a real tree
+    rooted at start even when zero-weight edges create ties."""
+    distances = {start: 0}
+    parents = {}
+    heap = [(0, start)]
+    while heap:
+        distance, node = heapq.heappop(heap)
+        if distance > distances[node]:
+            continue
+        for neighbor, weight in graph.get(node, []):
+            candidate = distance + weight
+            if candidate < distances.get(neighbor, float("inf")):
+                distances[neighbor] = candidate
+                parents[neighbor] = node
+                heapq.heappush(heap, (candidate, neighbor))
+    return distances, parents
+
+
 def connected_components(num_nodes, edges):
     """Components of the graph treating edges as undirected; loops over every node."""
     graph = build_graph(edges)
