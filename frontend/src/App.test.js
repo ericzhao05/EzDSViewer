@@ -1,6 +1,7 @@
 import { render, screen, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from './App';
+import { THEME_OPTIONS } from './theme/themes';
 import { STRUCTURES } from './structures/registry';
 
 // These tests cover the plain layout's behaviour; the layouts have their own preset.test.js files.
@@ -43,16 +44,34 @@ describe('theme menu', () => {
     expect(screen.queryByRole('radio')).toBeNull();
   });
 
-  test('offers three themes, switches, and remembers the pick', async () => {
-    const { unmount } = render(<App />);
+  test('offers Chalkboard, and shows the other two as coming soon that can\'t be picked', async () => {
+    render(<App />);
     await openMenu();
     expect(screen.getAllByRole('radio')).toHaveLength(3);
     expect(screen.getByRole('radio', { name: /chalkboard/i })).toBeChecked();
+    expect(screen.getByRole('radio', { name: /chalkboard/i })).toBeEnabled();
+    for (const name of [/toy blocks.*coming soon/i, /phosphor.*coming soon/i]) {
+      const radio = screen.getByRole('radio', { name });
+      expect(radio).toBeDisabled();
+      // eslint-disable-next-line no-await-in-loop
+      await userEvent.click(radio);
+      expect(radio).not.toBeChecked();
+    }
+    expect(document.documentElement.dataset.style).toBe('chalkboard');
+    expect(localStorage.getItem('ezds-theme')).toBeNull();
+  });
+
+  test('switches between available themes and remembers the pick', async () => {
+    const soon = THEME_OPTIONS.filter((o) => o.comingSoon);
+    soon.forEach((o) => { delete o.comingSoon; });
+    const { unmount } = render(<App />);
+    await openMenu();
     await userEvent.click(screen.getByRole('radio', { name: /phosphor/i }));
     expect(document.documentElement.dataset.style).toBe('phosphor');
     unmount();
     render(<App />);
     expect(document.documentElement.dataset.style).toBe('phosphor');
+    soon.forEach((o) => { o.comingSoon = true; });
   });
 
   test('Escape closes the menu and returns focus to the button', async () => {

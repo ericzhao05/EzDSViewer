@@ -1,10 +1,16 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import PlayerPage from './PlayerPage';
 import App from '../App';
+import { THEME_OPTIONS } from '../theme/themes';
 
 jest.mock('./Explorer', () => (props) => (
   <div data-testid="explorer" data-embed={String(props.embed)}>{props.initialCommand}</div>
 ));
+
+// These tests are about how a page keeps its theme, so every listed theme is available here.
+const original = THEME_OPTIONS.map((o) => ({ ...o }));
+beforeAll(() => THEME_OPTIONS.forEach((o) => { delete o.comingSoon; }));
+afterAll(() => THEME_OPTIONS.forEach((o, i) => Object.assign(o, original[i])));
 
 const shownStyle = () => document.documentElement.dataset.style;
 

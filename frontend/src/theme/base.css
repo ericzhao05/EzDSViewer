@@ -158,6 +158,27 @@ body {
   outline-offset: 2px;
 }
 
+/* Not ready yet: greyed out in one flat colour, and nothing reacts to the pointer */
+.theme-menu-option-soon,
+.theme-menu-option-soon input {
+  cursor: not-allowed;
+}
+
+.theme-menu-option-soon .theme-menu-row,
+.theme-menu-option-soon:hover .theme-menu-row {
+  background: none;
+  color: var(--p-muted);
+}
+
+.theme-menu-option-soon .theme-menu-swatch {
+  filter: grayscale(1);
+  opacity: 0.5;
+}
+
+.theme-menu-option-soon .theme-menu-name {
+  color: var(--p-muted);
+}
+
 .theme-menu-swatch {
   flex: none;
   display: flex;

@@ -3,13 +3,15 @@ import { PRESETS } from './presets';
 // What the hamburger menu offers. The first entry is the default for anyone
 // who has not picked a theme yet.
 //
+// comingSoon shows a theme greyed out in the menu, where it can't be picked. Remove the flag to offer it.
+//
 // To restore a hidden combination, uncomment its line below. Its colors then
 // apply across the whole app. Its cell shapes for the Array page are kept in
 // archive/array-presets.css; uncomment that import in theme/index.css too.
 export const THEME_OPTIONS = [
   { style: 'chalkboard', palette: 'blackout' },
-  { style: 'toy-blocks', palette: 'bubblegum' },
-  { style: 'phosphor', palette: 'green' },
+  { style: 'toy-blocks', palette: 'bubblegum', comingSoon: true },
+  { style: 'phosphor', palette: 'green', comingSoon: true },
   // { style: 'workbench', palette: 'graphite' },
   // { style: 'workbench', palette: 'cobalt' },
   // { style: 'workbench', palette: 'pine' },
@@ -62,17 +64,22 @@ export const THEME_OPTIONS = [
 const STORAGE_KEY = 'ezds-theme';
 
 const isOption = (styleId, paletteId) =>
-  THEME_OPTIONS.some((o) => o.style === styleId && o.palette === paletteId);
+  THEME_OPTIONS.some((o) => o.style === styleId && o.palette === paletteId && !o.comingSoon);
+
+const themeOf = (styleId, paletteId) => {
+  const style = PRESETS.find((p) => p.id === styleId);
+  return { style, colors: style.palettes.find((c) => c.id === paletteId) };
+};
 
 export function resolveTheme(styleId, paletteId) {
   const pick = isOption(styleId, paletteId) ? { style: styleId, palette: paletteId } : THEME_OPTIONS[0];
-  const style = PRESETS.find((p) => p.id === pick.style);
-  return { style, colors: style.palettes.find((c) => c.id === pick.palette) };
+  return themeOf(pick.style, pick.palette);
 }
 
-export const themeChoices = () => THEME_OPTIONS.map((o) => resolveTheme(o.style, o.palette));
+export const themeChoices = () =>
+  THEME_OPTIONS.map((o) => ({ ...themeOf(o.style, o.palette), comingSoon: Boolean(o.comingSoon) }));
 
-// A stale or hidden saved pick falls back to the default.
+// A stale, hidden or coming-soon saved pick falls back to the default.
 export function loadTheme() {
   const [styleId, paletteId] = (localStorage.getItem(STORAGE_KEY) || '').split('/');
   return resolveTheme(styleId, paletteId);
