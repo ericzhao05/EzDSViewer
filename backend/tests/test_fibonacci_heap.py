@@ -410,6 +410,34 @@ class RouteTests(unittest.TestCase):
         degrees = [root["degree"] for root in data["state"]["heap"]["roots"]]
         self.assertEqual(len(degrees), len(set(degrees)))
 
+    def extract_from(self, keys):
+        """Empties heap A through the route, inserts keys, then extracts the min."""
+        while self.client.get("/api/fibonacci-heap").get_json()["state"]["heap"]["size"]:
+            self.good("extract-min")
+        for key in keys:
+            self.good("insert", {"value": key})
+        return self.good("extract-min")
+
+    def test_extract_min_link_contents_for_one_link(self):
+        data = self.extract_from([1, 2, 3])
+        self.assertEqual(data["result"]["key"], 1)
+        self.assertEqual(data["result"]["links"], [{"child_key": 3, "parent_key": 2, "degree": 0}])
+        roots = data["state"]["heap"]["roots"]
+        self.assertEqual([root["key"] for root in roots], [2])
+        self.assertEqual([child["key"] for child in roots[0]["children"]], [3])
+
+    def test_extract_min_link_contents_with_a_nonzero_degree(self):
+        data = self.extract_from([1, 2, 3, 4, 5])
+        self.assertEqual(data["result"]["key"], 1)
+        self.assertEqual(
+            data["result"]["links"],
+            [
+                {"child_key": 5, "parent_key": 4, "degree": 0},
+                {"child_key": 3, "parent_key": 2, "degree": 0},
+                {"child_key": 4, "parent_key": 2, "degree": 1},
+            ],
+        )
+
     def test_decrease_key_reports_cuts(self):
         state = self.client.get("/api/fibonacci-heap").get_json()["state"]["heap"]
         child = state["roots"][0]["children"][0] if state["roots"][0]["children"] else None
