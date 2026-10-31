@@ -1,6 +1,7 @@
 import ArrayView from '../views/ArrayView';
 import StringView from '../views/StringView';
 import HashTableView from '../views/HashTableView';
+import LinkedListView from '../views/LinkedListView';
 import StackView from '../views/StackView';
 import QueueView from '../views/QueueView';
 import MatrixView from '../views/MatrixView';
@@ -13,6 +14,7 @@ export const STRUCTURES = [
   { id: 'array', label: 'Array', group: 'Core', Component: ArrayView },
   { id: 'string', label: 'String', group: 'Core', Component: StringView },
   { id: 'hash-table', label: 'Hash Table', group: 'Core', Component: HashTableView },
+  { id: 'linked-list', label: 'Linked List', group: 'Core', Component: LinkedListView },
   { id: 'stack', label: 'Stack', group: 'Core', Component: StackView },
   { id: 'queue', label: 'Queue & Deque', group: 'Core', Component: QueueView },
   { id: 'matrix', label: 'Matrix', group: 'Core', Component: MatrixView },
