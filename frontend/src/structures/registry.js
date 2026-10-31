@@ -10,6 +10,9 @@ import BstView from '../views/BstView';
 import HeapView from '../views/HeapView';
 import GraphView from '../views/GraphView';
 import TrieView from '../views/TrieView';
+import UnionFindView from '../views/UnionFindView';
+import BalancedTreesView from '../views/BalancedTreesView';
+import BTreeView from '../views/BTreeView';
 import IntervalsView from '../views/IntervalsView';
 import LruCacheView from '../views/LruCacheView';
 import RangeQueryView from '../views/RangeQueryView';
@@ -18,6 +21,7 @@ import BloomFilterView from '../views/BloomFilterView';
 import KdTreeView from '../views/KdTreeView';
 import QuadtreeView from '../views/QuadtreeView';
 import SuffixArrayView from '../views/SuffixArrayView';
+import FibonacciHeapView from '../views/FibonacciHeapView';
 
 // Groups follow the Contents section of ds.md.
 export const GROUPS = ['Core', 'Second-tier', 'Specialized'];
@@ -35,6 +39,9 @@ export const STRUCTURES = [
   { id: 'heap', label: 'Heap', group: 'Core', Component: HeapView },
   { id: 'graph', label: 'Graph', group: 'Core', Component: GraphView },
   { id: 'trie', label: 'Trie', group: 'Second-tier', Component: TrieView },
+  { id: 'union-find', label: 'Union-Find', group: 'Second-tier', Component: UnionFindView },
+  { id: 'balanced-trees', label: 'AVL & Red-Black', group: 'Second-tier', Component: BalancedTreesView },
+  { id: 'b-tree', label: 'B-Tree & B+ Tree', group: 'Second-tier', Component: BTreeView },
   { id: 'intervals', label: 'Intervals', group: 'Second-tier', Component: IntervalsView },
   { id: 'lru-cache', label: 'LRU Cache', group: 'Second-tier', Component: LruCacheView },
   { id: 'range-query', label: 'Fenwick & Segment', group: 'Specialized', Component: RangeQueryView },
@@ -43,4 +50,5 @@ export const STRUCTURES = [
   { id: 'kd-tree', label: 'kd-Tree', group: 'Specialized', Component: KdTreeView },
   { id: 'quadtree', label: 'Quadtree', group: 'Specialized', Component: QuadtreeView },
   { id: 'suffix-array', label: 'Suffix Array', group: 'Specialized', Component: SuffixArrayView },
+  { id: 'fibonacci-heap', label: 'Fibonacci Heap', group: 'Specialized', Component: FibonacciHeapView },
 ];

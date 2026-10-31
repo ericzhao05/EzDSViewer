@@ -16,6 +16,9 @@ from api.routes import (
     heap_routes,
     graph_routes,
     trie_routes,
+    union_find_routes,
+    balanced_trees_routes,
+    b_tree_routes,
     intervals_routes,
     lru_cache_routes,
     range_query_routes,
@@ -24,6 +27,7 @@ from api.routes import (
     kd_tree_routes,
     quadtree_routes,
     suffix_array_routes,
+    fibonacci_heap_routes,
 )
 
 ds_api = Blueprint('ds_api', __name__)
@@ -42,6 +46,9 @@ for module in (
     heap_routes,
     graph_routes,
     trie_routes,
+    union_find_routes,
+    balanced_trees_routes,
+    b_tree_routes,
     intervals_routes,
     lru_cache_routes,
     range_query_routes,
@@ -50,5 +57,6 @@ for module in (
     kd_tree_routes,
     quadtree_routes,
     suffix_array_routes,
+    fibonacci_heap_routes,
 ):
     ds_api.register_blueprint(module.bp)
