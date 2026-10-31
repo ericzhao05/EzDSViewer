@@ -10,6 +10,10 @@ import BstView from '../views/BstView';
 import HeapView from '../views/HeapView';
 import GraphView from '../views/GraphView';
 import TrieView from '../views/TrieView';
+import IntervalsView from '../views/IntervalsView';
+import LruCacheView from '../views/LruCacheView';
+import RangeQueryView from '../views/RangeQueryView';
+import SkipListView from '../views/SkipListView';
 import BloomFilterView from '../views/BloomFilterView';
 import KdTreeView from '../views/KdTreeView';
 import QuadtreeView from '../views/QuadtreeView';
@@ -31,6 +35,10 @@ export const STRUCTURES = [
   { id: 'heap', label: 'Heap', group: 'Core', Component: HeapView },
   { id: 'graph', label: 'Graph', group: 'Core', Component: GraphView },
   { id: 'trie', label: 'Trie', group: 'Second-tier', Component: TrieView },
+  { id: 'intervals', label: 'Intervals', group: 'Second-tier', Component: IntervalsView },
+  { id: 'lru-cache', label: 'LRU Cache', group: 'Second-tier', Component: LruCacheView },
+  { id: 'range-query', label: 'Fenwick & Segment', group: 'Specialized', Component: RangeQueryView },
+  { id: 'skip-list', label: 'Skip List', group: 'Specialized', Component: SkipListView },
   { id: 'bloom-filter', label: 'Bloom Filter', group: 'Specialized', Component: BloomFilterView },
   { id: 'kd-tree', label: 'kd-Tree', group: 'Specialized', Component: KdTreeView },
   { id: 'quadtree', label: 'Quadtree', group: 'Specialized', Component: QuadtreeView },
