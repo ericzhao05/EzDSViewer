@@ -1,0 +1,82 @@
+.heap-intro,
+.heap-complexity {
+  margin: 0.25rem 0;
+  max-width: 100%;
+}
+
+.heap-section {
+  margin: 1rem 0;
+}
+
+.heap-section h3 {
+  margin: 0.5rem 0;
+}
+
+.heap-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 0.25rem 0;
+}
+
+.heap-svg {
+  display: block;
+  margin: 0 auto;
+}
+
+.heap-edge {
+  stroke: var(--input-border);
+  stroke-width: 2;
+}
+
+.heap-node {
+  fill: var(--stack-item-bg);
+  stroke: var(--input-border);
+  stroke-width: 2;
+}
+
+.heap-node-hl {
+  stroke-width: 4;
+  stroke: #e67e22;
+}
+
+.heap-node-text {
+  fill: var(--stack-item-text);
+  font-weight: bold;
+  font-size: 14px;
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+
+.heap-row {
+  display: inline-flex;
+  gap: 0.35rem;
+  white-space: nowrap;
+  min-width: 100%;
+}
+
+.heap-slot {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 0.8rem;
+}
+
+.heap-cell {
+  min-width: 2.75rem;
+  text-align: center;
+  padding: 0.4rem 0.5rem;
+  border: 1px solid var(--input-border);
+  border-radius: 4px;
+  background: var(--stack-item-bg);
+  color: var(--stack-item-text);
+  font-weight: bold;
+}
+
+.heap-cell-hl {
+  outline: 3px solid #e67e22;
+}
+
+.heap-result {
+  margin: 0.5rem 0;
+  font-weight: bold;
+}
