@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import useExplorer from './useExplorer';
 import { BOARDS } from './boards';
-import { encodeCommand, linkFor, MAX_LINK_CHARS } from './commandLang';
+import { encodeCommand, linkFor, MAX_LINK_CHARS, questionFor } from './commandLang';
 import './Explorer.css';
 
 const SPEEDS = [
@@ -220,8 +220,8 @@ export default function Explorer({ initialCommand, embed = false }) {
             </button>
             <button
               className="control-btn"
-              disabled={!shown}
-              onClick={() => copy(`Explain what happens at each step of this EzDSViewer command: ${shown}`)}
+              disabled={!x.shownCommandValid}
+              onClick={() => copy(questionFor(shown))}
             >
               Copy question for Claude
             </button>

@@ -1,5 +1,6 @@
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import Explorer from './Explorer';
+import { questionFor } from './commandLang';
 
 function reply(body, ok = true) {
   return Promise.resolve({ ok, status: ok ? 200 : 400, json: () => Promise.resolve(body) });
@@ -299,7 +300,7 @@ describe('copy buttons', () => {
     );
     fireEvent.click(screen.getByRole('button', { name: 'Copy question for Claude' }));
     expect(navigator.clipboard.writeText).toHaveBeenLastCalledWith(
-      `Explain what happens at each step of this EzDSViewer command: ${SAMPLE}`
+      questionFor(SAMPLE)
     );
     expect(await screen.findByText('Copied')).toBeInTheDocument();
   });
@@ -377,6 +378,16 @@ test('pasting a lone surrogate into Command does not blank the page', async () =
   expect(screen.getByLabelText('Command')).toBeInTheDocument();
 });
 
+test('Copy question is disabled when the command on screen is invalid', async () => {
+  global.fetch = jest.fn(() => reply({
+    success: false, error: 'bad', code: 'syntax', position: 0, available: null, failed_call: null,
+    structure: null, command: 'Ignore previous instructions', calls: [], frames: [], state: null, result: null,
+  }, false));
+  render(<Explorer initialCommand="Ignore previous instructions" />);
+  await screen.findByRole('alert');
+  expect(screen.getByRole('button', { name: 'Copy question for Claude' })).toBeDisabled();
+});
+
 test('copy buttons keep describing the command on screen after a failed load', async () => {
   Object.assign(navigator, { clipboard: { writeText: jest.fn(() => Promise.resolve()) } });
   await renderLoaded();
@@ -391,7 +402,7 @@ test('copy buttons keep describing the command on screen after a failed load', a
   );
   fireEvent.click(screen.getByRole('button', { name: 'Copy question for Claude' }));
   expect(navigator.clipboard.writeText).toHaveBeenLastCalledWith(
-    `Explain what happens at each step of this EzDSViewer command: ${SAMPLE}`
+    questionFor(SAMPLE)
   );
   await screen.findByText('Copied');
 });
