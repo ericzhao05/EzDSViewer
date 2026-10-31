@@ -9,6 +9,7 @@ from api.routes import (
     hash_table_routes,
     stack_routes,
     queue_routes,
+    matrix_routes,
 )
 
 ds_api = Blueprint('ds_api', __name__)
@@ -20,5 +21,6 @@ for module in (
     hash_table_routes,
     stack_routes,
     queue_routes,
+    matrix_routes,
 ):
     ds_api.register_blueprint(module.bp)
