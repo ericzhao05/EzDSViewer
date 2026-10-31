@@ -164,9 +164,11 @@ body {
   cursor: not-allowed;
 }
 
-.theme-menu-option-soon .theme-menu-row,
-.theme-menu-option-soon:hover .theme-menu-row {
+.theme-menu .theme-menu-panel .theme-menu-option.theme-menu-option-soon .theme-menu-row,
+.theme-menu .theme-menu-panel .theme-menu-option.theme-menu-option-soon:hover .theme-menu-row {
+  border-color: transparent;
   background: none;
+  box-shadow: none;
   color: var(--p-muted);
 }
 
