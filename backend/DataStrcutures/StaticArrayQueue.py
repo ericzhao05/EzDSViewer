@@ -1,4 +1,6 @@
-import ctypes  
+import ctypes
+
+
 def make_array(n):
     return (n * ctypes.py_object)()
 
@@ -47,5 +49,6 @@ class StaticArrayQueue:
             raise Exception("Queue is empty")
         return self.data_arr[self.front_ind]
 
-
-
+    def to_list(self):
+        return [self.data_arr[(self.front_ind + i) % self.capacity]
+                for i in range(self.n)]

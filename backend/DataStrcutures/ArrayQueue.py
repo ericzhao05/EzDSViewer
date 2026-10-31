@@ -1,3 +1,6 @@
+from DataStrcutures.StaticArrayQueue import make_array
+
+
 class ArrayQueue:
     INITIAL_CAPACITY = 8
 
@@ -53,3 +56,7 @@ class ArrayQueue:
         self.data_arr = new_data
         self.capacity = new_cap
         self.front_ind = 0
+
+    def to_list(self):
+        return [self.data_arr[(self.front_ind + i) % self.capacity]
+                for i in range(self.n)]
