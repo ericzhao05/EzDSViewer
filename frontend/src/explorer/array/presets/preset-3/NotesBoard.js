@@ -1,5 +1,6 @@
 import React, { useLayoutEffect, useRef, useState } from 'react';
 import { searchNotes, withNotes } from './algorithmNotes';
+import CODE from './algorithmCode.json';
 import { Blank, Flags } from './Fields';
 
 // Where each note hangs and how it drifts: fixed per note, so it keeps its character when a search moves it.
@@ -34,41 +35,92 @@ function scatterVars(id) {
   };
 }
 
+// A note turns over to show its code. The back is wider than the note and lifts over its neighbours,
+// so every line shows without scrolling inside a small box.
 function Note({ item, onSubmit }) {
+  const [flipped, setFlipped] = useState(false);
+  const [everFlipped, setEverFlipped] = useState(false);
+  const spot = useRef(null);
+  const back = useRef(null);
+  const toCode = useRef(null);
+  const toNotes = useRef(null);
+  const moved = useRef(false);
+
+  const turn = (next) => {
+    moved.current = true;
+    setEverFlipped(true);
+    setFlipped(next);
+  };
+
+  // Focus follows the turn. The back shifts sideways if it would pass the edge of the notes area.
+  useLayoutEffect(() => {
+    if (flipped && spot.current && back.current) {
+      const area = spot.current.closest('.p3-notes');
+      if (area) {
+        const box = area.getBoundingClientRect();
+        const self = spot.current.getBoundingClientRect();
+        const half = back.current.offsetWidth / 2;
+        const middle = self.left + self.width / 2;
+        const shift = Math.max(box.left + half - middle, 0) + Math.min(box.right - half - middle, 0);
+        spot.current.style.setProperty('--back-shift', `${shift}px`);
+      }
+    }
+    if (moved.current) {
+      moved.current = false;
+      (flipped ? toNotes : toCode).current?.focus();
+    }
+  }, [flipped]);
+
   return (
-    <li className="p3-note-spot" data-note={item.id} data-kind={item.kind} style={scatterVars(item.id)}>
-      {/* The spot holds still and catches the pointer; only the two layers inside it move. */}
+    <li ref={spot} className="p3-note-spot" data-note={item.id} data-kind={item.kind} data-flipped={flipped} style={scatterVars(item.id)}>
+      {/* The spot holds still and catches the pointer; only the layers inside it move. */}
       <div className="p3-note-drift">
-        <form className="p3-note" aria-label={item.label} onSubmit={(e) => onSubmit(e, item)}>
-          <h4>{item.label}</h4>
-          <p id={`p3-about-${item.id}`}>{item.summary}</p>
-          <dl>
-            <div>
-              <dt>What it needs</dt>
-              <dd>{item.needs}</dd>
-            </div>
-            <div>
-              <dt>How long it takes</dt>
-              <dd>
-                <strong>{item.complexity}.</strong> {item.cost}
-              </dd>
-            </div>
-          </dl>
-          <div className="p3-note-go">
-            {item.inputs.map((input) => (
-              <label key={input.id} className="p3-note-field">
-                {input.label}
-                <Blank item={item} input={input} />
-              </label>
-            ))}
-            <button type="submit" className="control-btn p3-run" disabled={!!item.blockedReason} aria-describedby={`p3-about-${item.id}`}>
-              Run {item.label.toLowerCase()}
+        <div className="p3-note-flip">
+          <form className="p3-note" aria-label={item.label} onSubmit={(e) => onSubmit(e, item)} inert={flipped}>
+            <h4>{item.label}</h4>
+            <button ref={toCode} type="button" className="control-btn p3-flip" onClick={() => turn(true)} aria-label={`Show ${item.label} code`}>
+              Code
             </button>
-          </div>
-          <div className="p3-note-flags">
-            <Flags item={item} />
-          </div>
-        </form>
+            <p id={`p3-about-${item.id}`}>{item.summary}</p>
+            <dl>
+              <div>
+                <dt>What it needs</dt>
+                <dd>{item.needs}</dd>
+              </div>
+              <div>
+                <dt>How long it takes</dt>
+                <dd>
+                  <strong>{item.complexity}.</strong> {item.cost}
+                </dd>
+              </div>
+            </dl>
+            <div className="p3-note-go">
+              {item.inputs.map((input) => (
+                <label key={input.id} className="p3-note-field">
+                  {input.label}
+                  <Blank item={item} input={input} />
+                </label>
+              ))}
+              <button type="submit" className="control-btn p3-run" disabled={!!item.blockedReason} aria-describedby={`p3-about-${item.id}`}>
+                Run {item.label.toLowerCase()}
+              </button>
+            </div>
+            <div className="p3-note-flags">
+              <Flags item={item} />
+            </div>
+          </form>
+          {everFlipped && (
+            <div ref={back} className="p3-note-back" role="group" aria-label={`${item.label} code`} inert={!flipped}>
+              <h4>{item.label} in Python</h4>
+              <button ref={toNotes} type="button" className="control-btn p3-flip" onClick={() => turn(false)} aria-label={`Show ${item.label} notes`}>
+                Notes
+              </button>
+              <pre tabIndex={0}>
+                <code>{CODE[item.id]}</code>
+              </pre>
+            </div>
+          )}
+        </div>
       </div>
     </li>
   );

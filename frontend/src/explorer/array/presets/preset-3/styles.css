@@ -395,14 +395,106 @@
   z-index: 2;
 }
 
+.p3-note-spot[data-flipped='true'] {
+  z-index: 3;
+}
+
 .p3-note-drift {
   animation: p3-drift var(--drift-time) ease-in-out var(--drift-delay) infinite;
 }
 
 /* Paused, not removed, so it stops where it is rather than jumping home */
 .p3-note-spot:hover .p3-note-drift,
-.p3-note-spot:focus-within .p3-note-drift {
+.p3-note-spot:focus-within .p3-note-drift,
+.p3-note-spot[data-flipped='true'] .p3-note-drift {
   animation-play-state: paused;
+}
+
+/* Turning a note over */
+.p3-note-drift {
+  perspective: 1600px;
+}
+
+.p3-note-flip {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.5s cubic-bezier(0.3, 0.9, 0.35, 1);
+}
+
+.p3-note-spot[data-flipped='true'] .p3-note-flip {
+  transform: rotateY(180deg);
+}
+
+.p3-note,
+.p3-note-back {
+  backface-visibility: hidden;
+}
+
+.p3-note-spot[data-flipped='true'] .p3-note {
+  transform: rotate(0deg);
+}
+
+/* Up in the corner, clear of the pin and the name. Each side's button is the way to the other side. */
+.App .main-content .p3-notes .p3-flip {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.4rem;
+  z-index: 1;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 0.6rem;
+  font-size: var(--fs-small);
+}
+
+.p3-note h4,
+.p3-note-back h4 {
+  padding-right: 3.5rem;
+}
+
+.p3-note-back {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  box-sizing: border-box;
+  width: min(32rem, calc(100vw - 2rem));
+  padding: var(--note-pad);
+  border: var(--border-width) var(--border-style) var(--panel-border);
+  border-radius: var(--radius-md);
+  background-color: var(--panel-bg);
+  color: var(--p-ink);
+  transform: translateX(calc(-50% - var(--back-shift, 0px))) rotateY(180deg);
+}
+
+.p3-note-back h4 {
+  margin: 0 0 var(--space-sm);
+}
+
+.p3-note-back pre {
+  margin: 0;
+  overflow-x: auto;
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  text-align: left;
+  tab-size: 4;
+}
+
+.p3-note-back code {
+  font: inherit;
+  color: inherit;
+  background: none;
+  padding: 0;
+}
+
+.p3-note-back pre:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .p3-note-flip {
+    transition: none;
+  }
 }
 
 @keyframes p3-drift {
@@ -446,7 +538,8 @@
   transform: rotate(0deg);
 }
 
-.p3-note h4 {
+.p3-note h4,
+.p3-note-back h4 {
   margin: 0;
   font-size: var(--fs-h3);
   line-height: 1.1;
@@ -579,6 +672,12 @@
   outline-color: var(--note-ink);
 }
 
+/* The note's back is a small piece of slate, written on in the board's chalk */
+[data-style='chalkboard'] .p3-note-back {
+  border-radius: 2px 2px 1.1rem 2px;
+  background-color: var(--p-bg);
+}
+
 /* Toy blocks: chunky blocks with a coloured cap and a solid underside, stood on a peg */
 [data-style='toy-blocks'] .p3-note {
   --note-pad: 1.1rem;
@@ -596,6 +695,22 @@
   color: var(--island-ink);
 }
 
+[data-style='toy-blocks'] .p3-note-back {
+  --note-pad: 1.1rem;
+  border: 0;
+  border-radius: var(--radius-lg);
+  background-color: var(--p-surface);
+  box-shadow: 0 8px 0 var(--tb-under-plain);
+}
+
+[data-style='toy-blocks'] .p3-note-back h4 {
+  margin: calc(var(--note-pad) * -1) calc(var(--note-pad) * -1) var(--space-sm);
+  padding: 0.9rem 4.5rem 0.7rem var(--note-pad);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  background-color: var(--note-tint);
+  color: var(--island-ink);
+}
+
 [data-style='toy-blocks'] .p3-notes-list {
   row-gap: calc(var(--space-lg) + 8px);
 }
@@ -608,6 +723,18 @@
 [data-style='phosphor'] .p3-note {
   border: 1px dashed var(--p-muted);
   background-color: var(--p-bg);
+}
+
+[data-style='phosphor'] .p3-note-back {
+  border: 1px solid var(--p-muted);
+  background-color: var(--p-bg);
+}
+
+/* The terminal's own face is already fixed-width */
+[data-style='phosphor'] .p3-note-back pre {
+  font-family: inherit;
+  font-size: 1rem;
+  line-height: 1.25;
 }
 
 [data-style='phosphor'] .p3-note-spot:hover .p3-note,

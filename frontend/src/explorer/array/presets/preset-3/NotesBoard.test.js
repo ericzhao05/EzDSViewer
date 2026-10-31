@@ -183,3 +183,49 @@ test('a second sort starts again from the array that was made, not the sorted on
   await act(async () => { fireEvent.click(screen.getByRole('button', { name: 'Run merge sort' })); });
   expect(sent()).toContain('array.append(3).append(1).merge_sort()');
 });
+
+describe('turning a note over', () => {
+  const code = (name) => screen.getByRole('button', { name: `Show ${name} code` });
+
+  test('every note has a Code button in its own form that does not submit it', async () => {
+    await open('array.append(2).append(1)');
+    const before = global.fetch.mock.calls.length;
+    ['Two sum', 'Binary search', 'Max subarray', 'Prefix sums', 'Bubble sort', 'Selection sort', 'Insertion sort', 'Merge sort', 'Quick sort', 'Heap sort'].forEach((name) => {
+      expect(within(screen.getByRole('form', { name })).getByRole('button', { name: `Show ${name} code` })).toHaveTextContent('Code');
+    });
+    fireEvent.click(code('Bubble sort'));
+    expect(global.fetch.mock.calls.length).toBe(before);
+  });
+
+  test('Code shows the algorithm, and Notes flips back, with focus following', async () => {
+    await open('array.append(2).append(1)');
+    fireEvent.click(code('Quick sort'));
+    const back = screen.getByRole('group', { name: 'Quick sort code' });
+    expect(back).toHaveTextContent('def quick_sort(a, lo=0, hi=None):');
+    expect(document.querySelector('[data-note="quick_sort"]')).toHaveAttribute('data-flipped', 'true');
+    const notes = within(back).getByRole('button', { name: 'Show Quick sort notes' });
+    expect(notes).toHaveTextContent('Notes');
+    expect(notes).toHaveFocus();
+    expect(screen.getByRole('form', { name: 'Quick sort', hidden: true })).toHaveAttribute('inert');
+    fireEvent.click(notes);
+    expect(document.querySelector('[data-note="quick_sort"]')).toHaveAttribute('data-flipped', 'false');
+    expect(code('Quick sort')).toHaveFocus();
+    expect(back).toHaveAttribute('inert');
+  });
+
+  test('one note turning leaves the others alone, and every algorithm has code', async () => {
+    const CODE = require('./algorithmCode.json');
+    await open('array.append(2).append(1)');
+    fireEvent.click(code('Heap sort'));
+    expect(document.querySelector('[data-note="merge_sort"]')).toHaveAttribute('data-flipped', 'false');
+    expect(Object.keys(CODE).sort()).toEqual([...document.querySelectorAll('[data-note]')].map((n) => n.dataset.note).sort());
+  });
+
+  test('a typed target survives turning the note over and back', async () => {
+    await open('array.append(1).append(2)');
+    fireEvent.change(screen.getByRole('textbox', { name: 'Two sum target' }), { target: { value: '3' } });
+    fireEvent.click(code('Two sum'));
+    fireEvent.click(screen.getByRole('button', { name: 'Show Two sum notes' }));
+    expect(screen.getByRole('textbox', { name: 'Two sum target' })).toHaveValue('3');
+  });
+});
