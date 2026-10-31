@@ -1,0 +1,550 @@
+/* Layout 2, Filmstrip. Every rule stays under .preset-2 and takes its look from theme tokens. */
+.preset-2 {
+  --p2-bleed: var(--space-lg);
+  --p2-rule: var(--border-width) var(--border-style) var(--p-line);
+  min-width: 0;
+  text-align: left;
+}
+
+.preset-2 h3,
+.preset-2 h4,
+.preset-2 p,
+.preset-2 ul,
+.preset-2 ol {
+  margin: 0;
+  padding: 0;
+}
+
+.preset-2 ul,
+.preset-2 ol {
+  list-style: none;
+}
+
+/* Some themes centre page text and narrow paragraphs; these rows are left-aligned in all of them */
+.App .main-content .explorer .preset-2 :is(p, h2, h3, h4, label) {
+  text-align: left;
+}
+
+.App .main-content .explorer .preset-2 p {
+  max-width: none;
+  margin-inline: 0;
+}
+
+/* Title and intro: kept short so the array is on screen straight away */
+.preset-2 .p2-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-sm) var(--space-xl);
+  margin-bottom: var(--space-lg);
+}
+
+.preset-2 .p2-header h2 {
+  margin: 0;
+  text-align: left;
+}
+
+.App .main-content .explorer .preset-2 .p2-intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-sm) var(--space-xl);
+  max-width: none;
+}
+
+.App .main-content .explorer .preset-2 .p2-intro p {
+  max-width: 72ch;
+}
+
+@media (min-width: 1100px) {
+  .App .main-content .explorer .preset-2 .p2-intro {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+
+/* The picture */
+.preset-2 .p2-stage {
+  --p2-cell: 52px;
+  --p2-cell-type: var(--fs-base);
+  min-width: 0;
+}
+
+.preset-2 .p2-stage-medium {
+  --p2-cell: max(52px, min(64px, 15vw));
+  --p2-cell-type: var(--fs-h3);
+}
+
+.preset-2 .p2-stage-large {
+  --p2-cell: max(56px, min(96px, 18vw));
+  --p2-cell-type: var(--fs-h1);
+}
+
+.preset-2 .array-stats {
+  justify-content: center;
+  gap: var(--space-xs) var(--space-lg);
+  margin: 0;
+}
+
+/* The picture sits straight on the page rather than in a box */
+.main-content .preset-2 .p2-stage .array-scroll {
+  padding: var(--space-lg) var(--space-sm) var(--space-sm);
+  border: 0;
+  background: none;
+  scroll-behavior: auto;
+}
+
+.preset-2 .array-cells {
+  margin-inline: auto;
+}
+
+/* Tall enough for a pointer label, so the page below does not jump during a run */
+.preset-2 .array-cell-wrap {
+  min-height: calc(var(--p2-cell) + 3.25rem);
+}
+
+.App .main-content .explorer .preset-2 .array-cell {
+  min-width: var(--p2-cell);
+  height: var(--p2-cell);
+  font-size: var(--p2-cell-type);
+  transition: transform 0.18s ease-out;
+}
+
+/* The cell in play rises off the row, which reads even when only its ring differs */
+.App .main-content .explorer .preset-2 .array-cell.array-cell-highlight {
+  transform: translateY(-8px);
+}
+
+.preset-2 .array-prefix {
+  margin-top: var(--space-xs);
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.preset-2 .p2-caption {
+  box-sizing: border-box;
+  min-height: 2.6em;
+  max-width: 64ch;
+  margin: 0 auto var(--space-sm);
+  padding-inline: var(--space-sm);
+  color: var(--p-ink);
+  font-family: var(--f-body);
+  font-size: var(--fs-h3);
+  line-height: 1.3;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+/* The history band runs edge to edge of the content area */
+.preset-2 .p2-history {
+  margin-inline: calc(-1 * var(--p2-bleed));
+  padding-block: var(--space-md);
+  border-block: var(--p2-rule);
+  background-color: var(--p-surface);
+}
+
+.preset-2 .p2-history-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm) var(--space-lg);
+  padding-inline: var(--p2-bleed);
+}
+
+.preset-2 .p2-history-head p {
+  color: var(--p-muted);
+  font-size: var(--fs-small);
+}
+
+.preset-2 .p2-history-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+/* The strip scrolls by itself. The padding leaves room for focus rings and the active chip's marker. */
+.preset-2 .p2-strip {
+  position: relative;
+  display: flex;
+  gap: var(--space-sm);
+  min-width: 0;
+  overflow-x: auto;
+  padding: var(--space-md) var(--p2-bleed) var(--space-md);
+  scrollbar-width: thin;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .preset-2 .p2-strip-item:last-child .p2-chip {
+    animation: p2-frame-in 0.28s ease-out;
+  }
+}
+
+@keyframes p2-frame-in {
+  from {
+    opacity: 0;
+    transform: translateX(1.5rem);
+  }
+}
+
+.preset-2 .p2-strip-item {
+  flex: 0 0 auto;
+}
+
+/* A call that made more steps is a longer piece of film */
+.main-content .preset-2 .p2-chip {
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  width: max-content;
+  min-width: min(calc(9rem + var(--p2-frames, 1) * 0.75rem), 20rem);
+  max-width: 20rem;
+  height: 100%;
+  min-height: 44px;
+  padding: var(--space-sm);
+  border: var(--p2-rule);
+  border-radius: var(--radius-sm);
+  background-color: var(--p-bg);
+  color: var(--p-ink);
+  font-weight: 400;
+  text-align: left;
+}
+
+.main-content .preset-2 .p2-chip-algorithm {
+  border: 4px double var(--p-ink);
+}
+
+.main-content .preset-2 .p2-chip:hover:not(:disabled) {
+  background-color: var(--p-surface);
+  color: var(--p-ink);
+  border-color: var(--p-ink);
+}
+
+.main-content .preset-2 .p2-chip:disabled {
+  opacity: 1;
+  color: var(--p-muted);
+}
+
+.main-content .preset-2 .p2-chip[aria-current='step'],
+.main-content .preset-2 .p2-chip[aria-current='step']:hover:not(:disabled) {
+  border-color: var(--p-accent-ink);
+  background-color: var(--p-accent);
+  box-shadow: none;
+  color: var(--p-accent-ink);
+  outline: 2px solid var(--p-accent);
+  outline-offset: 0;
+}
+
+/* The active chip points up at the picture */
+.main-content .preset-2 .p2-chip[aria-current='step']::before {
+  content: '';
+  position: absolute;
+  top: calc(-0.5rem - 3px);
+  left: 1rem;
+  border-inline: 0.5rem solid transparent;
+  border-bottom: 0.5rem solid var(--p-accent);
+}
+
+.preset-2 .p2-chip-call {
+  overflow: hidden;
+  font-family: var(--f-data);
+  font-size: var(--fs-base);
+  font-weight: var(--fw-control);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.preset-2 .p2-chip-kind {
+  margin-top: auto;
+  font-size: var(--fs-small);
+}
+
+/* Zero width plus full min-width: these fill the chip without setting its width */
+.preset-2 .p2-thumb,
+.preset-2 .p2-holes {
+  display: flex;
+  gap: 2px;
+  width: 0;
+  min-width: 100%;
+  overflow: hidden;
+}
+
+.preset-2 .p2-thumb span {
+  flex: 0 1 12px;
+  box-sizing: border-box;
+  min-width: 1px;
+  height: 12px;
+  border: 1px solid currentColor;
+  border-radius: var(--radius-sm);
+}
+
+.preset-2 .p2-thumb-used {
+  background-color: currentColor;
+}
+
+/* Thin so the perforations don't read as a second, smaller array. Hollow means not played yet. */
+.preset-2 .p2-holes {
+  gap: 3px;
+}
+
+.preset-2 .p2-holes span {
+  flex: 0 1 10px;
+  box-sizing: border-box;
+  min-width: 1px;
+  height: 6px;
+  border: 1px solid currentColor;
+}
+
+.preset-2 .p2-hole-seen {
+  background-color: currentColor;
+}
+
+/* A long array or run: hairlines, so every slot still fits inside the chip */
+.preset-2 .p2-thumb.p2-dense,
+.preset-2 .p2-holes.p2-dense {
+  gap: 1px;
+}
+
+.preset-2 .p2-dense span {
+  border-width: 1px 0 0;
+  border-radius: 0;
+}
+
+.preset-2 .p2-strip-empty {
+  margin: var(--space-md) var(--p2-bleed);
+  padding: var(--space-md);
+  border: var(--border-width) dashed var(--p-line);
+  border-radius: var(--radius-md);
+}
+
+/* Transport, directly under the strip it plays */
+.preset-2 .explorer-steps {
+  justify-content: flex-start;
+  margin: 0;
+  padding-inline: var(--p2-bleed);
+}
+
+.preset-2 .explorer-steps .explorer-buttons {
+  justify-content: flex-start;
+}
+
+.preset-2 .explorer-slider {
+  flex: 1 1 12rem;
+}
+
+/* The dock */
+.preset-2 .p2-dock {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-lg) var(--space-xl);
+  margin-top: var(--space-lg);
+}
+
+@media (min-width: 1000px) {
+  .preset-2 .p2-dock {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+  }
+}
+
+.preset-2 .p2-group {
+  container-type: inline-size;
+  min-width: 0;
+}
+
+/* Algorithms are a separate instrument: framed, heavier, and run rather than performed */
+.preset-2 .p2-group-algorithms {
+  box-sizing: border-box;
+  padding: var(--space-md);
+  border: 4px double var(--p-ink);
+  border-radius: var(--radius-lg);
+  background-color: var(--p-surface);
+}
+
+.preset-2 .p2-group-edit {
+  padding-block: var(--space-md);
+}
+
+.preset-2 .p2-group h3 {
+  font-size: var(--fs-h2);
+  line-height: 1.1;
+}
+
+.preset-2 .p2-group-lead {
+  margin-bottom: var(--space-sm);
+}
+
+.preset-2 .p2-group li + li .p2-row {
+  border-top: var(--p2-rule);
+}
+
+.preset-2 .p2-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-xs) var(--space-md);
+  align-items: end;
+  max-width: none;
+  margin: 0;
+  padding-block: var(--space-sm);
+}
+
+.preset-2 .p2-row-text h4 {
+  font-size: var(--fs-h3);
+  line-height: 1.2;
+}
+
+.preset-2 .p2-complexity {
+  color: var(--p-muted);
+  font-family: var(--f-data);
+  font-size: var(--fs-small);
+}
+
+.preset-2 .p2-row-act {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: flex-end;
+  gap: var(--space-sm);
+  min-width: 0;
+}
+
+.preset-2 .p2-field {
+  flex: 0 1 5.5rem;
+  min-width: 4.25rem;
+}
+
+.main-content .explorer .preset-2 .p2-row .control-btn {
+  flex: none;
+  min-width: 6.25rem;
+}
+
+/* Run is filled in every theme; an edit's verb is the theme's plain outlined button */
+.App .main-content .explorer .preset-2 .p2-row .control-btn.p2-run:not(:disabled) {
+  background-color: var(--p-accent);
+  color: var(--p-accent-ink);
+}
+
+.App .main-content .explorer .preset-2 .p2-row .control-btn.p2-run:hover:not(:disabled) {
+  background-color: var(--p-ink);
+  color: var(--p-bg);
+}
+
+/* Toy blocks makes the first button of a row its main action, which would give verbs Run's weight */
+[data-style='toy-blocks'] .App .main-content .explorer .preset-2 .p2-row .control-btn.p2-verb:not(:disabled) {
+  background: var(--p-surface);
+  box-shadow: 0 4px 0 var(--tb-under-plain);
+  color: var(--p-ink);
+}
+
+[data-style='toy-blocks'] .App .main-content .explorer .preset-2 .p2-row .control-btn.p2-verb:hover:not(:disabled) {
+  background: var(--p-bg);
+}
+
+.preset-2 .p2-blocked {
+  grid-column: 1 / -1;
+  padding-left: var(--space-sm);
+  border-left: 3px dashed var(--p-ink);
+  color: var(--p-ink);
+  font-weight: var(--fw-control);
+}
+
+.preset-2 .p2-message {
+  grid-column: 1 / -1;
+  color: var(--p-ink);
+  font-weight: var(--fw-control);
+}
+
+.preset-2 .p2-message:empty,
+.preset-2 .p2-copy-note:empty {
+  display: block;
+  min-height: 0;
+  margin: calc(-1 * var(--space-xs)) 0 0;
+}
+
+@container (max-width: 30rem) {
+  .preset-2 .p2-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .preset-2 .p2-row-act {
+    justify-content: flex-start;
+  }
+
+  .preset-2 .p2-field {
+    flex: 1 1 5rem;
+  }
+}
+
+/* Share */
+.preset-2 .p2-share {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin-top: var(--space-lg);
+  padding-top: var(--space-md);
+  border-top: var(--p2-rule);
+}
+
+.preset-2 .p2-share-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.preset-2 .p2-share .explorer-command input {
+  width: 100%;
+}
+
+/* Focus shows on every interactive piece, including the chips */
+.preset-2 button:focus-visible,
+.preset-2 input:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.main-content .preset-2 .p2-chip[aria-current='step']:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 3px;
+}
+
+/* Phosphor reads as a terminal, so text stays left-aligned there */
+[data-style='phosphor'] .preset-2 .array-stats {
+  justify-content: flex-start;
+}
+
+[data-style='phosphor'] .preset-2 .p2-caption,
+[data-style='phosphor'] .preset-2 .array-prefix {
+  margin-inline: 0;
+  text-align: left;
+}
+
+[data-style='phosphor'] .preset-2 .array-cells {
+  margin-inline: 0;
+}
+
+@media (max-width: 700px) {
+  .preset-2 {
+    --p2-bleed: var(--space-sm);
+  }
+
+  .preset-2 .explorer-steps .explorer-buttons {
+    flex: 1 1 100%;
+  }
+
+  .preset-2 .explorer-steps .explorer-buttons .control-btn {
+    flex: 1 1 auto;
+  }
+
+  .preset-2 .explorer-slider {
+    flex: 1 1 8rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .App .main-content .explorer .preset-2 .array-cell {
+    transition: none;
+  }
+
+  .App .main-content .explorer .preset-2 .array-cell.array-cell-highlight {
+    transform: none;
+  }
+}

@@ -14,16 +14,17 @@ function themeFromLink() {
 // An embed sits on someone else's site, so it neither reads nor writes the saved theme.
 const EMBED_THEME = { getInitial: themeFromLink, persist: false };
 
-export default function PlayerPage({ embed = false }) {
+// The bare page behind /embed: the top bar and one animation, with no sidebar.
+export default function PlayerPage() {
   const command = new URLSearchParams(window.location.search).get('c') || 'array';
-  const { theme, pickTheme } = useTheme(embed ? EMBED_THEME : undefined);
+  const { theme, pickTheme } = useTheme(EMBED_THEME);
 
   return (
     <div className="App">
       <TopBar theme={theme} onPick={pickTheme} />
       <main className="main-content">
         <div className="ds-container">
-          <Explorer initialCommand={command} embed={embed} />
+          <Explorer initialCommand={command} embed />
         </div>
       </main>
     </div>

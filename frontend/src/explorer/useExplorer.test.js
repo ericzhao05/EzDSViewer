@@ -240,3 +240,67 @@ test('values with %, +, space, quotes, backslash and ) survive buildCall, encodi
   expect(global.fetch.mock.calls[0][0]).toContain(`cmd=${encodeCommand(text)}`);
   expect(requestedCommand()).toBe(text);
 });
+
+test('applyCall resolves to how many frames the new call made, or null on failure', async () => {
+  const { result } = await loaded(['append(1)'], [frame(0, 1)]);
+  global.fetch.mockReturnValueOnce(reply(success(['append(1)', 'max_subarray()'], [frame(0, 1), frame(1, 2), frame(1, 3), frame(1, 4)])));
+  let made;
+  await act(async () => { made = await result.current.applyCall('max_subarray()'); });
+  expect(made).toBe(3);
+  global.fetch.mockReturnValueOnce(reply(failure('array.append(1).max_subarray().x(', ['append(1)', 'max_subarray()'], []), false));
+  await act(async () => { made = await result.current.applyCall('x('); });
+  expect(made).toBeNull();
+});
+
+test('startAtEnd shows the last frame of the first load', async () => {
+  global.fetch.mockReturnValue(reply(success(['append(1)', 'append(2)'], [frame(0, 1), frame(1, 2)])));
+  const { result } = renderHook(() => useExplorer('array.append(1).append(2)', undefined, { startAtEnd: true }));
+  await waitFor(() => expect(result.current.structure).toBe('array'));
+  expect(result.current.step).toBe(1);
+});
+
+test('startOver loads just the structure name, clears the calls and reports the edit', async () => {
+  const onEdit = jest.fn();
+  global.fetch.mockReturnValueOnce(reply(success(['append(1)', 'append(2)'], [frame(0, 1), frame(1, 2)])));
+  const { result } = renderHook(() => useExplorer(undefined, onEdit));
+  await act(async () => { await result.current.load('array.append(1).append(2)'); });
+  global.fetch.mockReturnValueOnce(reply(success([], [], { n: 'empty' })));
+  await act(async () => { await result.current.startOver(); });
+  expect(requestedCommand()).toBe('array');
+  expect(result.current.calls).toEqual([]);
+  expect(result.current.command).toBe('array');
+  expect(onEdit).toHaveBeenLastCalledWith('array');
+});
+
+test('startOver before anything has loaded falls back to array', async () => {
+  global.fetch.mockReturnValueOnce(reply(success([], [], { n: 'e' })));
+  const { result } = renderHook(() => useExplorer());
+  await act(async () => { await result.current.startOver(); });
+  expect(requestedCommand()).toBe('array');
+});
+
+test('startOver after a bad first load falls back to the command\'s structure, else array', async () => {
+  global.fetch.mockReturnValueOnce(Promise.reject(new Error('offline')));
+  const { result } = renderHook(() => useExplorer());
+  await act(async () => { await result.current.load('array.append('); });
+  global.fetch.mockReturnValueOnce(reply(success([], [], { n: 'e' })));
+  await act(async () => { await result.current.startOver(); });
+  expect(requestedCommand()).toBe('array');
+  expect(result.current.structure).toBe('array');
+  expect(result.current.error).toBeNull();
+
+  const second = renderHook(() => useExplorer());
+  global.fetch.mockReturnValueOnce(Promise.reject(new Error('offline')));
+  await act(async () => { await second.result.current.load('nonsense.x()'); });
+  global.fetch.mockReturnValueOnce(reply(success([], [], { n: 'e' })));
+  await act(async () => { await second.result.current.startOver(); });
+  expect(requestedCommand()).toBe('array');
+});
+
+test('applyCall keeps the step when told the person has moved on', async () => {
+  const { result } = await loaded(['append(1)'], [frame(0, 1)]);
+  global.fetch.mockReturnValueOnce(reply(success(['append(1)', 'x()'], [frame(0, 1), frame(1, 2), frame(1, 3)])));
+  await act(async () => { await result.current.applyCall('x()', () => true); });
+  expect(result.current.step).toBe(0);
+  expect(result.current.calls).toEqual(['append(1)', 'x()']);
+});

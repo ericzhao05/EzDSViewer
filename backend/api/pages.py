@@ -1,4 +1,4 @@
-"""Serves the built frontend for the /v and /embed player pages."""
+"""Serves the built frontend for the app at / and /v and the bare player at /embed."""
 
 import os
 
@@ -51,6 +51,7 @@ def _page(frame_ancestors):
     return res
 
 
+@bp.route("/")
 @bp.route("/v")
 def view():
     return _page(frame_ancestors=True)

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { runCommand } from '../api/client';
+import { BOARDS } from './boards';
 
 const EMPTY = { structure: null, calls: [], frames: [], state: null, result: null };
 
@@ -18,7 +19,7 @@ function join(structure, calls) {
 
 // Holds the explorer's command, animation frames and current step.
 // Only the most recent request may update state, so late replies are ignored.
-export default function useExplorer(initialCommand, onEdit) {
+export default function useExplorer(initialCommand, onEdit, { startAtEnd = false } = {}) {
   const [command, setCommand] = useState(initialCommand || '');
   const [response, setResponse] = useState(EMPTY);
   const [step, setStep] = useState(0);
@@ -52,14 +53,14 @@ export default function useExplorer(initialCommand, onEdit) {
   const lastFrame = (data) => Math.max(0, data.frames.length - 1);
 
   const load = useCallback(
-    async (text) => {
+    async (text, { atEnd = false } = {}) => {
       setCommand(text);
       const data = await request(text);
       if (!data) return;
       setResponse(data);
       if (data.success) {
         setCommand(data.command);
-        setStep(0);
+        setStep(atEnd ? lastFrame(data) : 0);
         setError(null);
       } else {
         setStep(lastFrame(data));
@@ -69,21 +70,26 @@ export default function useExplorer(initialCommand, onEdit) {
     [request]
   );
 
+  // Resolves to how many frames the new call made, or null if it was superseded or failed.
+  // If keepStep() is true once the reply arrives, the person has navigated meanwhile and the step stays put.
   const applyCall = useCallback(
-    async (callText) => {
-      if (!response.structure) return;
-      const data = await request(join(response.structure, [...response.calls, callText]));
-      if (!data) return;
+    // base is the calls to build on, when that isn't all of them.
+    async (callText, keepStep, base = response.calls) => {
+      if (!response.structure) return null;
+      const data = await request(join(response.structure, [...base, callText]));
+      if (!data) return null;
       if (!data.success) {
         setError(toError(data));
-        return;
+        return null;
       }
-      const first = data.frames.findIndex((f) => f.call === data.calls.length - 1);
+      const newest = data.calls.length - 1;
+      const first = data.frames.findIndex((f) => f.call === newest);
       setResponse(data);
       setCommand(data.command);
-      setStep(first >= 0 ? first : lastFrame(data));
+      if (!(keepStep && keepStep())) setStep(first >= 0 ? first : lastFrame(data));
       setError(null);
       if (editHook.current) editHook.current(data.command);
+      return data.frames.filter((f) => f.call === newest).length;
     },
     [request, response]
   );
@@ -103,6 +109,32 @@ export default function useExplorer(initialCommand, onEdit) {
     if (editHook.current) editHook.current(data.command);
   }, [request, response]);
 
+  // Swaps everything for a new command, keeping what's on screen if it fails, and shows its last step.
+  const replaceWith = useCallback(
+    async (text) => {
+      const data = await request(text);
+      if (!data) return;
+      if (!data.success) {
+        setError(toError(data));
+        return;
+      }
+      setResponse(data);
+      setCommand(data.command);
+      setStep(lastFrame(data));
+      setError(null);
+      if (editHook.current) editHook.current(data.command);
+    },
+    [request]
+  );
+
+  // Loads just the structure name, which clears the history.
+  // After a bad first load there is no structure, so use the command's own if it has a board, else array.
+  const startOver = useCallback(async () => {
+    const named = command.split('.')[0].trim();
+    const structure = response.structure || (BOARDS[named] ? named : 'array');
+    await replaceWith(structure);
+  }, [replaceWith, response, command]);
+
   const goTo = useCallback(
     (i) => setStep(Math.min(Math.max(i, 0), Math.max(0, response.frames.length - 1))),
     [response.frames.length]
@@ -111,7 +143,7 @@ export default function useExplorer(initialCommand, onEdit) {
   const prev = useCallback(() => goTo(step - 1), [goTo, step]);
 
   useEffect(() => {
-    if (initialCommand) load(initialCommand);
+    if (initialCommand) load(initialCommand, { atEnd: startAtEnd });
     // Only the first command is loaded automatically.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -128,12 +160,15 @@ export default function useExplorer(initialCommand, onEdit) {
     step,
     frame,
     state: frame ? frame.state : response.state,
+    latestState: response.state, // the newest array, which edits build on, whatever step is on screen
     result: response.result,
     error,
     loading,
     load,
     applyCall,
     undo,
+    startOver,
+    replaceWith,
     goTo,
     next,
     prev,

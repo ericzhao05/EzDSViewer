@@ -149,7 +149,8 @@ class FailureTest(unittest.TestCase):
         self.assertEqual(
             r["error"],
             'array has no method "nope"; available: append, insert, pop, get, reset,'
-            " two_sum_sorted, binary_search, max_subarray, prefix_sums",
+            " two_sum_sorted, binary_search, max_subarray, prefix_sums, bubble_sort,"
+            " selection_sort, insertion_sort, merge_sort, quick_sort, heap_sort",
         )
         self.assertEqual(r["position"], 16)
         self.assertEqual(r["available"], list(CATALOG["methods"]))

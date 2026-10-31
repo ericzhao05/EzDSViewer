@@ -28,12 +28,19 @@ test('the catalog keeps 10 styles with 5 palettes each', () => {
   PRESETS.forEach((p) => expect(p.palettes).toHaveLength(5));
 });
 
-test('only the three chosen combinations are offered, Chalkboard Blackout first', () => {
+test('only the three chosen combinations are listed, Chalkboard Blackout first and the only one available', () => {
   expect(THEME_OPTIONS).toEqual([
     { style: 'chalkboard', palette: 'blackout' },
-    { style: 'toy-blocks', palette: 'bubblegum' },
-    { style: 'phosphor', palette: 'green' },
+    { style: 'toy-blocks', palette: 'bubblegum', comingSoon: true },
+    { style: 'phosphor', palette: 'green', comingSoon: true },
   ]);
+  expect(themeChoices().map((c) => c.comingSoon)).toEqual([false, true, true]);
+});
+
+test('a coming-soon theme can\'t be used, even if it was saved before', () => {
+  saveTheme('phosphor', 'green');
+  expect(loadTheme().style.id).toBe('chalkboard');
+  expect(resolveTheme('toy-blocks', 'bubblegum').style.id).toBe('chalkboard');
 });
 
 test('every offered theme keeps text readable (WCAG AA)', () => {
@@ -50,8 +57,11 @@ test('a first visit gets the default', () => {
 });
 
 test('a saved pick is restored', () => {
+  const soon = THEME_OPTIONS[2];
+  delete soon.comingSoon;
   saveTheme('phosphor', 'green');
   expect(loadTheme().style.id).toBe('phosphor');
+  soon.comingSoon = true;
 });
 
 test('a hidden or unknown saved pick falls back to the default', () => {
@@ -62,7 +72,7 @@ test('a hidden or unknown saved pick falls back to the default', () => {
 
 test('applyTheme sets the attributes and palette variables on the root', () => {
   const root = document.createElement('div');
-  const { style, colors } = resolveTheme('toy-blocks', 'bubblegum');
+  const { style, colors } = themeChoices()[1];
   applyTheme(style, colors, root);
   expect(root.dataset.style).toBe('toy-blocks');
   expect(root.dataset.palette).toBe('bubblegum');

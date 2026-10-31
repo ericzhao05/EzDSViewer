@@ -1,6 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import ArrayBoard from './ArrayBoard';
 import ArrayControls from './ArrayControls';
+import useArrayControls from './useArrayControls';
 
 const state = { data: [1, 2, null, null], size: 2, capacity: 4, resizes: 1 };
 const frame = (extra = {}) => ({ call: 0, state, highlight: [], pointers: {}, aux: null, note: '', ...extra });
@@ -33,9 +34,17 @@ test('renders without a frame', () => {
 });
 
 describe('ArrayControls', () => {
-  function setup(props = {}) {
+  // The default look, fed by the real hook over a small fake session.
+  function Harness({ session }) {
+    return <ArrayControls controls={useArrayControls(session)} />;
+  }
+  function setup({ onStartOver = jest.fn(), disabled = false } = {}) {
     const onCall = jest.fn();
-    render(<ArrayControls onCall={onCall} onUndo={jest.fn()} canUndo disabled={false} {...props} />);
+    const session = {
+      state, calls: [], frames: [], loading: disabled, canUndo: true,
+      runCall: onCall, undo: jest.fn(), startOver: onStartOver, goTo: jest.fn(),
+    };
+    render(<Harness session={session} />);
     return onCall;
   }
   const type = (label, value) => fireEvent.change(screen.getByLabelText(label), { target: { value } });
@@ -73,8 +82,15 @@ describe('ArrayControls', () => {
     expect(onCall).toHaveBeenLastCalledWith('max_subarray()');
     press('Prefix sums');
     expect(onCall).toHaveBeenLastCalledWith('prefix_sums()');
-    press('Reset');
-    expect(onCall).toHaveBeenLastCalledWith('reset()');
+  });
+
+  test('Start over calls onStartOver and there is no Reset button', () => {
+    const onStartOver = jest.fn();
+    const onCall = setup({ onStartOver });
+    expect(screen.queryByRole('button', { name: 'Reset' })).toBeNull();
+    press('Start over');
+    expect(onStartOver).toHaveBeenCalledTimes(1);
+    expect(onCall).not.toHaveBeenCalled();
   });
 
   test('Pop with no index pops the end', () => {
@@ -99,5 +115,26 @@ describe('ArrayControls', () => {
     expect(screen.getByLabelText('Value')).toBeDisabled();
     expect(screen.getByRole('button', { name: 'Append' })).toBeDisabled();
     expect(screen.getByRole('button', { name: 'Undo' })).toBeDisabled();
+  });
+});
+
+describe('move arrows', () => {
+  const state = { data: [3, 1, 2], size: 3, capacity: 4, resizes: 1 };
+  const frameWith = (moves) => ({ highlight: [], pointers: {}, aux: moves ? { moves } : null, note: 'x' });
+  const headStrokes = (el) => el.querySelector('.move-arrow-head').getAttribute('d').match(/M/g).length;
+
+  test('a swap has a head at both ends, an insert at one', () => {
+    const { container, rerender } = render(<ArrayBoard frame={frameWith([{ kind: 'swap', from: 0, to: 1 }])} state={state} />);
+    expect(headStrokes(container.querySelector('.move-arrow-swap'))).toBe(4);
+    rerender(<ArrayBoard frame={frameWith([{ kind: 'insert', from: 2, to: 0 }])} state={state} />);
+    expect(container.querySelector('.move-arrow-swap')).toBeNull();
+    expect(headStrokes(container.querySelector('.move-arrow-insert'))).toBe(2);
+  });
+
+  test('a step with no move draws nothing, and bad indexes are ignored', () => {
+    const { container, rerender } = render(<ArrayBoard frame={frameWith(null)} state={state} />);
+    expect(container.querySelector('.move-arrows')).toBeNull();
+    rerender(<ArrayBoard frame={frameWith([{ kind: 'swap', from: 0, to: 99 }])} state={state} />);
+    expect(container.querySelector('.move-arrow')).toBeNull();
   });
 });
