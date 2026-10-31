@@ -6,6 +6,7 @@ import StackView from '../views/StackView';
 import QueueView from '../views/QueueView';
 import MatrixView from '../views/MatrixView';
 import BinaryTreeView from '../views/BinaryTreeView';
+import BstView from '../views/BstView';
 
 // Groups follow the Contents section of ds.md.
 export const GROUPS = ['Core', 'Second-tier', 'Specialized'];
@@ -19,4 +20,5 @@ export const STRUCTURES = [
   { id: 'queue', label: 'Queue & Deque', group: 'Core', Component: QueueView },
   { id: 'matrix', label: 'Matrix', group: 'Core', Component: MatrixView },
   { id: 'binary-tree', label: 'Binary Tree', group: 'Core', Component: BinaryTreeView },
+  { id: 'bst', label: 'Binary Search Tree', group: 'Core', Component: BstView },
 ];
