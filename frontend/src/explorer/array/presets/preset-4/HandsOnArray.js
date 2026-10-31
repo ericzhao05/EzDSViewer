@@ -104,14 +104,15 @@ export default function HandsOnArray({ session, controls }) {
     if (stale) setOpened(null);
   }, [stale]);
 
-  // Focus goes to the new cell when it opens or the row changes under it, but never out of the step controls.
+  // Focus goes into the new cell only on the render right after the person opened it, never on later renders.
+  const focusNew = useRef(false);
   useEffect(() => {
-    if (!mode || !newInput.current) return;
-    const at = document.activeElement;
-    if (at && at !== document.body && root.current && !root.current.contains(at)) return;
+    if (!focusNew.current) return;
+    focusNew.current = false;
+    if (!newInput.current) return;
     newInput.current.focus();
     reveal(newInput.current);
-  }, [mode && mode.kind, insertingAt, size]); // eslint-disable-line react-hooks/exhaustive-deps
+  });
 
   useEffect(() => {
     if (!focusNext.current || !scroller.current) return;
@@ -138,10 +139,12 @@ export default function HandsOnArray({ session, controls }) {
   const openInsert = (at) => {
     if (insert.blockedReason) return;
     insertIndex.setValue(String(at));
+    focusNew.current = true;
     setOpened({ kind: 'insert', at });
   };
   const openAppend = () => {
     if (append.blockedReason) return;
+    focusNew.current = true;
     setOpened({ kind: 'append' });
   };
   const closeNew = (focusSlot) => {

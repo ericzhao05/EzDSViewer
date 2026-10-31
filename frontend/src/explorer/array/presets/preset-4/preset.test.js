@@ -295,6 +295,18 @@ describe('an open insert', () => {
   });
 });
 
+describe('focus after a new cell opens', () => {
+  it('goes into the input when it opens, and not on later renders even from the page body', () => {
+    const { rerender } = render(<Harness session={makeSession([1, 3, 5, 7])} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Insert a value at index 1' }));
+    expect(document.activeElement).toBe(screen.getByLabelText('Value to insert at index 1'));
+    act(() => document.activeElement.blur());
+    expect(document.activeElement).toBe(document.body);
+    rerender(<Harness session={makeSession([1, 3, 5])} />);
+    expect(document.activeElement).toBe(document.body);
+  });
+});
+
 describe('clearing the typed index', () => {
   it.each(['Undo', 'Start over'])('%s clears it', (name) => {
     setup();

@@ -1,7 +1,7 @@
 /* Layout 4, Hands on. Colours, fonts and radii come from the theme tokens. */
 .preset-4 {
   --p4-slot: 66px;
-  --p4-gap: 32px;
+  --p4-gap: 44px; /* the gap is its own 44px tap target; the + mark inside stays small */
   min-width: 0;
   text-align: left;
 }
@@ -116,7 +116,6 @@
 
 /* A gap is always drawn: it has to read as a control before anyone has pressed one. */
 .preset-4 .p4-gap {
-  position: relative;
   flex: none;
   display: flex;
   align-items: center;
@@ -131,19 +130,6 @@
   box-shadow: none;
   color: var(--p-muted);
   cursor: pointer;
-}
-
-.preset-4 .p4-gap::before {
-  /* The gap is drawn 32px wide but its hit area is at least 44px, at every width. */
-  content: '';
-  position: absolute;
-  inset: 0 -6px;
-}
-
-/* Neighbouring cells keep their own edges where the hit areas overlap. */
-.preset-4 .p4-cell-btn {
-  position: relative;
-  z-index: 1;
 }
 
 .preset-4 .p4-gap-mark {
