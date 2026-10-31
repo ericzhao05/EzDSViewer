@@ -10,6 +10,10 @@ import BstView from '../views/BstView';
 import HeapView from '../views/HeapView';
 import GraphView from '../views/GraphView';
 import TrieView from '../views/TrieView';
+import BloomFilterView from '../views/BloomFilterView';
+import KdTreeView from '../views/KdTreeView';
+import QuadtreeView from '../views/QuadtreeView';
+import SuffixArrayView from '../views/SuffixArrayView';
 
 // Groups follow the Contents section of ds.md.
 export const GROUPS = ['Core', 'Second-tier', 'Specialized'];
@@ -27,4 +31,8 @@ export const STRUCTURES = [
   { id: 'heap', label: 'Heap', group: 'Core', Component: HeapView },
   { id: 'graph', label: 'Graph', group: 'Core', Component: GraphView },
   { id: 'trie', label: 'Trie', group: 'Second-tier', Component: TrieView },
+  { id: 'bloom-filter', label: 'Bloom Filter', group: 'Specialized', Component: BloomFilterView },
+  { id: 'kd-tree', label: 'kd-Tree', group: 'Specialized', Component: KdTreeView },
+  { id: 'quadtree', label: 'Quadtree', group: 'Specialized', Component: QuadtreeView },
+  { id: 'suffix-array', label: 'Suffix Array', group: 'Specialized', Component: SuffixArrayView },
 ];

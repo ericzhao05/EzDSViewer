@@ -16,6 +16,10 @@ from api.routes import (
     heap_routes,
     graph_routes,
     trie_routes,
+    bloom_filter_routes,
+    kd_tree_routes,
+    quadtree_routes,
+    suffix_array_routes,
 )
 
 ds_api = Blueprint('ds_api', __name__)
@@ -34,5 +38,9 @@ for module in (
     heap_routes,
     graph_routes,
     trie_routes,
+    bloom_filter_routes,
+    kd_tree_routes,
+    quadtree_routes,
+    suffix_array_routes,
 ):
     ds_api.register_blueprint(module.bp)
