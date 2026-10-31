@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import useDsState from '../hooks/useDsState';
+import ArrayCells from './ArrayCells';
 import './ArrayView.css';
 
 // Numeric-looking input becomes a number, anything else stays a string.
@@ -106,21 +107,7 @@ export default function ArrayView() {
             </span>
           </div>
 
-          <div className="array-scroll">
-            <div className="array-cells" role="list" aria-label="Array cells">
-              {state.data.map((item, i) => {
-                const used = i < state.size;
-                return (
-                  <div className="array-cell-wrap" key={i} role="listitem">
-                    <div className={`array-cell ${used ? 'array-cell-used' : 'array-cell-free'}`}>
-                      {used ? String(item) : ''}
-                    </div>
-                    <div className="array-cell-index">{i}</div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
+          <ArrayCells state={state} />
           <p className="array-legend">Filled cells are in use (size); dashed cells are spare capacity.</p>
           {empty && <p className="empty-message">The array is empty. Append a value to begin.</p>}
           {note && <p className="array-note">{note}</p>}

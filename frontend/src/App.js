@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 import { GROUPS, STRUCTURES } from './structures/registry';
+import PlayerPage from './explorer/PlayerPage';
 
-function App() {
+function Shell() {
   const [activeDS, setActiveDS] = useState(STRUCTURES[0].id);
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem('darkMode') === 'true');
 
@@ -61,6 +62,13 @@ function App() {
       </div>
     </div>
   );
+}
+
+// The player pages replace the sidebar layout; the check lives here so Shell's hooks stay unconditional.
+function App() {
+  const path = window.location.pathname;
+  if (path === '/v' || path === '/embed') return <PlayerPage embed={path === '/embed'} />;
+  return <Shell />;
 }
 
 export default App;
