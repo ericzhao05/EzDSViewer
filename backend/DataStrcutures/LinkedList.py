@@ -172,3 +172,133 @@ class LinkedList:
         value = self._nodes()[size - n].val
         self.head = remove_nth_from_end(self.head, n)
         return value
+
+
+class DoublyNode:
+    def __init__(self, val=0, prev=None, next=None, id=None):
+        self.val = val
+        self.prev = prev
+        self.next = next
+        self.id = id
+
+
+class DoublyLinkedList:
+    """Doubly linked list with real prev and next pointers.
+
+    Every node gets an id that stays with it for life and is never reused by this
+    list, so node_by_id gives the API a dictionary lookup to the node it names. That
+    is what keeps insert_after and delete O(1): neither one walks the list.
+    """
+
+    def __init__(self, values=()):
+        self.head = None
+        self.tail = None
+        self._size = 0
+        self._next_id = 1
+        self._by_id = {}
+        for v in values:
+            self.push_back(v)
+
+    def __len__(self):
+        return self._size
+
+    def _link(self, prev, value, next):
+        """Create a node between two neighbours (either may be None); O(1)."""
+        node = DoublyNode(value, prev, next, self._next_id)
+        self._next_id += 1
+        self._by_id[node.id] = node
+        self._size += 1
+        if prev is None:
+            self.head = node
+        else:
+            prev.next = node
+        if next is None:
+            self.tail = node
+        else:
+            next.prev = node
+        return node
+
+    def _require_own(self, node):
+        if node is None or self._by_id.get(getattr(node, "id", None)) is not node:
+            raise ValueError("node is not in this list")
+
+    def node_by_id(self, node_id):
+        return self._by_id.get(node_id)
+
+    def push_front(self, value):
+        return self._link(None, value, self.head)
+
+    def push_back(self, value):
+        return self._link(self.tail, value, None)
+
+    def insert_after(self, node, value):
+        self._require_own(node)
+        return self._link(node, value, node.next)
+
+    def delete(self, node):
+        self._require_own(node)
+        if node.prev is None:
+            self.head = node.next
+        else:
+            node.prev.next = node.next
+        if node.next is None:
+            self.tail = node.prev
+        else:
+            node.next.prev = node.prev
+        node.prev = node.next = None
+        del self._by_id[node.id]
+        self._size -= 1
+        return node.val
+
+    def pop_front(self):
+        if self.head is None:
+            raise IndexError("pop from empty list")
+        return self.delete(self.head)
+
+    def pop_back(self):
+        if self.tail is None:
+            raise IndexError("pop from empty list")
+        return self.delete(self.tail)
+
+    def forward(self):
+        node = self.head
+        while node is not None:
+            yield node
+            node = node.next
+
+    def backward(self):
+        node = self.tail
+        while node is not None:
+            yield node
+            node = node.prev
+
+    def find(self, value):
+        """The first node from the head holding value, or None; O(n)."""
+        for node in self.forward():
+            if node.val == value:
+                return node
+        return None
+
+    def to_list(self):
+        return [n.val for n in self.forward()]
+
+    def to_list_backward(self):
+        return [n.val for n in self.backward()]
+
+    def to_dict(self):
+        nodes = [
+            {
+                "id": n.id,
+                "value": n.val,
+                "prev": n.prev.id if n.prev else None,
+                "next": n.next.id if n.next else None,
+            }
+            for n in self.forward()
+        ]
+        return {
+            "values": [n["value"] for n in nodes],
+            "length": self._size,
+            "head": self.head.id if self.head else None,
+            "tail": self.tail.id if self.tail else None,
+            "nodes": nodes,
+        }

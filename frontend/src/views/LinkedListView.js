@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import useDsState from '../hooks/useDsState';
 import './LinkedListView.css';
 
@@ -30,7 +30,7 @@ function describe(op, result) {
   }
 }
 
-export default function LinkedListView() {
+function SinglyPanel({ onBusy }) {
   const { state, error, loading, run } = useDsState('linked-list');
   const [valueText, setValueText] = useState('');
   const [indexText, setIndexText] = useState('');
@@ -100,9 +100,12 @@ export default function LinkedListView() {
   const cycleTo = loaded ? state.cycle_to : null;
   const mid = values.length ? Math.floor(values.length / 2) : -1;
 
+  useEffect(() => {
+    onBusy(loading);
+  }, [loading, onBusy]);
+
   return (
-    <div className="ds-container">
-      <h2>Linked List Visualization</h2>
+    <>
       <p className="linked-list-intro">
         Nodes scattered through memory, each pointing to the next. It gives up O(1) indexing in
         exchange for O(1) insertion and removal at a position you already hold.
@@ -222,6 +225,237 @@ export default function LinkedListView() {
         />
         <button className="control-btn" onClick={onMerge} disabled={loading}>Merge sorted</button>
       </div>
+    </>
+  );
+}
+
+function describeDoubly(op, r) {
+  switch (op) {
+    case 'pop-front':
+    case 'pop-back':
+    case 'delete':
+      return `Removed value ${r.removed} (node #${r.node}): its neighbours now point at each other.`;
+    case 'insert-after':
+      return `Inserted node #${r.node} after node #${r.after}: only the neighbouring pointers changed.`;
+    case 'find':
+      return r.found ? `Found at index ${r.index} (node #${r.node}).` : 'Value not found.';
+    case 'traverse-forward':
+      return `Forward from head: ${r.values.join(' → ') || 'empty'}`;
+    case 'traverse-backward':
+      return `Backward from tail: ${r.values.join(' → ') || 'empty'}`;
+    default:
+      return '';
+  }
+}
+
+const pointerText = (id) => (id === null ? 'null' : `#${id}`);
+
+function DoublyPanel({ onBusy }) {
+  const { state, error, loading, run } = useDsState('linked-list/doubly');
+  const [valueText, setValueText] = useState('');
+  const [selectedId, setSelectedId] = useState(null);
+  const [highlight, setHighlight] = useState(null);
+  const [message, setMessage] = useState('');
+  const [localError, setLocalError] = useState('');
+
+  useEffect(() => {
+    onBusy(loading);
+  }, [loading, onBusy]);
+
+  const nodes = state ? state.nodes : [];
+  // The selection is an id, so it simply stops matching once that node is gone.
+  const selected = nodes.find((n) => n.id === selectedId) || null;
+
+  const exec = async (op, payload) => {
+    setLocalError('');
+    const data = await run(op, payload);
+    if (!data) {
+      setMessage('');
+      setHighlight(null);
+      return null;
+    }
+    const r = data.result;
+    setMessage(r ? describeDoubly(op, r) : '');
+    setHighlight(r && r.node !== undefined ? r.node : null);
+    return data;
+  };
+
+  const complain = (text) => {
+    setLocalError(text);
+    setMessage('');
+  };
+
+  const needValue = () => {
+    if (!INT.test(valueText.trim())) {
+      complain('Value must be a whole number');
+      return undefined;
+    }
+    return Number(valueText.trim());
+  };
+
+  const withValue = (op) => () => {
+    const value = needValue();
+    if (value !== undefined) exec(op, { value });
+  };
+  const onInsertAfter = () => {
+    if (!selected) {
+      complain('Select a node first: click it in the drawing');
+      return;
+    }
+    const value = needValue();
+    if (value !== undefined) exec('insert-after', { node: selected.id, value });
+  };
+  const onDelete = () => {
+    if (!selected) {
+      complain('Select a node first: click it in the drawing');
+      return;
+    }
+    exec('delete', { node: selected.id });
+  };
+  const onReset = async () => {
+    const data = await exec('reset', {});
+    if (data) {
+      setSelectedId(null);
+      setMessage('List reset.');
+    }
+  };
+
+  const shownError = localError || error;
+  const btn = (label, onClick) => (
+    <button className="control-btn" onClick={onClick} disabled={loading}>{label}</button>
+  );
+
+  return (
+    <>
+      <p className="linked-list-intro">
+        Nodes scattered through memory, each pointing to both neighbors. It gives up O(1) indexing in
+        exchange for O(1) insertion and removal at a position you already hold.
+      </p>
+      <p className="linked-list-complexity" data-testid="doubly-complexity">
+        Access: O(n). Search: O(n). Insert: O(1) at a known node. Delete: O(1) at a known node.
+        Space: O(n). Click a node to hold it: its id reaches the node directly, with no walk from the
+        head.
+      </p>
+
+      {shownError && <div className="error-message" role="alert">{shownError}</div>}
+
+      <div className="linked-list-scroll">
+        {!state && !shownError && <p className="empty-message">Loading...</p>}
+        {state && nodes.length === 0 && (
+          <p className="empty-message">Doubly linked list is empty. Push some nodes!</p>
+        )}
+        {nodes.length > 0 && (
+          <ol className="linked-list-chain" aria-label="Doubly linked list nodes">
+            {nodes.map((n) => (
+              <li
+                key={n.id}
+                data-testid={`dnode-${n.id}`}
+                className={
+                  'linked-list-ditem' +
+                  (highlight === n.id ? ' linked-list-highlight' : '') +
+                  (selectedId === n.id ? ' linked-list-selected' : '')
+                }
+              >
+                <div className="linked-list-dcell">
+                  <div className="linked-list-tags">
+                    {n.id === state.head && <span className="linked-list-tag">head</span>}
+                    {n.id === state.tail && <span className="linked-list-tag">tail</span>}
+                  </div>
+                  <button
+                    type="button"
+                    className="linked-list-dnode"
+                    aria-label={`Select node #${n.id}, value ${n.value}`}
+                    aria-pressed={selectedId === n.id}
+                    onClick={() => {
+                      setLocalError('');
+                      setSelectedId(selectedId === n.id ? null : n.id);
+                    }}
+                    disabled={loading}
+                  >
+                    <span className="linked-list-dptr" data-testid={`dnode-${n.id}-prev`}>
+                      <span className="linked-list-dptr-name">prev </span>{pointerText(n.prev)}
+                    </span>
+                    <span className="linked-list-val">{n.value}</span>
+                    <span className="linked-list-dptr" data-testid={`dnode-${n.id}-next`}>
+                      <span className="linked-list-dptr-name">next </span>{pointerText(n.next)}
+                    </span>
+                  </button>
+                  <span className="linked-list-index">#{n.id}</span>
+                </div>
+                {n.next !== null && (
+                  <span className="linked-list-dlinks" data-testid={`dlink-${n.id}`} aria-hidden="true">
+                    <span>&rarr;</span>
+                    <span>&larr;</span>
+                  </span>
+                )}
+              </li>
+            ))}
+          </ol>
+        )}
+      </div>
+
+      {state && (
+        <div className="linked-list-stats">
+          <span>Length: <strong>{state.length}</strong></span>
+          <span>Head: <strong>{pointerText(state.head)}</strong></span>
+          <span>Tail: <strong>{pointerText(state.tail)}</strong></span>
+          <span data-testid="doubly-selected">
+            Selected: <strong>{selected ? `#${selected.id} (value ${selected.value})` : 'none'}</strong>
+          </span>
+        </div>
+      )}
+
+      {message && <div className="linked-list-result" role="status">{message}</div>}
+
+      <div className="ds-controls linked-list-dcontrols">
+        <input
+          type="text"
+          aria-label="Value"
+          placeholder="Value"
+          value={valueText}
+          onChange={(e) => setValueText(e.target.value)}
+          disabled={loading}
+        />
+        {btn('Push front', withValue('push-front'))}
+        {btn('Push back', withValue('push-back'))}
+        {btn('Pop front', () => exec('pop-front', {}))}
+        {btn('Pop back', () => exec('pop-back', {}))}
+        {btn('Find value', withValue('find'))}
+        {btn('Reset', onReset)}
+      </div>
+      <div className="ds-controls linked-list-dcontrols">
+        {btn('Insert after selected', onInsertAfter)}
+        {btn('Delete selected', onDelete)}
+        {btn('Traverse forward', () => exec('traverse-forward', {}))}
+        {btn('Traverse backward', () => exec('traverse-backward', {}))}
+      </div>
+    </>
+  );
+}
+
+export default function LinkedListView() {
+  const [mode, setMode] = useState('singly');
+  const [busy, setBusy] = useState(false);
+  const modeButton = (value, label) => (
+    <button
+      type="button"
+      className={'control-btn' + (mode === value ? ' linked-list-mode-active' : '')}
+      aria-pressed={mode === value}
+      onClick={() => setMode(value)}
+      disabled={busy}
+    >
+      {label}
+    </button>
+  );
+
+  return (
+    <div className="ds-container">
+      <h2>Linked List Visualization</h2>
+      <div className="ds-controls" role="group" aria-label="List type">
+        {modeButton('singly', 'Singly')}
+        {modeButton('doubly', 'Doubly')}
+      </div>
+      {mode === 'singly' ? <SinglyPanel onBusy={setBusy} /> : <DoublyPanel onBusy={setBusy} />}
     </div>
   );
 }
